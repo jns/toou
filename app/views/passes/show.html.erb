@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Serialnumber:</strong>
+  <%= @pass.serialNumber %>
+</p>
+
+<p>
+  <strong>Expiration:</strong>
+  <%= @pass.expiration %>
+</p>
+
+<p>
+  <strong>Passtypeidentifier:</strong>
+  <%= @pass.passTypeIdentifier %>
+</p>
+
+<%= link_to 'Edit', edit_pass_path(@pass) %> |
+<%= link_to 'Back', passes_path %>

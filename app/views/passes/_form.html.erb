@@ -1,0 +1,37 @@
+<%= form_for(@pass) do |f| %>
+  <% if @pass.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pass.errors.count, "error") %> prohibited this pass from being saved:</h2>
+
+      <ul>
+      <% @pass.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :serialNumber %><br>
+    <%= f.text_field :serialNumber %>
+  </div>
+  <div class="field">
+    <%= f.label :expiration %><br>
+    <%= f.datetime_select :expiration %>
+  </div>
+  <div class="field">
+    <%= f.label :passTypeIdentifier %><br>
+    <%= f.text_field :passTypeIdentifier %>
+  </div>
+  <div class="field">
+    <%= f.label "Purchaser" %>
+    <%= f.collection_select(:purchaser_id, Account.all, :id, :name) %>
+  </div>
+  <div class="field">
+    <%= f.label "Recipient"%>
+    <%= f.collection_select(:recipient_id, Account.all, :id, :name) %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
