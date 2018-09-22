@@ -27,7 +27,7 @@ class PassesController < ApplicationController
     @pass = Pass.new(pass_params)
     respond_to do |format|
       if @pass.save
-        PassBuilderJob.perform_later @pass
+        PassBuilderJob.perform_later @pass.id
         format.html { redirect_to @pass, notice: 'Pass was successfully created.' }
         format.json { render :show, status: :created, location: @pass, :include => 'recipient' }
       else

@@ -5,22 +5,23 @@ class PassBuilderJob < ActiveJob::Base
 
   queue_as :default
   
+  def passRootDir 
+    File.join(Rails.root, "passes")  
+  end
+  
   def pkpassTemplateDir
-    PKPASS_TEMPLATE_DIR
-      # File.join(Rails.root, PKPASS_TEMPLATE_DIR)
+    File.join(Rails.root, "lib", "assets", "pkPassTemplate")
   end
   
   def pkpassCertificateDir
-    PKPASS_CERTIFICATE_DIR
-      # File.join(Rails.root, PKPASS_CERTIFICATE_DIR)
+    File.join(Rails.root, "lib", "assets", "certificates")
   end
   
   def perform(*passids)
     
     # Build a pkpass for each passid
-    passes.each() do |passid|
+    passids.each() do |passid|
       p = Pass.find(passid)
-      
       createTemplateDirectoryForPass(p)
       createPassJson(p)
       buildPass(p)
@@ -30,14 +31,12 @@ class PassBuilderJob < ActiveJob::Base
  
   # The filename of the signed and compressed pass
   def passFileName(p)
-    # File.join(Rails.root, PASS_DIR, "#{p.serialNumber}.pkpass")
-    File.join(PASS_DIR, "#{p.serialNumber}.pkpass")
+    File.join(passRootDir, "#{p.serialNumber}.pkpass")
   end
   
   # Returns the name of the directory on the server that stores the pass
   def passDirectory(p)
-    # File.join(Rails.root, PASS_DIR, "#{p.serialNumber}.pass")
-    File.join(PASS_DIR, "#{p.serialNumber}.pass")
+    File.join(passRootDir, "#{p.serialNumber}.pass")
   end
   
   # Creates the pass directory and populates it with template resources
@@ -82,13 +81,12 @@ class PassBuilderJob < ActiveJob::Base
   def buildPass(p)
     
     Dubai::Passbook.certificate, Dubai::Passbook.password = File.join(pkpassCertificateDir, "PassSigningCert.p12"), ENV['PKPASS_CERTIFICATE_PASSWORD']
-    passDir = passDirectory(p)
-    passName = passFileName(p)
-    
+
     # Example.pass is a directory with files "pass.json", "icon.png" & "icon@2x.png"
-    File.open(passName, 'w+') do |f|
-      f.write Dubai::Passbook::Pass.new(passDir).pkpass.string
+    File.open(passFileName(p), 'w+') do |f|
+      f.write Dubai::Passbook::Pass.new(passDirectory(p)).pkpass.string
     end
+    
   end
 
 end
