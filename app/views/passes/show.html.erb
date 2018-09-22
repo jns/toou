@@ -15,5 +15,9 @@
   <%= @pass.passTypeIdentifier %>
 </p>
 
+<p>
+  <strong>Recipient</strong>
+  <%= if @pass.account then @pass.account.name else "NA" end %>
+</p>
 <%= link_to 'Edit', edit_pass_path(@pass) %> |
 <%= link_to 'Back', passes_path %>

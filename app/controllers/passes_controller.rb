@@ -25,11 +25,11 @@ class PassesController < ApplicationController
   # POST /passes.json
   def create
     @pass = Pass.new(pass_params)
-
     respond_to do |format|
       if @pass.save
+        PassBuilderJob.perform_later @pass
         format.html { redirect_to @pass, notice: 'Pass was successfully created.' }
-        format.json { render :show, status: :created, location: @pass }
+        format.json { render :show, status: :created, location: @pass, :include => 'recipient' }
       else
         format.html { render :new }
         format.json { render json: @pass.errors, status: :unprocessable_entity }
@@ -40,6 +40,7 @@ class PassesController < ApplicationController
   # PATCH/PUT /passes/1
   # PATCH/PUT /passes/1.json
   def update
+    
     respond_to do |format|
       if @pass.update(pass_params)
         format.html { redirect_to @pass, notice: 'Pass was successfully updated.' }
@@ -69,6 +70,6 @@ class PassesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def pass_params
-      params.require(:pass).permit(:serialNumber, :expiration, :passTypeIdentifier)
+      params.require(:pass).permit(:serialNumber, :expiration, :passTypeIdentifier, :message, :account_id)
     end
 end
