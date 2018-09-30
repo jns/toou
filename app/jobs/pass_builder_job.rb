@@ -1,6 +1,17 @@
 
 require 'dubai'
 
+# 
+# This class builds and signs pkpasses 
+# 
+# Assumptions:
+# - Existence of an environment variable PKPASS_CERTIFICATE_PASSWORD
+# - A template directory for passes in Rails.root/lib/assets/pkPassTemplate 
+# - Private certificates located in Rails.root/lib/assets/certificates
+# - Signed passes are stored in Rails.root/passes
+#
+# Production versions must migrate this class off the web server and use 
+# configuration to specify locations of templates, certificates, and passes
 class PassBuilderJob < ActiveJob::Base
 
   queue_as :default
@@ -55,6 +66,8 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:formatVersion] = 1
     pkpass[:organizationName] = "Josh Shapiro"
     pkpass[:passTypeIdentifier] = "pass.com.eloisaguanlao.testpass"
+    pkpass[:authenticationToken] = "FIXME"
+    pkpass[:webServiceURL] = "FIXME"
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601

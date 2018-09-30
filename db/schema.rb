@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180921160944) do
+ActiveRecord::Schema.define(version: 20180923234126) do
 
   create_table "accounts", force: :cascade do |t|
     t.string   "name"
@@ -21,6 +21,12 @@ ActiveRecord::Schema.define(version: 20180921160944) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.integer "account_id"
+  end
+
+  add_index "orders", ["account_id"], name: "index_orders_on_account_id"
+
   create_table "passes", force: :cascade do |t|
     t.string   "serialNumber"
     t.datetime "expiration"
@@ -29,8 +35,10 @@ ActiveRecord::Schema.define(version: 20180921160944) do
     t.datetime "updated_at",         null: false
     t.integer  "account_id"
     t.string   "message"
+    t.integer  "order_id"
   end
 
   add_index "passes", ["account_id"], name: "index_passes_on_account_id"
+  add_index "passes", ["order_id"], name: "index_passes_on_order_id"
 
 end
