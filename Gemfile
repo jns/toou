@@ -39,7 +39,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   # Use sqlite3 for dev and test
-  get 'sqlite3'
+  gem 'sqlite3'
 end
 
 group :development do
