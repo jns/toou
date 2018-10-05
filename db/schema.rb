@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(version: 20180923234126) do
   add_index "orders", ["account_id"], name: "index_orders_on_account_id"
 
   create_table "passes", force: :cascade do |t|
-    t.string   "serialNumber",       null: false
+    t.string   "serialNumber"
     t.datetime "expiration"
-    t.string   "passTypeIdentifier", null: false, default: "pass.com.eloisaguanlao.testpass"
+    t.string   "passTypeIdentifier"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.integer  "account_id"
