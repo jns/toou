@@ -22,5 +22,6 @@ module Workspace
 
     # Do not initialize application during precompilation
     config.assets.initialize_on_precompile = false
+    
   end
 end

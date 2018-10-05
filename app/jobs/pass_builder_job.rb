@@ -14,19 +14,10 @@ require 'dubai'
 # configuration to specify locations of templates, certificates, and passes
 class PassBuilderJob < ActiveJob::Base
 
+  include PassesHelper
+  
   queue_as :default
   
-  def passRootDir 
-    File.join(Rails.root, "passes")  
-  end
-  
-  def pkpassTemplateDir
-    File.join(Rails.root, "lib", "assets", "pkPassTemplate")
-  end
-  
-  def pkpassCertificateDir
-    File.join(Rails.root, "lib", "assets", "certificates")
-  end
   
   def perform(*passids)
     
@@ -39,16 +30,7 @@ class PassBuilderJob < ActiveJob::Base
     end
     
   end
- 
-  # The filename of the signed and compressed pass
-  def passFileName(p)
-    File.join(passRootDir, "#{p.serialNumber}.pkpass")
-  end
-  
-  # Returns the name of the directory on the server that stores the pass
-  def passDirectory(p)
-    File.join(passRootDir, "#{p.serialNumber}.pass")
-  end
+
   
   # Creates the pass directory and populates it with template resources
   def createTemplateDirectoryForPass(p)
@@ -66,8 +48,8 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:formatVersion] = 1
     pkpass[:organizationName] = "Josh Shapiro"
     pkpass[:passTypeIdentifier] = "pass.com.eloisaguanlao.testpass"
-    pkpass[:authenticationToken] = "FIXME"
-    pkpass[:webServiceURL] = "FIXME"
+    #pkpass[:authenticationToken] = "FIXME"
+    #pkpass[:webServiceURL] = "FIXME"
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601

@@ -1,4 +1,9 @@
+
 class PassesController < ApplicationController
+  
+  include PassesHelper
+  
+  
   before_action :set_pass, only: [:show, :edit, :update, :destroy]
 
   # GET /passes
@@ -10,6 +15,23 @@ class PassesController < ApplicationController
   # GET /passes/1
   # GET /passes/1.json
   def show
+  end
+
+  # GET /passes/passType/serialnumber
+  def fetch
+    passTypeId, serialNumber = fetch_params
+    pass = Pass.find_by passTypeIdentifier: passTypeId, serialNumber: serialNumber
+    if pass
+      passFileName = passFileName(pass)
+      if File.exists?(passFileName)
+        logger.debug("sending #{passFileName}")
+        send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
+      else
+        raise ActionController::BadRequest.new("Pass not found")
+      end
+    else
+      raise ActionController::RoutingError.new('Pass Not Found')
+    end
   end
 
   # GET /passes/new
@@ -72,4 +94,9 @@ class PassesController < ApplicationController
     def pass_params
       params.require(:pass).permit(:serialNumber, :expiration, :passTypeIdentifier, :message, :account_id)
     end
+    
+    def fetch_params
+      params.require([:pass_type_id, :serial_number])
+    end
+    
 end
