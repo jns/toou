@@ -92,7 +92,7 @@ class PassesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def pass_params
-      params.require(:pass).permit(:serialNumber, :expiration, :passTypeIdentifier, :message, :account_id)
+      params.require(:pass).permit(:serialNumber, :expiration, :message, :account_id)
     end
     
     def fetch_params

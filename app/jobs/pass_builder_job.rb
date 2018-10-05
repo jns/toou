@@ -47,9 +47,9 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:description] = "A TooU payment pass"
     pkpass[:formatVersion] = 1
     pkpass[:organizationName] = "Josh Shapiro"
-    pkpass[:passTypeIdentifier] = "pass.com.eloisaguanlao.testpass"
+    pkpass[:passTypeIdentifier] = p.passTypeIdentifier
     #pkpass[:authenticationToken] = "FIXME"
-    #pkpass[:webServiceURL] = "FIXME"
+    # pkpass[:webServiceURL] = ENV['WEB_SERVICE_URL']
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601

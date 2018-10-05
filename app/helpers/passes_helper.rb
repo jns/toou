@@ -1,6 +1,10 @@
 module PassesHelper
 
     
+    def pkpassUrl(p) 
+        "/v1/passes/#{p.passTypeIdentifier}/#{p.serialNumber}"    
+    end
+    
   def passRootDir 
     File.join(Rails.root, "passes")  
   end

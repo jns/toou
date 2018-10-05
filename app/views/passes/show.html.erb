@@ -19,5 +19,15 @@
   <strong>Recipient</strong>
   <%= if @pass.account then @pass.account.name else "NA" end %>
 </p>
+
+<p>
+  <strong>Message</strong>
+  <%= @pass.message %>
+</p>
+
+<p>
+  <%= link_to 'Download', pkpassUrl(@pass), download: true %>
+</p>
+
 <%= link_to 'Edit', edit_pass_path(@pass) %> |
 <%= link_to 'Back', passes_path %>
