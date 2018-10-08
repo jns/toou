@@ -156,6 +156,8 @@ GEM
       shenzhen
       venice
     ntlm-http (0.1.1)
+    open-iconic-rails (0.0.1)
+      rails (>= 3.1)
     pg (0.21.0)
     plist (3.1.0)
     popper_js (1.14.3)
@@ -279,6 +281,7 @@ DEPENDENCIES
   jbuilder (~> 2.7.0)
   jquery-rails (~> 4.3.3)
   nomad-cli (~> 0.0.2)
+  open-iconic-rails
   pg
   rails (~> 5.2.1)
   sass-rails (~> 5.0.7)

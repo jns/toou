@@ -1,0 +1,11 @@
+<div class="container pt-5">
+    
+  <form action="/passes">
+    <div class="form-group">
+      <label for="redemptionCode">We sent a code to <%= @acct_phone_number %>. Please enter it to confirm your identity.</label>
+      <input type="text" class="form-control" id="twoFactorAuth" placeholder="Code">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form> 
+    
+</div>

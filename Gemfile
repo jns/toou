@@ -17,6 +17,8 @@ gem 'coffee-rails', '~>4.2.2'
 
 # Use bootstrap
 gem 'bootstrap', '~>4.1.3'
+# Use iconic icons
+gem 'open-iconic-rails'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '~>4.3.3'
