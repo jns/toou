@@ -1,5 +1,8 @@
 class AuthorizationController < ApplicationController
 
+    include MessageSender
+    include CodeGenerator
+    
     skip_before_action :authenticate
     helper OpenIconicHelper
     
@@ -14,7 +17,13 @@ class AuthorizationController < ApplicationController
     end
     
     def two_factor
-        @acct_phone_number = "123-4567"
+        phoneNumber = twofactor_params
+        MessageSender.send_code(phoneNumber, CodeGenerator.generate)
     end
     
+    private
+    def twofactor_params
+        params.require([:phoneNumber])
+    end
+
 end

@@ -32,6 +32,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use the nomad command line tools for generating apple passes
 gem 'nomad-cli', '~> 0.0.2'
 
+# Use the twilio gem for sending SMS
+gem 'twilio-ruby'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

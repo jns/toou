@@ -9,9 +9,7 @@ class ApplicationController < ActionController::Base
   
   def authenticate
     
-    logger.debug("You requested #{request.request_method}")
-    logger.debug("Authentication Here...#{request.authorization()}")
-    
   end
+  
   
 end
