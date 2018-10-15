@@ -3,13 +3,14 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   
-  before_action :authenticate
-  
+  before_action :authenticate_request
+  attr_reader :current_user
+
   private
-  
-  def authenticate
-    
+
+  def authenticate_request
+    @current_user = AuthorizeApiRequest.call(request.headers).result
+    render json: { error: 'Not Authorized' }, status: 401 unless @current_user
   end
-  
   
 end

@@ -35,6 +35,12 @@ gem 'nomad-cli', '~> 0.0.2'
 # Use the twilio gem for sending SMS
 gem 'twilio-ruby'
 
+# Use jason web tokens for authentication
+gem 'jwt'
+
+# Use SimpleCommand for dispatching commands
+gem 'simple_command'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

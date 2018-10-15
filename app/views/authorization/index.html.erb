@@ -22,25 +22,19 @@
 
 
   <div class="container" id="redemption-code-form" style="display: none">
-  <form action="/confirm_phone" method="get">
+  <%= form_tag "redeem_code" do %>
     <div class="form-group">
       <label for="redemptionCode">Redemption Code</label>
-      <input type="text" class="form-control" id="redemptionCode" placeholder="Redemption Code">
+      <input type="text" class="form-control" name="redemptionCode" id="redemptionCode" placeholder="Redemption Code">
     </div>
     <button class="btn btn-outline-secondary"><%= open_iconic :icon, :arrow_thick_left %>Go Back</button>
     <button type="submit" class="btn btn-primary">Submit</button>
-  </form>  
+  <% end %>
   </div>
   
   <div class="container" id="phone-number-form" style="display: none">
-  <form action="/authenticate" method="get">
-    <div class="form-group">
-      <label for="phoneNumber">Phone Number</label>
-      <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Phone Number">
-    </div>
-    <button class="btn btn-outline-secondary"><%= open_iconic :icon, :arrow_thick_left %>Go Back</button>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>    </div>
+    <%= render 'new_phone' %>
+  </div>
 
 </div>
 

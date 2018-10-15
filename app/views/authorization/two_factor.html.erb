@@ -1,11 +1,12 @@
 <div class="container pt-5">
     
-  <form action="/passes">
+  <%= form_tag "authenticate_otp" do %>
     <div class="form-group">
       <label for="redemptionCode">We sent a code to <%= @acct_phone_number %>. Please enter it to confirm your identity.</label>
-      <input type="text" class="form-control" id="twoFactorAuth" placeholder="Code">
+      <input type="text" class="form-control" id="otp" name="otp" placeholder="Code">
     </div>
+    <%= hidden_field_tag :phoneNumber, @acct_phone_number %>
     <button type="submit" class="btn btn-primary">Submit</button>
-  </form> 
-    
+  <% end %>
+
 </div>

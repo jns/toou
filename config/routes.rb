@@ -9,8 +9,10 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'authorization#index'
-  get 'authenticate', to: 'authorization#two_factor'
-  get 'confirm_phone', to: 'authorization#confirm_phone'
+  post 'authenticate', to: 'authorization#two_factor'
+  post 'redeem_code', to: 'authorization#redeem_code'
+  post 'authenticate_otp', to: 'authorization#authenticate'
+  
   get 'new_phone', to: 'authorization#new_phone'
   
   # Example of regular route:

@@ -1,5 +1,8 @@
 class AccountsController < ApplicationController
   before_action :set_account, only: [:show, :edit, :update, :destroy]
+  
+  
+    skip_before_action :authenticate_request, only: [:new]
 
   # GET /accounts
   # GET /accounts.json
