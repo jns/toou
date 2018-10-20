@@ -8,6 +8,7 @@ class MessageSender
       ENV.fetch("TWILIO_ACCOUNT_SID"),
       ENV.fetch("TWILIO_AUTH_TOKEN"),
     )
+    self
   end
   
   def send_code(phone_number, code)
