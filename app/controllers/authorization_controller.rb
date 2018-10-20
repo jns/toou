@@ -1,10 +1,11 @@
 class AuthorizationController < ApplicationController
 
-    include MessageSender
     helper OpenIconicHelper
     
     skip_before_action :authenticate_request
 
+    @messageSender = MessageSender.new
+    
     def index
     end
     
@@ -24,7 +25,7 @@ class AuthorizationController < ApplicationController
         if acct then
             @account_id = acct.id
             otp = acct.generate_otp 
-            MessageSender.send_code(@acct_phone_number, otp)
+            @messageSender.send_code(@acct_phone_number, otp)
         else 
             flash[:notice] = "Hmm. we can't find your account"
             redirect_to controller: "accounts", action: "new"

@@ -9,9 +9,10 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'authorization#index'
-  post 'authenticate', to: 'authorization#two_factor'
+  post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'redeem_code', to: 'authorization#redeem_code'
-  post 'authenticate_otp', to: 'authorization#authenticate'
+  post 'api/authenticate', to: 'api#authenticate'
+  post 'api/passes', to: 'api#passes'
   
   get 'new_phone', to: 'authorization#new_phone'
   

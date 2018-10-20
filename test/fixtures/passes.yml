@@ -1,11 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  serialNumber: MyString
+  serialNumber: abc123
+  account_id: 1
   expiration: 2018-09-18 02:35:30
-  passTypeIdentifier: MyString
+  passTypeIdentifier: pass.com.toou
+  message: This is pass one
 
 two:
-  serialNumber: MyString
+  serialNumber: abc124
+  account_id: 1
   expiration: 2018-09-18 02:35:30
-  passTypeIdentifier: MyString
+  passTypeIdentifier: pass.com.toou
+  message: This is pass two
+
+three:
+  serialNumber: abc125
+  account_id: 2
+  expiration: 2018-09-18 02:35:30
+  passTypeIdentifier: pass.com.toou
+  message: This is pass three
