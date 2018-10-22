@@ -16,8 +16,8 @@ class ApiController < ApplicationController
             if acct then
                 # Todo check the device ID and get worried if it changed
                 otp = acct.generate_otp 
-                MessageSender.new.send_code(acct_phone_number, otp)
-                render json: "{}", status: :ok 
+                #MessageSender.new.send_code(acct_phone_number, otp)
+                render json: {passcode: otp}, status: :ok 
             else 
                 render status: :bad_request, json: {error: "There was as problem finding or creating an account."}
             end

@@ -13,6 +13,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   # end
   test "Request OTP" do
 
+    MessageSender.client.messages.clear
+    
     post "/api/requestOneTimePasscode", params: {"phoneNumber": @acct1.mobile, "deviceId": @devId}, as: :json
     assert_response :success
     
