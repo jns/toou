@@ -55,7 +55,12 @@ class ApiController < ApplicationController
     # Returns available passes for authenticated user
     # 
     def passes
-        render json: @current_user.passes, status: :ok
+        command = RequestPasses.call(@current_user, serialNumbers)
+        if command.success?
+            render json: , command.result, status: :ok
+        else
+            render json: {error: command.errors}, status: :bad_request
+        end
     end
     
     
@@ -66,5 +71,13 @@ class ApiController < ApplicationController
         true    
     end
     
+    def serialNumbers
+       values = params[:serialNumbers]
+       if ! values.is_a? Array
+           []
+       else
+          values.select{|v| SerialNumber.is_valid(v)} 
+       end
+    end
     
 end
