@@ -23,12 +23,13 @@ class PassesController < ApplicationController
     pass = Pass.find_by passTypeIdentifier: passTypeId, serialNumber: serialNumber
     if pass
       passFileName = passFileName(pass)
-      if File.exists?(passFileName)
-        logger.debug("sending #{passFileName}")
-        send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
-      else
-        raise ActionController::BadRequest.new("Pass not found")
+      if not File.exists?(passFileName)
+        # Build pass on the fly
+        PassBuilderJob.new().perform(pass.id)
+        raise ActionController::BadRequest.new("Problem generating pass") unless File.exists?(passFileName)
       end
+      logger.debug("sending #{passFileName}")
+      send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
     else
       raise ActionController::RoutingError.new('Pass Not Found')
     end

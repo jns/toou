@@ -1,5 +1,8 @@
 class Pass < ActiveRecord::Base
     
+    USED = "USED"
+    EXPIRED = "EXPIRED"
+    VALID = "VALID"
     
     # The Account is the owner of the pass, i.e. the person the pass was purchased for
     belongs_to :account
@@ -15,11 +18,11 @@ class Pass < ActiveRecord::Base
     
     def status
        if self.used? then
-           return "USED"
+           return USED
        elsif self.expired? then
-           return "EXPIRED"
+           return EXPIRED
        else
-           return "VALID"
+           return VALID
        end
     end
     
