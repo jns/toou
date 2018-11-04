@@ -22,6 +22,6 @@ module Workspace
 
     # Do not initialize application during precompilation
     config.assets.initialize_on_precompile = false
-    config.eager_load_paths << Rails.root.join("lib/2fa")
+    config.eager_load_paths << Rails.root.join("lib/helpers")
   end
 end

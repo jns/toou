@@ -18,7 +18,12 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/requestOneTimePasscode", params: {"phoneNumber": @acct1.mobile, "deviceId": @devId}, as: :json
     assert_response :success
     
-    assert_equal 1, MessageSender.client.messages.size
+    # Disabled SMS for now
+    # assert_equal 1, MessageSender.client.messages.size
+    
+    # Temporarily return passcode inside response
+    json = JSON.parse(@response.body)
+    assert_not_nil(json["passcode"])
     
   end
   
@@ -55,17 +60,43 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
+    # Posting with no parameters will return valid passes
     post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
     passes = JSON.parse(@response.body)
+    assert_equal 1, passes.size
+    assert_equal "abc124", passes.first["serialNumber"]
+  
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
+    passes = JSON.parse(@response.body)
+    
     assert_equal 2, passes.size
+    assert_equal "EXPIRED", passes.find{|p| p["serialNumber"] == "abc123"}["status"]
+    assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc124"}["status"]
     
   end
+  
+  test "Fetch Invalid Pass" do
+  
+    post "/api/authenticate", params: {"phoneNumber": @acct1.mobile, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["xxx123"]}
+    passes = JSON.parse(@response.body)
+    
+    assert_equal 2, passes.size
+    assert_equal "INVALID", passes.find{|p| p["serialNumber"] == "xxx123"}["status"]
+    
+  end
+  
   
   test "Fetch Passes unauthorized" do
     
     token = "ThisIs.NotA.Token"
     
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
+    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
     passes = JSON.parse(@response.body)
     assert_response :unauthorized
     

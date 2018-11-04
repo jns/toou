@@ -28,9 +28,9 @@ class RequestPasses
             if found_pass then
                 found_pass
             else
-                {p => :invalid}
+                InvalidPass.new(p)
             end
-        })
+        }).uniq{|p| p.serialNumber}
         
     end
     

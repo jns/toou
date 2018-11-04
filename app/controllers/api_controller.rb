@@ -57,7 +57,8 @@ class ApiController < ApplicationController
     def passes
         command = RequestPasses.call(@current_user, serialNumbers)
         if command.success?
-            render json: , command.result, status: :ok
+            @passes = command.result
+            render 'passes.json.jbuilder', status: :ok
         else
             render json: {error: command.errors}, status: :bad_request
         end
@@ -76,7 +77,7 @@ class ApiController < ApplicationController
        if ! values.is_a? Array
            []
        else
-          values.select{|v| SerialNumber.is_valid(v)} 
+          values.select{|v| SerialNumber.isValid?(v)} 
        end
     end
     

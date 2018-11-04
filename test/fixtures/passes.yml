@@ -10,7 +10,7 @@ one:
 two:
   serialNumber: abc124
   account_id: 1
-  expiration: 2018-09-18 02:35:30
+  expiration: 2050-09-18 02:35:30
   passTypeIdentifier: pass.com.toou
   message: This is pass two
 
