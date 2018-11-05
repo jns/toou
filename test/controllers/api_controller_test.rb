@@ -83,11 +83,11 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
   
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["xxx123"]}
+    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["12345abc"]}
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
-    assert_equal "INVALID", passes.find{|p| p["serialNumber"] == "xxx123"}["status"]
+    assert_equal "INVALID", passes.find{|p| p["serialNumber"] == "12345abc"}["status"]
     
   end
   
