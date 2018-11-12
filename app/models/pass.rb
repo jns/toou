@@ -12,6 +12,10 @@ class Pass < ActiveRecord::Base
     
     alias :recipient :account
     
+    before_create do
+        self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
+    end
+    
     def purchaser
        order.account 
     end

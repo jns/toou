@@ -2,6 +2,10 @@ class Account < ActiveRecord::Base
     has_many :passes
     has_many :orders
     
+    def Account.search_by(recipient)
+        
+    end
+    
     def authenticate(password)
         return self.one_time_password_hash == password
     end
