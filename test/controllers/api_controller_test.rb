@@ -28,7 +28,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Creates a new account" do
-    number = "555-555-5555"
+    number = "5555555555"
     assert_nil Account.find_by_mobile(number)
     
     post "/api/requestOneTimePasscode", params: {"phoneNumber": number, "deviceId": @devId}, as: :json
