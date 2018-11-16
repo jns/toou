@@ -22,8 +22,8 @@ class PlaceOrder
                 }
             end
             return o
-        rescue 
-            return errors.add(:internal_server_error, "Error creating order")
+        rescue => e
+            return errors.add(:internal_server_error, "Error creating order: #{e.message}")
         end
     end
     

@@ -10,7 +10,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        @recipients = Account.all.map{|a| {"phoneNumber" => a.mobile}}
        @message = "Test Message"
        
-       cmd = PlaceOrder.new(@account, @recipients, @message).call()
+       cmd = PlaceOrder.call(@account, @recipients, @message)
        assert cmd.success? 
        
        assert_equal(1, @account.orders.size)
