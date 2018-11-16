@@ -25,4 +25,17 @@ class AccountTest < ActiveSupport::TestCase
     assert_not_nil(Account.search_by("phoneNumber" => "(504) 383-4228"))  
   end
   
+  test "search or create by phone number" do
+    number = "555-1212"
+    a = Account.search_by("phoneNumber" => number)
+    a.destroy if a
+    
+    assert_nil(Account.search_by("phoneNumber" => number))
+    
+    Account.search_or_create_by_recipient("phoneNumber" => number)
+    
+    assert_not_nil(Account.search_by("phoneNumber" => number))
+    
+  end
+  
 end

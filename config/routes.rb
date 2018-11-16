@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   post 'redeem_code', to: 'authorization#redeem_code'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
+  post 'api/place_order', to: 'api#placeOrder'
   
   get 'new_phone', to: 'authorization#new_phone'
   

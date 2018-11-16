@@ -26,6 +26,19 @@ class Account < ActiveRecord::Base
         return nil
     end
     
+    # Search for an account using the search_by function.  If the account isn't found, then create it
+    def Account.search_or_create_by_recipient(recipient)
+        a = Account.search_by(recipient)
+        if a == nil then
+            a = Account.create()
+            a.mobile = recipient["phoneNumber"]
+            a.email = recipient["email"]
+            a.save
+        end
+        
+        return a
+    end
+    
     def authenticate(password)
         return self.one_time_password_hash == password
     end

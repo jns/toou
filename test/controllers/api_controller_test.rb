@@ -102,5 +102,35 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "Place Order Succeeds" do
+    
+    post "/api/authenticate", params: {"phoneNumber": @acct1.mobile, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/place_order", headers: {"Authorization": "Bearer #{token}"}, 
+      params: {"recipients": [{"phoneNumber" => @acct1.mobile}],
+               "message": "So Long and Thanks for all the Fish"
+      }
+    
+    assert_response :success
+    order = JSON.parse(@response.body)
+    assert order["order_id"].to_i > 0
+    
+  end
+  
+  test "Place Order Unauthorized" do 
+     
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/place_order", headers: {"Authorization": "Bearer Not.A.Token"}, 
+      params: {"recipients": [{"phoneNumber" => "310-909-7243"}, 
+                              {"phoneNumber" =>  "5043834228"}],
+               "message": "So Long and Thanks for all the Fish"
+      }
+    
+    assert_response :unauthorized
+  end
   
 end

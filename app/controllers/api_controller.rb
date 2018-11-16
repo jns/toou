@@ -52,6 +52,19 @@ class ApiController < ApplicationController
        end
     end
     
+    # Places an order for passes to be delivered to recipients
+    # @param [Array<{"phoneNumber" : String || "email" : String}>] recipients An array of objects with phoneNumber or email properties
+    # @param [String] the message to include in the delivered pass
+    def placeOrder
+        recipients, message = params.require([:recipients, :message])
+        command = PlaceOrder.call(@current_user, recipients, message)
+        if command.success?
+            render json: {order_id: command.result.id}, status: :ok
+        else
+            render json: {error: command.errors}, status: :bad_request
+        end
+    end
+    
     # Returns available passes for authenticated user
     # 
     def passes
