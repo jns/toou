@@ -3,7 +3,7 @@ class AuthenticateUser
   prepend SimpleCommand
   
   def initialize(phone, one_time_password)
-    @phone = phone
+    @phone = Account.sanitize_phone_number(phone)
     @otp = one_time_password
   end
 
