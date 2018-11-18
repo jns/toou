@@ -13,12 +13,13 @@ class PlaceOrder
     def call
         begin
             o = Order.new
-            ActiveRecord::Base.transaction do 
+            ActiveRecord::Base.transaction do
                 o.account = @account
-                o.save
+                throw "Error creating order for account #{@account.mobile}" unless o.save  
                 @recipients.each{ |r| 
                     p = create_pass(r, o)
                     p.save
+                    throw "Error create pass for order #{o.id}" unless p.save 
                 }
             end
             return o

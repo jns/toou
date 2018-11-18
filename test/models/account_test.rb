@@ -15,6 +15,17 @@ class AccountTest < ActiveSupport::TestCase
     a.save
   end
   
+  test "Sanitize phone number" do
+    assert_equal("3109097243", Account.sanitize_phone_number("(310) 909-7243"))
+    assert_equal("3109097243", Account.sanitize_phone_number("310-909-7243"))
+    assert_equal("3109097243", Account.sanitize_phone_number("3109097243"))
+    
+    assert_equal("3109097243", Account.sanitize_phone_number("(310)\u00a0909-7243"))
+    assert_equal("3109097243", Account.sanitize_phone_number("(310)\U00a0909-7243"))
+    
+  
+  end
+  
   test "phone number format" do
       assert_equal("3109097243", Account.find(1).mobile)
       assert_equal("5043834228", Account.find(2).mobile)

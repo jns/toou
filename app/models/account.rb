@@ -7,7 +7,8 @@ class Account < ActiveRecord::Base
     end
     
     def Account.sanitize_phone_number(number)
-        number.gsub(/[^0-9]/, "")
+        number.gsub(/U[0-9a-f]{4}/, "")
+              .gsub(/[^0-9]/, "")
     end
     
     # Find an account using a predicate that can contain any of the following keys
@@ -31,6 +32,7 @@ class Account < ActiveRecord::Base
         a = Account.search_by(recipient)
         if a == nil then
             a = Account.create()
+            a.name = recipient["name"]
             a.mobile = recipient["phoneNumber"]
             a.email = recipient["email"]
             a.save
