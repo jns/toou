@@ -11,8 +11,9 @@ class ApiController < ApplicationController
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
         acct_phone_number, device_id = params.require([:phoneNumber, :deviceId])
-        if isValidPhone(acct_phone_number) then
-            acct = Account.find_or_create_by(mobile: acct_phone_number)
+        phone = Account.sanitize_phone_number(acct_phone_number)
+        if isValidPhone(phone) then
+            acct = Account.find_or_create_by(mobile: phone)
             if acct then
                 # Todo check the device ID and get worried if it changed
                 otp = acct.generate_otp 
@@ -40,7 +41,7 @@ class ApiController < ApplicationController
     # @param [String] phoneNumber The phone number of the device to authenticate
     # @param [String] passCode a one time passcode returned by requestOneTimePasscode
     # @param [String] deviceId a unique id of the device
-    # @param 200 {"auth_token", jwt} a json web token or 401 for an invalid set of credentials
+    # @return 200 {"auth_token", jwt} a json web token or 401 for an invalid set of credentials
     def authenticate
         otp, phoneNumber = params.require([:passCode, :phoneNumber, :deviceId])
         command = AuthenticateUser.call(phoneNumber, otp)

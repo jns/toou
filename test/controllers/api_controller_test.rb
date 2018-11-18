@@ -2,6 +2,8 @@ require 'test_helper'
 
 class ApiControllerTest < ActionDispatch::IntegrationTest
 
+  include ActionView::Helpers::NumberHelper
+
   def setup
     @acct1 = Account.find(1)
     @acct1.generate_otp
@@ -15,7 +17,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
 
     MessageSender.client.messages.clear
     
-    post "/api/requestOneTimePasscode", params: {"phoneNumber": @acct1.mobile, "deviceId": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {"phoneNumber": number_to_phone(@acct1.mobile), "deviceId": @devId}, as: :json
     assert_response :success
     
     # Disabled SMS for now
@@ -28,13 +30,13 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Creates a new account" do
-    number = "5555555555"
-    assert_nil Account.find_by_mobile(number)
+    number = "(555) 555-5555"
+    assert_nil Account.find_by_mobile(Account.sanitize_phone_number(number))
     
     post "/api/requestOneTimePasscode", params: {"phoneNumber": number, "deviceId": @devId}, as: :json
     assert_response :success
     
-    assert_not_nil Account.find_by_mobile(number)
+    assert_not_nil Account.find_by_mobile(Account.sanitize_phone_number(number))
   end
   
   
