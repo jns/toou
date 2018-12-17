@@ -10,4 +10,8 @@ class InvalidPass
         @status = "INVALID"
     end
     
+    def purchaser
+       "" 
+    end
+    
 end

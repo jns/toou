@@ -8,7 +8,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
    end
    
    test "call PlaceOrder" do
-       @account = Account.find(1)
+       @account = Account.find(3)
        @recipients = Account.all.map{|a| {"phoneNumber" => number_to_phone(a.mobile)}}
        @message = "Test Message"
        
