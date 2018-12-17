@@ -6,9 +6,10 @@
 #
 default: &default
   adapter: postgresql
-  encoding: SQL_ASCII
+  encoding: UTF8
   pool: 5
   timeout: 5000
+  template: template0
 
 development:
   <<: *default

@@ -20,3 +20,10 @@ three:
   expiration: 2018-09-18 02:35:30
   passTypeIdentifier: pass.com.toou
   message: This is pass three
+  
+four:
+  serialNumber: abc126
+  account_id: 3
+  expiration: 2025-01-01 00:00:00
+  passTypeIdentifier: pass.com.toou
+  message: This pass has an emoji 👍

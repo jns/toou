@@ -8,6 +8,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     @acct1 = Account.find(1)
     @acct1.generate_otp
     @devId = "12345"
+
+    @acct3 = Account.find(3)
+    @acct3.generate_otp
   end
 
   # test "the truth" do
@@ -78,6 +81,19 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "Fetch a pass with an emoji" do
+    post "/api/authenticate", params: {"phoneNumber": @acct3.mobile, "passCode": @acct3.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+    
+    # Posting with no parameters will return valid passes
+    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
+    passes = JSON.parse(@response.body)
+    assert_equal 1, passes.size
+    assert_equal "This pass has an emoji \u{1F44D}", passes.first["message"]
+  
+  end
+  
   test "Fetch Invalid Pass" do
   
     post "/api/authenticate", params: {"phoneNumber": @acct1.mobile, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
@@ -99,8 +115,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = "ThisIs.NotA.Token"
     
     post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
-    passes = JSON.parse(@response.body)
+    body = JSON.parse(@response.body)
     assert_response :unauthorized
+    assert_not_nil(body["error"])
     
   end
   

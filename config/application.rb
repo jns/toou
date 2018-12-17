@@ -23,5 +23,9 @@ module Workspace
     # Do not initialize application during precompilation
     config.assets.initialize_on_precompile = false
     config.eager_load_paths << Rails.root.join("lib/helpers")
+    
+    # Set the encoding
+    config.encoding="utf-8"
+    
   end
 end

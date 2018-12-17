@@ -18,7 +18,6 @@ class PlaceOrder
                 throw "Error creating order for account #{@account.mobile}" unless o.save  
                 @recipients.each{ |r| 
                     p = create_pass(r, o)
-                    p.save
                     throw "Error create pass for order #{o.id}" unless p.save 
                 }
             end
@@ -33,8 +32,8 @@ class PlaceOrder
     def create_pass(recipient, order) 
        p = Pass.create
        p.message = @message
-       p.expiration = Date.today + 8.days
-       p.account = Account.search_or_create_by_recipient(recipient)
+      p.expiration = Date.today + 8.days
+      p.account = Account.search_or_create_by_recipient(recipient)
        p.order = order
        return p
     end
