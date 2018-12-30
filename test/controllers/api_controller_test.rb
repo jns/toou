@@ -174,6 +174,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     history = JSON.parse(@response.body)
     assert history.size == 3
     
+    assert_equal ["date", "activity_type", "message"], history.first.keys
   end
   
   test "Account History Unauthorized" do
