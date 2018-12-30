@@ -10,14 +10,13 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'authorization#index'
+  get 'about', to: 'authorization#about'
+  
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
-  post 'redeem_code', to: 'authorization#redeem_code'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/history', to: 'api#history'
-  
-  get 'new_phone', to: 'authorization#new_phone'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

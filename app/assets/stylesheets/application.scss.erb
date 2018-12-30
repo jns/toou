@@ -1,0 +1,83 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ */
+ 
+@import "bootstrap";
+@import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500');
+@import 'colors';
+
+body {
+    font-family: 'Maven Pro', sans-serif;
+    color: $app-turquoise;
+}
+
+.navbar {
+    background-color: $app-turquoise;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5); 
+    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.5);
+}
+
+.navbar-brand {
+    background-image: url(<%= asset_path 'TooULogoMini' %>);
+    background-size: 100px 50px; 
+    width: 100px;
+    height: 50px;
+    
+    &:hover {
+        background-color: $app-turquoise;
+    }
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.regular-20pt {
+    font-size: 20pt;
+    font-weight: 400;
+}
+
+.medium-20pt {
+    font-size: 20pt;
+    font-weight: 500;
+}
+
+.regular-28pt {
+    font-size: 28pt;
+    font-weight: 400;
+}
+.medium-28pt {
+    font-size: 28pt;
+    font-weight: 500;
+}
+
+.darkgray {
+    color: $app-darkgray;
+}
+
+a {
+  color: $app-turquoise;
+
+  &:visited {
+    color: $app-darkgray;
+  }
+
+  &:hover {
+    color: $app-darkgray;
+  }
+}

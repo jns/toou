@@ -1,39 +1,17 @@
 
-<div class="container pt-5">
-
-
-  <div class="container" id="entry-point">
-    <div class="row">
-      <div class="col">
-      <button type="button" class="btn btn-outline-primary btn-block" id="redemption-code-btn">I have a code to redeem</button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col" style="text-align: center">
-        or
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button type="button" class="btn btn-outline-primary btn-block" id="phone-number-btn">Enter my phone number</button>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="container" id="redemption-code-form" style="display: none">
-  <%= form_tag "redeem_code" do %>
-    <div class="form-group">
-      <label for="redemptionCode">Redemption Code</label>
-      <input type="text" class="form-control" name="redemptionCode" id="redemptionCode" placeholder="Redemption Code">
-    </div>
-    <button class="btn btn-outline-secondary"><%= open_iconic :icon, :arrow_thick_left %>Go Back</button>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  <% end %>
-  </div>
+<div class="container-fluid pt-5">
   
-  <div class="container" id="phone-number-form" style="display: none">
-    <%= render 'new_phone' %>
+  <div class="container-fluid" >
+    <div class="row">
+      <div class="col text-center">
+        <div id="HandGlass" ></div>
+      </div>
+    </div>  
+    <div class="row">
+      <div class="col text-center mt-5">
+         <a href="/about"><span class="regular-28pt ">Treat Someone</span></a>
+      </div>
+    </div>
   </div>
 
 </div>

@@ -9,14 +9,7 @@ class AuthorizationController < ApplicationController
     def index
     end
     
-    def new_phone
-    end
-    
-    def redeem_code
-        redemptionCode = getRedemptionCode
-        # Lookup phone number or email for redemption code
-        @acct_phone_number = "123-4567"
-        render 'confirm_phone'
+    def about
     end
     
     def two_factor
