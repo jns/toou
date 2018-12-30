@@ -78,6 +78,17 @@ class ApiController < ApplicationController
         end
     end
     
+    #
+    # Returns the purchase and pass history for an authenticated user
+    def history
+       command = AccountHistory.call(@current_user)
+       if command.success?
+           @history = command.result
+           render 'history.json.jbuilder', status: :ok
+       else
+           render json: {error: command.errors}, status: :bad_request
+       end
+    end
     
     
     private

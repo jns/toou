@@ -17,6 +17,9 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        
        assert_equal(1, @account.orders.size)
        assert_equal(@recipients.size, @account.orders.first.passes.size)
+       @account.orders.each do |o| 
+          assert_not_nil o.created_at
+       end
    end
     
    test "call PlaceOrder new account" do 

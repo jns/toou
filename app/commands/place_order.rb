@@ -1,5 +1,6 @@
 #  
-#  Takes an account, and a list 
+#  Takes an account, and a list of recipients
+#  generates an order with a set of passes
 class PlaceOrder
 
     prepend SimpleCommand

@@ -10,7 +10,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     @devId = "12345"
     
     @acct2 = Account.find(2)
-
+    @acct2.generate_otp
+    
     @acct3 = Account.find(3)
     @acct3.generate_otp
   end
@@ -159,6 +160,27 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
       }
     
     assert_response :unauthorized
+  end
+  
+  test "Account History Succeeds" do
+    post "/api/authenticate", params: {"phoneNumber": @acct2.mobile, "passCode": @acct2.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/history", headers: {"Authorization": "Bearer #{token}"}
+    assert_response :success
+    history = JSON.parse(@response.body)
+    assert history.size == 3
+    
+  end
+  
+  test "Account History Unauthorized" do
+    
+    post "/api/history", headers: {"Authorization": "Bearer Not.A.Token"}
+    assert_response :unauthorized
+    
   end
   
 end
