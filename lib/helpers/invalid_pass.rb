@@ -11,7 +11,7 @@ class InvalidPass
     end
     
     def purchaser
-       "" 
+        return InvalidRecipient.new
     end
     
 end

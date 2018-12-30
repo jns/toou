@@ -8,6 +8,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     @acct1 = Account.find(1)
     @acct1.generate_otp
     @devId = "12345"
+    
+    @acct2 = Account.find(2)
 
     @acct3 = Account.find(3)
     @acct3.generate_otp
@@ -70,6 +72,13 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     passes = JSON.parse(@response.body)
     assert_equal 1, passes.size
     assert_equal "abc124", passes.first["serialNumber"]
+    
+    assert_equal ["name", "mobile", "email"], passes.first["purchaser"].keys
+    
+    assert_equal @acct2.name, passes.first["purchaser"]["name"]
+    assert_equal @acct2.mobile, passes.first["purchaser"]["mobile"]
+    assert_equal @acct2.email, passes.first["purchaser"]["email"]
+    
   
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
