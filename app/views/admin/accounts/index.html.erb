@@ -18,9 +18,9 @@
         <td><%= account.name %></td>
         <td><%= account.mobile %></td>
         <td><%= account.email %></td>
-        <td><%= link_to 'Show', account %></td>
-        <td><%= link_to 'Edit', edit_account_path(account) %></td>
-        <td><%= link_to 'Destroy', account, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', admin_account_path(account) %></td>
+        <td><%= link_to 'Edit', edit_admin_account_path(account) %></td>
+        <td><%= link_to 'Destroy', admin_account_path(account), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Account', new_account_path %>
+<%= link_to 'New Account', new_admin_account_path %>
