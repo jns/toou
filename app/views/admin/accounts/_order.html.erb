@@ -11,14 +11,16 @@
     <table class="table collapse" id="collapsePasses<%= order.id %>">
       <thead>
         <th scope="col">Status</th>
-        <th scope="col">Recipient</th>
+        <th scope="col">Recipient (ID)</th>
+        <th scope="col">Expiration</th>
         <th scope="col">Serial Number</th>
       </thead>
       <tbody>
         <% order.passes.each do |pass| %>
             <tr>
               <td><%= pass.status %></td>
-              <td><%= link_to pass.recipient.name, admin_account_path(pass.recipient) || "No name" %></td>
+              <td><%= link_to "#{pass.recipient.name } (#{pass.recipient.id})", admin_account_path(pass.recipient) || "No name" %></td>
+              <td><%= pass.expiration.to_formatted_s(:db) %></td>
               <td><%= pass.serialNumber %></td>
             </tr>
         <% end %>

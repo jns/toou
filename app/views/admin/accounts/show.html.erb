@@ -46,14 +46,14 @@
       <table class="table" >
         <thead>
           <th scope="col">Status</th>
-          <th scope="col">Purchaser</th>
+          <th scope="col">Purchaser (ID)</th>
           <th scope="col">Serial Number</th>
         </thead>
         <tbody>
           <% @account.passes.each do |pass| %>
               <tr>
                 <td><%= pass.status %></td>
-                <td><%= link_to (pass.purchaser.name || "No name"), admin_account_path(pass.purchaser) %></td>
+                <td><%= link_to "#{pass.purchaser.name} (#{pass.purchaser.id})", admin_account_path(pass.purchaser) %></td>
                 <td><%= pass.serialNumber %></td>
               </tr>
           <% end %>
