@@ -6,21 +6,29 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
 
-<nav class="navbar navbar-dark">
-  <a class="navbar-brand mx-auto" href="/"></a>
+<nav class="navbar navbar-expand-lg navbar-dark">
   <ul class="navbar-nav">
-    <li class="nav-item">
       <% if session["auth_token"] %>
-        <a class="nav-link" href="/admin/logout">logout</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Go To</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <%= link_to "Passes", '/admin/passes', class: 'dropdown-item' %>
+            <%= link_to "Orders", '/admin/orders', class: 'dropdown-item' %>
+            <%= link_to "Accounts", '/admin/accounts', class: 'dropdown-item' %>
+            <div class="dropdown-divider"></div>
+            <%= link_to "logout", '/admin/logout', class: 'dropdown-item' %>
+          </div>
+        </li>
       <% else %>
-        <a class="nav-link" href="/admin/login">login</a>
+        <li class="nav-link"><%= link_to "login", 'admin/login', class: 'nav-link'%></li>
       <% end %>
-    </li>
   </ul>
+  <a class="navbar-brand mx-auto" href="/"></a>
+  
 </nav>
 
 <div class="flash">

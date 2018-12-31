@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   post 'api/history', to: 'api#history'
   
   # Admin Routes
+  get 'admin', to: 'admin#index'
   get 'admin/login', to: 'admin#login'
   get 'admin/logout', to: 'admin#logout'
   post 'admin/authenticate', to: 'admin#authenticate'

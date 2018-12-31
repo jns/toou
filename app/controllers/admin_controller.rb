@@ -2,6 +2,8 @@ class AdminController < ApplicationController
 
     skip_before_action :validate_auth_token, only: [:login, :authenticate]
     
+    def index
+    end
 
     # presents the login screen
     def login
