@@ -1,8 +1,7 @@
-class OrdersController < ApplicationController
+module Admin
+class OrdersController < AuthorizationController
 
-    skip_before_action :authenticate_request
-  
-    before_action :set_order, only: [:show, :edit, :update, :destroy]
+  before_action :set_order, only: [:show, :edit, :update, :destroy]
 
   # GET /orders
   # GET /orders.json
@@ -74,4 +73,5 @@ class OrdersController < ApplicationController
     def order_params
       params.fetch(:order, {})
     end
+end
 end

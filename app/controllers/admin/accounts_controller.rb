@@ -1,9 +1,8 @@
-class AccountsController < ApplicationController
+module Admin
+class AccountsController < AuthorizationController
+  
   before_action :set_account, only: [:show, :edit, :update, :destroy]
   
-  
-    skip_before_action :authenticate_request, only: [:new]
-
   # GET /accounts
   # GET /accounts.json
   def index
@@ -74,4 +73,5 @@ class AccountsController < ApplicationController
     def account_params
       params.require(:account).permit(:name, :mobile, :email)
     end
+end
 end

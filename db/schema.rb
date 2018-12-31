@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_30_014206) do
+ActiveRecord::Schema.define(version: 2018_12_30_215148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,13 @@ ActiveRecord::Schema.define(version: 2018_12_30_014206) do
     t.datetime "updated_at", null: false
     t.string "one_time_password_hash"
     t.datetime "one_time_password_validity"
+  end
+
+  create_table "admin_accounts", force: :cascade do |t|
+    t.string "username"
+    t.string "password_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "orders", force: :cascade do |t|

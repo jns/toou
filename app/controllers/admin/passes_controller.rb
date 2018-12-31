@@ -1,11 +1,9 @@
 
-class PassesController < ApplicationController
+module Admin
+class PassesController < AuthorizationController
   
   include PassesHelper
   
-  skip_before_action :authenticate_request
-  before_action :set_pass, only: [:show, :edit, :update, :destroy]
-
   # GET /passes
   # GET /passes.json
   def index
@@ -100,4 +98,5 @@ class PassesController < ApplicationController
       params.require([:pass_type_id, :serial_number])
     end
     
+end
 end

@@ -9,14 +9,21 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'authorization#index'
-  get 'about', to: 'authorization#about'
+  root 'welcome#index'
+  get 'about', to: 'welcome#about'
   
+  # API Endpoints
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/history', to: 'api#history'
+  
+  # Admin Routes
+  get 'admin/login', to: 'authorization#login'
+  get 'admin/logout', to: 'authorization#logout'
+  post 'admin/authenticate', to: 'authorization#authenticate'
+  get 'admin/restricted', to: 'authorization#restricted'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -61,9 +68,11 @@ Rails.application.routes.draw do
   #   resources :photos, concerns: :toggleable
 
   # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  namespace :admin do
+    # Directs /admin/passes/* to Admin::PassesController
+    # (app/controllers/admin/passes_controller.rb)
+    resources :passes
+    resources :orders
+    resources :accounts
+  end
 end

@@ -2,52 +2,55 @@ class AuthorizationController < ApplicationController
 
     helper OpenIconicHelper
     
-    skip_before_action :authenticate_request
-
-    @messageSender = MessageSender.new
+    before_action :authorize_admin, except: [:login, :authenticate]
     
-    def index
+    # presents the login screen
+    def login
     end
     
-    def about
+    # resets the session and redirects to home
+    def logout
+        reset_session
+        redirect_to root_url
     end
     
-    def two_factor
-        @acct_phone_number = getPhoneNumber
-        acct = Account.find_by_mobile(@acct_phone_number)
-        if acct then
-            @account_id = acct.id
-            otp = acct.generate_otp 
-            @messageSender.send_code(@acct_phone_number, otp)
-        else 
-            flash[:notice] = "Hmm. we can't find your account"
-            redirect_to controller: "accounts", action: "new"
-        end
-    end
-    
+    # Authenticates the admin 
     def authenticate
-        otp, phoneNumber = getOTPparams
-           command = AuthenticateUser.call(phoneNumber, otp)
+        username, password = getCredentials
+        command = AuthenticateAdmin.call(username, password)
     
        if command.success?
-         render json: { auth_token: command.result }
+           session["auth_token"] = command.result
+           redirect_to action: :restricted
        else
-         render json: { error: command.errors }, status: :unauthorized
+            session["auth_token"] = nil
+            flash[:notice] = "Login unsuccessful"
+            redirect_to '/admin/login'
        end
+    end
+    
+    def restricted
     end
     
     private
     
-    def getRedemptionCode
-        params.require(:redemptionCode)    
+    attr_reader :current_user
+
+    def authorize_admin
+        
+        decoded_auth_token ||= JsonWebToken.decode(session["auth_token"])
+        user ||= AdminAccount.find(decoded_auth_token[:user_id]) if decoded_auth_token
+    
+        if user 
+            @current_user = user
+        else
+            flash[:notice] = "Invalid Credentials"
+            redirect_to '/admin/login'
+        end
     end
     
-    def getPhoneNumber
-        params.require(:phoneNumber)
+    
+    def getCredentials 
+      params.require([:username, :password])
     end
-
-    def getOTPparams
-       params.require([:otp, :phoneNumber]) 
-    end
-
 end

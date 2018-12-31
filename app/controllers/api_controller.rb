@@ -1,7 +1,11 @@
 class ApiController < ApplicationController
 
-    skip_before_action :verify_authenticity_token
-    skip_before_action :authenticate_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate]
+    # autheticates user with JWT
+    before_action :authorize_request, except: [:requestOneTimePasscode, :redeemCode, :authenticate]
+    
+    # Sends texts for two-factor auth
+    @messageSender = MessageSender.new
+
 
     # Delivers a one time passcode to the users mobile device 
     #
@@ -93,6 +97,13 @@ class ApiController < ApplicationController
     
     private
     
+    attr_reader :current_user
+
+    def authorize_request
+        @current_user = AuthorizeApiRequest.call(request.headers).result
+        render json: { error: 'Not Authorized' }, status: 401 unless @current_user
+    end
+
     def isValidPhone(phone)
         true    
     end
