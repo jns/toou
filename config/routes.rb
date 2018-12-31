@@ -20,10 +20,10 @@ Rails.application.routes.draw do
   post 'api/history', to: 'api#history'
   
   # Admin Routes
-  get 'admin/login', to: 'welcome#login'
-  get 'admin/logout', to: 'welcome#logout'
-  post 'admin/authenticate', to: 'welcome#authenticate'
-  get 'admin/restricted', to: 'welcome#restricted'
+  get 'admin/login', to: 'admin#login'
+  get 'admin/logout', to: 'admin#logout'
+  post 'admin/authenticate', to: 'admin#authenticate'
+  get 'admin/restricted', to: 'admin#restricted'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

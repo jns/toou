@@ -3,13 +3,13 @@ class ApplicationController < ActionController::Base
     # For APIs, you may want to use :null_session instead.
     protect_from_forgery with: :exception
 
-    before_action :authorize_admin
+    before_action :validate_auth_token
 
     private
     
     attr_reader :current_user
 
-    def authorize_admin
+    def validate_auth_token
         
         decoded_auth_token ||= JsonWebToken.decode(session["auth_token"])
         user ||= AdminAccount.find(decoded_auth_token[:user_id]) if decoded_auth_token
