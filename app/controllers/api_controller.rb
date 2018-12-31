@@ -1,4 +1,4 @@
-class ApiController < ApplicationController
+class ApiController < ActionController::Base
 
     # autheticates user with JWT
     before_action :authorize_request, except: [:requestOneTimePasscode, :redeemCode, :authenticate]
