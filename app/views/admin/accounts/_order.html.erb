@@ -1,0 +1,27 @@
+<div class="card card-body">
+  <div class="card-title">
+    <div class="float-right">   
+      <a data-toggle="collapse" href="#collapsePasses<%= order.id %>" role="button" aria-expanded="false" aria-controls="collapseExample">
+        View Passes
+      </a>
+    </div>
+    <div>Order ID:<strong> <%= order.id %></strong></div>
+    <div>Date: <strong><%= order.created_at.to_formatted_s(:rfc822)%></strong></div>
+  </div>
+    <table class="table collapse" id="collapsePasses<%= order.id %>">
+      <thead>
+        <th scope="col">Status</th>
+        <th scope="col">Recipient</th>
+        <th scope="col">Serial Number</th>
+      </thead>
+      <tbody>
+        <% order.passes.each do |pass| %>
+            <tr>
+              <td><%= pass.status %></td>
+              <td><%= link_to pass.recipient.name, admin_account_path(pass.recipient) || "No name" %></td>
+              <td><%= pass.serialNumber %></td>
+            </tr>
+        <% end %>
+      </tbody>
+    </table>
+</div>

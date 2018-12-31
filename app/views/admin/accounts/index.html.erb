@@ -1,8 +1,10 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Accounts</h1>
 
-<table>
+<div class="card card-body content-width mx-auto">
+<h4>Listing Accounts</h4>
+
+<table class="table">
   <thead>
     <tr>
       <th>Name</th>
@@ -15,10 +17,9 @@
   <tbody>
     <% @accounts.each do |account| %>
       <tr>
-        <td><%= account.name %></td>
+        <td><%= link_to account.name, admin_account_path(account) %></td>
         <td><%= account.mobile %></td>
         <td><%= account.email %></td>
-        <td><%= link_to 'Show', admin_account_path(account) %></td>
         <td><%= link_to 'Edit', edit_admin_account_path(account) %></td>
         <td><%= link_to 'Destroy', admin_account_path(account), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
@@ -26,6 +27,8 @@
   </tbody>
 </table>
 
-<br>
-
+<div class="card-link">
 <%= link_to 'New Account', new_admin_account_path %>
+  
+</div>
+</div>
