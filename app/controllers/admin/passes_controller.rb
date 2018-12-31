@@ -1,6 +1,6 @@
 
 module Admin
-class PassesController < AuthorizationController
+class PassesController < ApplicationController
   
   include PassesHelper
   

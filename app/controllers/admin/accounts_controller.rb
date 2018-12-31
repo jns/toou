@@ -1,5 +1,5 @@
 module Admin
-class AccountsController < AuthorizationController
+class AccountsController < ApplicationController
   
   before_action :set_account, only: [:show, :edit, :update, :destroy]
   
