@@ -4,6 +4,8 @@ class PassesController < ApplicationController
   
   include PassesHelper
   
+  before_action :set_pass, only: [:show, :edit, :update, :destroy]
+  
   # GET /passes
   # GET /passes.json
   def index
@@ -49,7 +51,7 @@ class PassesController < ApplicationController
     respond_to do |format|
       if @pass.save
         PassBuilderJob.perform_later @pass.id
-        format.html { redirect_to @pass, notice: 'Pass was successfully created.' }
+        format.html { redirect_to [:admin, @pass], notice: 'Pass was successfully created.' }
         format.json { render :show, status: :created, location: @pass, :include => 'recipient' }
       else
         format.html { render :new }
@@ -78,7 +80,7 @@ class PassesController < ApplicationController
   def destroy
     @pass.destroy
     respond_to do |format|
-      format.html { redirect_to passes_url, notice: 'Pass was successfully destroyed.' }
+      format.html { redirect_to admin_passes_url, notice: 'Pass was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  resources :orders
-  resources :passes
-  resources :accounts
   
   get 'v1/passes/*pass_type_id/:serial_number', to: 'passes#fetch'
   

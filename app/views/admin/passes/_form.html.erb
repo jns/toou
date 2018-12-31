@@ -1,4 +1,4 @@
-<%= form_for(@pass) do |f| %>
+<%= form_for([:admin, @pass]) do |f| %>
   <% if @pass.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@pass.errors.count, "error") %> prohibited this pass from being saved:</h2>

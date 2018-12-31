@@ -18,9 +18,9 @@
         <td><%= pass.serialNumber %></td>
         <td><%= pass.expiration %></td>
         <td><%= pass.passTypeIdentifier %></td>
-        <td><%= link_to 'Show', pass %></td>
-        <td><%= link_to 'Edit', edit_pass_path(pass) %></td>
-        <td><%= link_to 'Destroy', pass, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', admin_pass_path(pass) %></td>
+        <td><%= link_to 'Edit', edit_admin_pass_path(pass) %></td>
+        <td><%= link_to 'Destroy', admin_pass_path(pass), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Pass', new_pass_path %>
+<%= link_to 'New Pass', new_admin_pass_path %>
