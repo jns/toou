@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     has_many :phone_numbers
 
     def primary_phone_number
-       phone_numbers.first || ""
+       phone_numbers.first.to_s || ""
     end
 
     def Account.find_by_mobile(number)

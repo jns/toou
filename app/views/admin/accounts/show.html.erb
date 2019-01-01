@@ -37,7 +37,7 @@
   <div class="tab-content" id="AccountViewTabsContent">
     <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
       <% if @account.orders.empty? %> 
-        No Orders
+        <h5 class="text-center m-5">No Orders</h5v>
       <% else %>
         <%= render partial: "order", collection: @account.orders  %>
       <% end %>

@@ -71,7 +71,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
-    # Posting with no parameters will return valid passes
+    # Posting with no parameters will return only valid passes
     post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
     passes = JSON.parse(@response.body)
     assert_equal 1, passes.size

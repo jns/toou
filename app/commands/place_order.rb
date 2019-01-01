@@ -5,6 +5,7 @@ class PlaceOrder
 
     prepend SimpleCommand
   
+    # Recipients are specified as key value pairs with keys phoneNumber: , name:, and email:
     def initialize(account, recipients, message)
         @account = account
         @recipients = recipients
