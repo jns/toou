@@ -39,6 +39,8 @@ ActiveRecord::Schema.define(version: 2018_12_31_212221) do
     t.integer "phone_number_digits_min"
     t.integer "phone_number_digits_max"
     t.string "area_code_regex"
+    t.index ["abbreviation"], name: "index_countries_on_abbreviation"
+    t.index ["country_code"], name: "index_countries_on_country_code"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -69,6 +71,7 @@ ActiveRecord::Schema.define(version: 2018_12_31_212221) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_phone_numbers_on_account_id"
+    t.index ["country_code", "area_code", "phone_number"], name: "primary_index", unique: true
   end
 
 end

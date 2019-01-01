@@ -6,18 +6,24 @@ class PhoneNumber < ActiveRecord::Base
               .gsub(/[^0-9]/, "")
     end
     
-    # Attempts to create and save a phone number to the database from a string
-    def PhoneNumber.create_from_string(phone_number_string)
+    # Attempts to locate a phone number by the given unsanitized string
+    def PhoneNumber.find_by_string(phone_number_string)
+        digits = PhoneNumber.remove_all_but_digits(phone_number_string)
+        country = PhoneNumber.match_country(digits) || Country.find_by_abbreviation("US")
+        country_code, area_code, phone_number = split_phone_number(digits, country)
+        
+        PhoneNumber.where(country_code: country_code, area_code: area_code, phone_number: phone_number)
+    end
+    
+    # Attempts to find or create and save a phone number to the database from a string
+    def PhoneNumber.find_or_create_from_string(phone_number_string)
         
         digits = PhoneNumber.remove_all_but_digits(phone_number_string)
-        
         country = PhoneNumber.match_country(digits) || Country.find_by_abbreviation("US")
-        
-        
         country_code, area_code, phone_number = split_phone_number(digits, country)
         
         if area_code && phone_number
-            PhoneNumber.create(country_code: country_code, area_code: area_code, phone_number: phone_number)
+            PhoneNumber.find_or_create_by(country_code: country_code, area_code: area_code, phone_number: phone_number)
         else
             nil
         end

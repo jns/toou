@@ -43,23 +43,23 @@ class PhoneNumberTest < ActiveSupport::TestCase
   
   test "correctly parses area code and phone number without country code" do
     
-    p = PhoneNumber.create_from_string("(310) 909-7243")
+    p = PhoneNumber.find_or_create_from_string("(310) 909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
-    p = PhoneNumber.create_from_string("(310)-909-7243")
+    p = PhoneNumber.find_or_create_from_string("(310)-909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
-    p = PhoneNumber.create_from_string("310-909-7243")
+    p = PhoneNumber.find_or_create_from_string("310-909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
     
-    p = PhoneNumber.create_from_string("3109097243")
+    p = PhoneNumber.find_or_create_from_string("3109097243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
@@ -68,32 +68,32 @@ class PhoneNumberTest < ActiveSupport::TestCase
   
   test "correctly parses area code and phone number with a country code" do
     
-    p = PhoneNumber.create_from_string("1 (310) 909-7243")
+    p = PhoneNumber.find_or_create_from_string("1 (310) 909-7243")
     assert_equal "1", p.country_code
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
-    p = PhoneNumber.create_from_string("81 (010)-909-7243")
+    p = PhoneNumber.find_or_create_from_string("81 (010)-909-7243")
     assert_equal "81", p.country_code
     assert_equal "010", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
-    p = PhoneNumber.create_from_string("+52 310-909-7243")
+    p = PhoneNumber.find_or_create_from_string("+52 310-909-7243")
     assert_equal "52", p.country_code
     assert_equal "", p.area_code
     assert_equal "3109097243", p.phone_number
     p.destroy
     
     
-    p = PhoneNumber.create_from_string("+81 0609097243")
+    p = PhoneNumber.find_or_create_from_string("+81 0609097243")
     assert_equal "81", p.country_code
     assert_equal "060", p.area_code
     assert_equal "9097243", p.phone_number
     p.destroy
     
-    p = PhoneNumber.create_from_string("+13109097243")
+    p = PhoneNumber.find_or_create_from_string("+13109097243")
     assert_equal "1", p.country_code
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
@@ -103,15 +103,15 @@ class PhoneNumberTest < ActiveSupport::TestCase
   
   test "country code defaults to U.S." do
   
-    p = PhoneNumber.create_from_string("3109097243")
+    p = PhoneNumber.find_or_create_from_string("3109097243")
     assert_equal "1", p.country_code
     p.destroy
     
-    p = PhoneNumber.create_from_string("8187577604")
+    p = PhoneNumber.find_or_create_from_string("8187577604")
     assert_equal "1", p.country_code
     p.destroy
     
-    p = PhoneNumber.create_from_string("5258887604")
+    p = PhoneNumber.find_or_create_from_string("5258887604")
     assert_equal "1", p.country_code
     p.destroy
     
@@ -119,14 +119,14 @@ class PhoneNumberTest < ActiveSupport::TestCase
 
   test "fails for U.S. numbers shorter or longer than 10 digits" do
     
-    p = PhoneNumber.create_from_string("1 (8188) 351-5155")
+    p = PhoneNumber.find_or_create_from_string("1 (8188) 351-5155")
     assert_nil p
     
-    p = PhoneNumber.create_from_string("(520) 035-15155")
+    p = PhoneNumber.find_or_create_from_string("(520) 035-15155")
     assert_nil p
     
     
-    p = PhoneNumber.create_from_string("535-5155")
+    p = PhoneNumber.find_or_create_from_string("535-5155")
     assert_nil p
     
   end

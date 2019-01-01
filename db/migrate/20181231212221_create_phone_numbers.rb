@@ -8,6 +8,9 @@ class CreatePhoneNumbers < ActiveRecord::Migration[5.2]
       t.integer :phone_number_digits_min
       t.integer :phone_number_digits_max
       t.string :area_code_regex
+      
+      t.index :country_code
+      t.index :abbreviation
     end
     
     create_table :phone_numbers do |t|
@@ -16,6 +19,7 @@ class CreatePhoneNumbers < ActiveRecord::Migration[5.2]
       t.string :phone_number
       t.references :account
       t.timestamps
+      t.index [:country_code, :area_code, :phone_number], name: "primary_index", unique: true
     end
   end
 end
