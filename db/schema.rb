@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_30_215148) do
+ActiveRecord::Schema.define(version: 2018_12_31_212221) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 2018_12_30_215148) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+    t.string "abbreviation"
+    t.integer "country_code"
+    t.integer "phone_number_digits_min"
+    t.integer "phone_number_digits_max"
+    t.string "area_code_regex"
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at"
@@ -50,6 +59,16 @@ ActiveRecord::Schema.define(version: 2018_12_30_215148) do
     t.string "proof_of_purchase"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+  end
+
+  create_table "phone_numbers", force: :cascade do |t|
+    t.string "country_code"
+    t.string "area_code"
+    t.string "phone_number"
+    t.bigint "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_phone_numbers_on_account_id"
   end
 
 end

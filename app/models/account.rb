@@ -12,8 +12,13 @@ class Account < ActiveRecord::Base
     end
     
     # Find an account using a predicate that can contain any of the following keys
-    # phoneNumber, #email
+    # phoneNumber, email
     def Account.search_by(recipient)
+        
+        if recipient.is_a? Account
+            return recipient
+        end
+        
         if recipient["phoneNumber"]
             a = Account.find_by(:mobile => Account.sanitize_phone_number(recipient["phoneNumber"]))
             return a if a != nil
