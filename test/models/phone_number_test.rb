@@ -131,6 +131,9 @@ class PhoneNumberTest < ActiveSupport::TestCase
     
   end
   
-  
+  test "phone number formatting" do
+    p = PhoneNumber.find_or_create_from_string("(310) 909-7243")
+    assert_equal "+13109097243", p.to_s
+  end
   
 end

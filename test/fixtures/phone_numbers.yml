@@ -1,2 +1,20 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+josh:
+  account_id: 1
+  country_code: 1
+  area_code: 310
+  phone_number: 9097243
+  
+pete:
+  account_id: 2
+  country_code: 1
+  area_code: 504
+  phone_number: 3834228
+  
+someone:
+  account_id: 3
+  country_code: 1
+  area_code: 818
+  phone_number: 7577604
+  

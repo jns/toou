@@ -6,27 +6,22 @@ class AccountTest < ActiveSupport::TestCase
   # end
   
   setup do
+    
+    # Seed test database with countries
+    load "#{Rails.root}/db/seeds.rb"
+    
     a = Account.find(1)
-      a.mobile = "310-909-7243"
+      a.phone_numbers << PhoneNumber.find_or_create_from_string("310-909-7243")
       a.save
       
     a = Account.find(2)
-    a.mobile = "(504) 383-4228"
+    a.phone_numbers << PhoneNumber.find_or_create_from_string("(504) 383-4228")
     a.save
   end
   
-  test "Sanitize phone number" do
-    assert_equal("3109097243", Account.sanitize_phone_number("(310) 909-7243"))
-    assert_equal("3109097243", Account.sanitize_phone_number("310-909-7243"))
-    assert_equal("3109097243", Account.sanitize_phone_number("3109097243"))
-    
-    assert_equal("3109097243", Account.sanitize_phone_number("(310)\u00a0909-7243"))
-    assert_equal("3109097243", Account.sanitize_phone_number("(310)\U00a0909-7243"))
-  end
-  
   test "phone number format" do
-      assert_equal("3109097243", Account.find(1).mobile)
-      assert_equal("5043834228", Account.find(2).mobile)
+      assert_equal("+13109097243", Account.find(1).primary_phone_number.to_s)
+      assert_equal("+15043834228", Account.find(2).primary_phone_number.to_s)
   end
   
   test "search by phoneNumber" do
@@ -36,7 +31,7 @@ class AccountTest < ActiveSupport::TestCase
   
   test "search or create by phone number" do
 
-    number = "555-1212"
+    number = "818 555-1212"
     
     # Remove account with phone number if it exists
     a = Account.search_by("phoneNumber" => number)
@@ -49,6 +44,8 @@ class AccountTest < ActiveSupport::TestCase
     Account.search_or_create_by_recipient("phoneNumber" => number)
     assert_not_nil(Account.search_by("phoneNumber" => number))
   end
+  
+  
   
   test "search or create by email" do
       

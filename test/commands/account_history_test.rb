@@ -1,6 +1,6 @@
 
 # Test account history
-class AuthenticateUserTest < ActiveSupport::TestCase
+class AccountHistoryTest < ActiveSupport::TestCase
 
     def setup()
        @acct = Account.find(2) 

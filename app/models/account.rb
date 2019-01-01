@@ -1,16 +1,19 @@
 class Account < ActiveRecord::Base
     has_many :passes
     has_many :orders
-    
-    before_save do 
-        self.mobile = Account.sanitize_phone_number(mobile) if attribute_present?("mobile") 
+    has_many :phone_numbers
+
+    def primary_phone_number
+       phone_numbers.first || ""
     end
-    
-    def Account.sanitize_phone_number(number)
-        number.gsub(/U[0-9a-f]{4}/, "")
-              .gsub(/[^0-9]/, "")
+
+    def Account.find_by_mobile(number)
+        if p = PhoneNumber.find_by_string(number) 
+           return p.account
+        end
+        return nil
     end
-    
+
     # Find an account using a predicate that can contain any of the following keys
     # phoneNumber, email
     def Account.search_by(recipient)
@@ -20,12 +23,12 @@ class Account < ActiveRecord::Base
         end
         
         if recipient["phoneNumber"]
-            a = Account.find_by(:mobile => Account.sanitize_phone_number(recipient["phoneNumber"]))
-            return a if a != nil
+            phone = PhoneNumber.find_by_string(recipient["phoneNumber"])
+            return phone.account if phone && phone.account
         end
         
         if recipient["email"]
-            a = Account.find_by(:email => recipient["email"])
+            a = Account.find_by(email: recipient["email"])
             return a if a != nil
         end
         
@@ -37,9 +40,13 @@ class Account < ActiveRecord::Base
         a = Account.search_by(recipient)
         if a == nil then
             a = Account.create()
+            phone = PhoneNumber.find_or_create_from_string(recipient["phoneNumber"]) 
+            throw "Unable to create phone number: '#{recipient["phoneNumber"]}'" if phone == nil 
+            throw "Phone Number is already affiliated with an account" unless phone.account == nil 
+                
             a.name = recipient["name"]
-            a.mobile = recipient["phoneNumber"]
             a.email = recipient["email"]
+            a.phone_numbers << phone
             a.save
         end
         

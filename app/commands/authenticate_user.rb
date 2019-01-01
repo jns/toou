@@ -3,7 +3,7 @@ class AuthenticateUser
   prepend SimpleCommand
   
   def initialize(phone, one_time_password)
-    @phone = Account.sanitize_phone_number(phone)
+    @phone = phone
     @otp = one_time_password
   end
 
@@ -16,7 +16,7 @@ class AuthenticateUser
   attr_accessor :phone, :otp
 
   def user
-    user = Account.find_by_mobile(phone)
+    user = PhoneNumber.find_by_string(phone).account
     return user if user && user.authenticate(otp)
 
     errors.add :user_authentication, 'invalid credentials'

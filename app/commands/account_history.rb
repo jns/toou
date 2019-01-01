@@ -9,6 +9,11 @@ class AccountHistory
     
     def call
         
+        unless @account
+            errors.add :invalid_params, "Account is nil"
+            return nil
+        end
+        
         history = []
         @account.orders.each { |order|
             item = HistoryItem.new()

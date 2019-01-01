@@ -3,17 +3,14 @@
 one:
   id: 1
   name: Josh
-  mobile: 3199097243
   email: joshua.shapiro@gmail.com
   
 two:
   id: 2
   name: Pete
-  mobile: 5043834228
   email: peter.shimpeno@gmail.com
 
 three:
   id: 3
   name: someone who never ordered anything
-  mobile: 8187577604
   email: someone@somewhere

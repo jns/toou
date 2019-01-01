@@ -1,5 +1,7 @@
 class PhoneNumber < ActiveRecord::Base
 
+    belongs_to :account
+    
     # Removes all non-numeric characters from a string
     def PhoneNumber.remove_all_but_digits(number)
         number.gsub(/U[0-9a-f]{4}/, "")
@@ -12,7 +14,7 @@ class PhoneNumber < ActiveRecord::Base
         country = PhoneNumber.match_country(digits) || Country.find_by_abbreviation("US")
         country_code, area_code, phone_number = split_phone_number(digits, country)
         
-        PhoneNumber.where(country_code: country_code, area_code: area_code, phone_number: phone_number)
+        PhoneNumber.find_by(country_code: country_code, area_code: area_code, phone_number: phone_number)
     end
     
     # Attempts to find or create and save a phone number to the database from a string
@@ -66,6 +68,15 @@ class PhoneNumber < ActiveRecord::Base
         end
         
         return nil
+    end
+    
+    
+    def to_formatted_s
+       "+" + country_code + area_code + phone_number
+    end
+    
+    def to_s
+       to_formatted_s 
     end
     
 end

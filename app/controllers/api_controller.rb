@@ -15,17 +15,23 @@ class ApiController < ActionController::Base
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
         acct_phone_number, device_id = params.require([:phoneNumber, :deviceId])
-        phone = Account.sanitize_phone_number(acct_phone_number)
-        if isValidPhone(phone) then
-            acct = Account.find_or_create_by(mobile: phone)
-            if acct then
-                # Todo check the device ID and get worried if it changed
-                otp = acct.generate_otp 
-                #MessageSender.new.send_code(acct_phone_number, otp)
-                render json: {passcode: otp}, status: :ok 
-            else 
-                render status: :bad_request, json: {error: "There was as problem finding or creating an account."}
+        phone = PhoneNumber.find_or_create_from_string(acct_phone_number)
+        if phone then
+            acct = phone.account
+            unless acct  
+                acct = Account.new
+                acct.phone_numbers << phone
+                if not acct.save
+                   render status: :bad_request, json: {error: "Error creating account"}
+                   return
+                end
             end
+            
+            # Todo check the device ID and get worried if it changed
+            otp = acct.generate_otp 
+            #MessageSender.new.send_code(acct_phone_number, otp)
+            render json: {passcode: otp}, status: :ok
+            
         else
             render status: :bad_request, json: {error: "Invalid phone number."}
         end
@@ -102,10 +108,6 @@ class ApiController < ActionController::Base
     def authorize_request
         @current_user = AuthorizeApiRequest.call(request.headers).result
         render json: { error: 'Not Authorized' }, status: 401 unless @current_user
-    end
-
-    def isValidPhone(phone)
-        true    
     end
     
     def serialNumbers

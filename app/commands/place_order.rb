@@ -16,7 +16,7 @@ class PlaceOrder
             o = Order.new
             ActiveRecord::Base.transaction do
                 o.account = @account
-                throw "Error creating order for account #{@account.mobile}" unless o.save  
+                throw "Error creating order for account #{@account.primary_phone_number}" unless o.save  
                 @recipients.each{ |r| 
                     p = create_pass(r, o)
                     throw "Error create pass for order #{o.id}" unless p.save 
