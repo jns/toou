@@ -124,11 +124,11 @@ class ApiController < ActionController::Base
             PassBuilderJob.new().perform(pass.id)
         end
         
-        # If pass still doesn't exist there was an error, return not_found
+        # If pass still doesn't exist there was an error, return internal server error
         if File.exists?(passFileName)
             send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
         else
-            render json: {}, status: :not_found
+            render json: {}, status: :internal_server_error
         end
     end
     
