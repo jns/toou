@@ -36,13 +36,13 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       purchaser = Account.find(1)
       
       # Generate a random 10 digit phone number and confirm it doesn't exist
-      newAcct = Array.new(10){ [*'0'..'9'].sample }.join
+      # newAcct = Array.new(10){ [*'0'..'9'].sample }.join
+      newAcct = "18888888888"
       assert_nil( PhoneNumber.find_by_string(newAcct) )
       
       # Create parameters for api and invoke command
       recipients = [{"phoneNumber" => newAcct, "name" => "Someone"}]
       cmd = PlaceOrder.call(purchaser, recipients, "Message")
-      puts cmd.errors
       assert cmd.success?
       
       # Assert that the phone number now exists and has an associated account

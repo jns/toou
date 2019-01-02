@@ -1,6 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+abc123:
+  id: 1
   serialNumber: abc123
   account_id: 1
   order_id: 1
@@ -9,7 +10,8 @@ one:
   passTypeIdentifier: pass.com.toou
   message: This is pass one
 
-two:
+distant_future:
+  id: 2
   serialNumber: abc124
   account_id: 1
   order_id: 2
@@ -18,7 +20,8 @@ two:
   passTypeIdentifier: pass.com.toou
   message: This is pass two
 
-three:
+expired:
+  id: 3
   serialNumber: abc125
   account_id: 2
   order_id: 1
@@ -27,7 +30,8 @@ three:
   passTypeIdentifier: pass.com.toou
   message: This is pass three
   
-four:
+abc126:
+  id: 4
   serialNumber: abc126
   account_id: 3
   order_id: 3

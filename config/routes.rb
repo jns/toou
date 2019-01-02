@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   
-  get 'v1/passes/*pass_type_id/:serial_number', to: 'passes#fetch'
+  get 'v1/passes/*pass_type_id/:serial_number', to: 'pass_kit_api#fetch'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

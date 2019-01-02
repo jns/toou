@@ -17,24 +17,6 @@ class PassesController < ApplicationController
   def show
   end
 
-  # GET /passes/passType/serialnumber
-  def fetch
-    passTypeId, serialNumber = fetch_params
-    pass = Pass.find_by passTypeIdentifier: passTypeId, serialNumber: serialNumber
-    if pass
-      passFileName = passFileName(pass)
-      if not File.exists?(passFileName)
-        # Build pass on the fly
-        PassBuilderJob.new().perform(pass.id)
-        raise ActionController::BadRequest.new("Problem generating pass") unless File.exists?(passFileName)
-      end
-      logger.debug("sending #{passFileName}")
-      send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
-    else
-      raise ActionController::RoutingError.new('Pass Not Found')
-    end
-  end
-
   # GET /passes/new
   def new
     @pass = Pass.new
@@ -100,5 +82,5 @@ class PassesController < ApplicationController
       params.require([:pass_type_id, :serial_number])
     end
     
-end
-end
+end # End Class
+end # End Admin Module

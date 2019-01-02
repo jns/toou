@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+josh:
   id: 1
   name: Josh
   email: joshua.shapiro@gmail.com
   
-two:
+pete:
   id: 2
   name: Pete
   email: peter.shimpeno@gmail.com

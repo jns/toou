@@ -23,10 +23,15 @@ class PassBuilderJob < ActiveJob::Base
     
     # Build a pkpass for each passid
     passids.each() do |passid|
-      p = Pass.find(passid)
-      createTemplateDirectoryForPass(p)
-      createPassJson(p)
-      buildPass(p)
+      begin 
+        p = Pass.find(passid)
+        createTemplateDirectoryForPass(p)
+        createPassJson(p)
+        buildPass(p)
+      rescue => e
+        puts e.message
+        # Log error 
+      end
     end
     
   end
@@ -43,13 +48,17 @@ class PassBuilderJob < ActiveJob::Base
   
   # Creates the pass.json file in the appropriate pass directory
   def createPassJson(p)
+    
+    authToken = JsonWebToken.encode(pass_id: p.id) or throw "Error generating web token for pass #{p.serialNumber}"
+    webServiceUrl = ENV["WEB_SERVICE_URL"] or throw "Environment variable for WEB_SERVICE_URL is missing"
+    
     pkpass = {}
     pkpass[:description] = "A TooU payment pass"
     pkpass[:formatVersion] = 1
     pkpass[:organizationName] = "Josh Shapiro"
     pkpass[:passTypeIdentifier] = p.passTypeIdentifier
-    #pkpass[:authenticationToken] = "FIXME"
-    # pkpass[:webServiceURL] = ENV['WEB_SERVICE_URL']
+    pkpass[:authenticationToken] = authToken
+    pkpass[:webServiceURL] = ENV['WEB_SERVICE_URL']
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601
@@ -75,8 +84,9 @@ class PassBuilderJob < ActiveJob::Base
   # Builds and signs the pass  
   def buildPass(p)
     
-    Dubai::Passbook.certificate, Dubai::Passbook.password = File.join(pkpassCertificateDir, "PassSigningCert.p12"), ENV['PKPASS_CERTIFICATE_PASSWORD']
-
+    certificatePassword = ENV['PKPASS_CERTIFICATE_PASSWORD'] or throw "Enivornment Variable for PKPASS_CERTIFICATE_PASSWORD is missing"
+    Dubai::Passbook.certificate, Dubai::Passbook.password = File.join(pkpassCertificateDir, "PassSigningCert.p12"), certificatePassword
+    
     # Example.pass is a directory with files "pass.json", "icon.png" & "icon@2x.png"
     File.open(passFileName(p), 'w+') do |f|
       f.write Dubai::Passbook::Pass.new(passDirectory(p)).pkpass.string

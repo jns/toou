@@ -76,6 +76,7 @@ class ApiController < ActionController::Base
         end
     end
     
+    
     # Returns available passes for authenticated user
     # 
     def passes
