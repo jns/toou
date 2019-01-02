@@ -27,7 +27,6 @@ class PassKitApiController < ActionController::Base
     # Reutrns a 501 if the pass is currently unavailable and is getting recreated.  Client should try again
     def fetch
         passTypeId, serialNumber = fetch_params
-
         # Verfiy auth token matches passed parameters
         if @current_pass.serialNumber != serialNumber || @current_pass.passTypeIdentifier != passTypeId
             render json: {error: "mismatch"}, status: :unauthorized

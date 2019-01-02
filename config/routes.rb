@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/history', to: 'api#history'
+  get  'api/pass/:serial_number', to: 'api#pass'
   
   # Admin Routes
   get 'admin', to: 'admin#index'

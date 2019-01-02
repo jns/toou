@@ -1,5 +1,7 @@
 class ApiController < ActionController::Base
 
+    include PassesHelper
+
     # autheticates user with JWT
     before_action :authorize_request, except: [:requestOneTimePasscode, :redeemCode, :authenticate]
     
@@ -101,6 +103,34 @@ class ApiController < ActionController::Base
        end
     end
     
+    # Returns the specific pkpass if the user is authorized
+    # Required Params
+    # @param serial_number
+    def pass
+        
+        serialNumber = serialNumberParam
+        
+        pass = @current_user.passes.find{|p| p.serialNumber == serialNumber}
+        
+        unless pass
+            render json: {}, status: :not_found
+            return
+        end
+        
+        passFileName = passFileName(pass)
+        
+        # If pass doesn't exist then build pass on the fly
+        if not File.exists?(passFileName)
+            PassBuilderJob.new().perform(pass.id)
+        end
+        
+        # If pass still doesn't exist there was an error, return not_found
+        if File.exists?(passFileName)
+            send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
+        else
+            render json: {}, status: :not_found
+        end
+    end
     
     private
     
@@ -109,6 +139,15 @@ class ApiController < ActionController::Base
     def authorize_request
         @current_user = AuthorizeApiRequest.call(request.headers).result
         render json: { error: 'Not Authorized' }, status: 401 unless @current_user
+    end
+    
+    def serialNumberParam
+        value = params[:serial_number]
+        if SerialNumber.isValid?(value)
+            value
+        else
+            nil
+        end
     end
     
     def serialNumbers

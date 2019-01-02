@@ -187,4 +187,35 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "Fetch an apple pkpass - Authorized" do
+    
+    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    pass = passes(:distant_future)
+  
+    get "/api/pass/#{pass.serialNumber}", headers: {"Authorization": token}
+    assert_response :ok
+  end
+  
+  
+  test "Fetch another users apple pkpass - Not Found" do
+    
+    post "/api/authenticate", params: {"phoneNumber": @acct2.primary_phone_number.to_s, "passCode": @acct2.one_time_password_hash, "deviceId": @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    pass = passes(:distant_future)
+  
+    get "/api/pass/#{pass.serialNumber}", headers: {"Authorization": token}
+    assert_response :not_found
+  end
+  
+  test "Fetch an apple pkpass - Unuthorized" do
+    pass = passes(:distant_future)
+    get "/api/pass/#{pass.serialNumber}"
+    assert_response :unauthorized
+  end
+  
 end
