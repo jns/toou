@@ -6,7 +6,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
 
   def setup
     # Seed test database with countries
-    load "#{Rails.root}/db/seeds.rb"
+    #load "#{Rails.root}/db/seeds.rb"
     
     @acct1 = Account.find(1)
     @acct1.generate_otp
@@ -26,7 +26,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
 
     MessageSender.client.messages.clear
     
-    post "/api/requestOneTimePasscode", params: {"phoneNumber": number_to_phone(@acct1.primary_phone_number.to_s), "deviceId": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.primary_phone_number.to_s), "name": @acct1.name, "device_id": @devId}, as: :json
     assert_response :success
     
     # Disabled SMS for now
@@ -42,7 +42,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5555"
     assert_nil PhoneNumber.find_by_string(number)
     
-    post "/api/requestOneTimePasscode", params: {"phoneNumber": number, "deviceId": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {"phone_number": number, "name": "Name", "device_id": @devId}, as: :json
     assert_response :success
     
     assert_not_nil Account.find_by_mobile(number)

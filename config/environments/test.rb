@@ -40,7 +40,5 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   
-  # Test Environment Variables
-  ENV["WEB_SERVICE_URL"]="https://toou-shaprioj.c9users.io"
-  ENV["PKPASS_CERTIFICATE_PASSWORD"]="password123"
+
 end

@@ -1,7 +1,13 @@
 class MessageSender
+
+  @@messages = []
   
   cattr_accessor :client
   self.client = Twilio::REST::Client
+
+  def MessageSender.messages 
+    @@messages
+  end
 
   def initialize
     @client = self.class.client.new(
@@ -20,5 +26,6 @@ class MessageSender
     )
 
     message.status == 'queued'
+    @@messages << message
   end
 end

@@ -16,14 +16,14 @@ class ApiController < ActionController::Base
     # @return 200 For a valid phone number and deviceID
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
-        acct_phone_number, device_id = params.require([:phoneNumber, :deviceId])
+        acct_phone_number, name, device_id = params.require([:phone_number, :name, :device_id])
         phone = PhoneNumber.find_or_create_from_string(acct_phone_number)
         if phone then
             acct = phone.account
             unless acct  
-                acct = Account.new
+                acct = Account.new(name: name)
                 acct.phone_numbers << phone
-                if not acct.save
+                if not (acct.save and phone.save)
                    render status: :bad_request, json: {error: "Error creating account"}
                    return
                 end
@@ -31,7 +31,7 @@ class ApiController < ActionController::Base
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
-            #MessageSender.new.send_code(acct_phone_number, otp)
+            MessageSender.new.send_code(phone.to_s, otp)
             render json: {passcode: otp}, status: :ok
             
         else
@@ -50,12 +50,12 @@ class ApiController < ActionController::Base
     end
     
     # Authenticates the parameters and returns a json web token
-    # @param [String] phoneNumber The phone number of the device to authenticate
-    # @param [String] passCode a one time passcode returned by requestOneTimePasscode
-    # @param [String] deviceId a unique id of the device
+    # @param [String] phone_number The phone number of the device to authenticate
+    # @param [String] pass_code a one time passcode returned by requestOneTimePasscode
+    # @param [String] device_id a unique id of the device
     # @return 200 {"auth_token", jwt} a json web token or 401 for an invalid set of credentials
     def authenticate
-        otp, phoneNumber = params.require([:passCode, :phoneNumber, :deviceId])
+        otp, phoneNumber = params.require([:pass_code, :phone_number, :device_id])
         command = AuthenticateUser.call(phoneNumber, otp)
     
        if command.success?
