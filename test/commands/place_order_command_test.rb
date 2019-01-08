@@ -1,11 +1,11 @@
+require 'test_helper'
 
 class PlaceOrderCommandTest < ActiveSupport::TestCase
    
    include ActionView::Helpers::NumberHelper
-   
+ 
    def setup
-    # Seed test database with countries
-    load "#{Rails.root}/db/seeds.rb"
+    accounts(:josh).orders.clear    
    end
    
    test "Send an order to all existing account phone numbers succeeds" do
@@ -14,12 +14,12 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         toaccounts = Account.all
 
         # Build the recipient array
-       @recipients = toaccounts.collect{|a| {"phoneNumber" => number_to_phone(a.primary_phone_number)}}
+       @recipients = toaccounts.collect{|a| a.phone_number}
        @message = "Test Message"
        
        cmd = PlaceOrder.call(@account, @recipients, @message)
        assert cmd.success? 
-       
+      
        # This should be the only order
        assert_equal(1, @account.orders.size)
        order = @account.orders[0]
@@ -31,23 +31,28 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        
    end
     
+    test "sending an order to an empty number fails" do
+        cmd = PlaceOrder.call accounts(:josh), [nil], "Invalid"
+        assert_equal false, cmd.success?
+        assert_nil cmd.result
+        assert_equal 0, accounts(:josh).orders.size
+    end
+    
    test "call PlaceOrder creates a new account" do 
       
       purchaser = Account.find(1)
       
       # Generate a random 10 digit phone number and confirm it doesn't exist
       # newAcct = Array.new(10){ [*'0'..'9'].sample }.join
-      newAcct = "18888888888"
-      assert_nil( PhoneNumber.find_by_string(newAcct) )
+      newAcct = "1 888 888 8888"
+      assert_nil( Account.search_by_phone_number(newAcct) )
       
       # Create parameters for api and invoke command
-      recipients = [{"phoneNumber" => newAcct, "name" => "Someone"}]
+      recipients = [newAcct]
       cmd = PlaceOrder.call(purchaser, recipients, "Message")
       assert cmd.success?
       
       # Assert that the phone number now exists and has an associated account
-      p = PhoneNumber.find_by_string(newAcct)
-      assert_not_nil p
-      assert_not_nil p.account
+      assert_not_nil Account.search_by_phone_number(newAcct)
    end
 end

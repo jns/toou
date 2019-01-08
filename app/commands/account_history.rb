@@ -20,9 +20,9 @@ class AccountHistory
             item.date = order.created_at
             item.activity_type = HistoryItem::SEND_ACTIVITY_TYPE
             if order.passes.count == 1 then
-               item.message = "You sent a drink to #{order.passes.first.account.name}"
+               item.message = "You sent a drink to #{order.passes.first.account.phone_number}"
             else 
-               item.message = "You sent drinks to #{order.recipients.collect{|r| r.name}.join(",")}" 
+               item.message = "You sent drinks to #{order.recipients.collect{|r| r.phone_number}.join(",")}" 
             end
             history << item
         }
@@ -31,7 +31,7 @@ class AccountHistory
             item = HistoryItem.new()
             item.date = pass.created_at
             item.activity_type = HistoryItem::RECEIVE_ACTIVITY_TYPE
-            item.message = "You received a drink from #{pass.purchaser.name}"
+            item.message = "You received a drink from #{pass.purchaser.phone_number}"
             history << item
         }
         

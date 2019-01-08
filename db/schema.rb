@@ -10,18 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_01_011152) do
+ActiveRecord::Schema.define(version: 2019_01_08_052433) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
-    t.string "name"
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "one_time_password_hash"
     t.datetime "one_time_password_validity"
+    t.string "phone_number"
+    t.index ["phone_number"], name: "index_accounts_on_phone_number"
   end
 
   create_table "admin_accounts", force: :cascade do |t|
@@ -42,6 +43,15 @@ ActiveRecord::Schema.define(version: 2019_01_01_011152) do
     t.index ["country_code"], name: "index_countries_on_country_code"
   end
 
+  create_table "logs", force: :cascade do |t|
+    t.string "log_type"
+    t.string "message"
+    t.string "context"
+    t.bigint "current_user"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at"
@@ -60,17 +70,6 @@ ActiveRecord::Schema.define(version: 2019_01_01_011152) do
     t.string "proof_of_purchase"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
-  end
-
-  create_table "phone_numbers", force: :cascade do |t|
-    t.string "country_code"
-    t.string "area_code"
-    t.string "phone_number"
-    t.bigint "account_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_phone_numbers_on_account_id"
-    t.index ["country_code", "area_code", "phone_number"], name: "primary_index", unique: true
   end
 
 end

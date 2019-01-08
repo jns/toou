@@ -1,5 +1,7 @@
 class AlterAccountPhone < ActiveRecord::Migration[5.2]
   def change
-    remove_column :accounts, :mobile, :string
+    rename_column :accounts, :mobile, :phone_number
+    remove_column :accounts, :name, :string
+    add_index :accounts, :phone_number
   end
 end

@@ -5,7 +5,7 @@ class PlaceOrder
 
     prepend SimpleCommand
   
-    # Recipients are specified as key value pairs with keys phoneNumber: , name:, and email:
+    # Recipients are specified as an array of phone numbers 
     def initialize(account, recipients, message)
         @account = account
         @recipients = recipients
@@ -14,30 +14,32 @@ class PlaceOrder
     
     def call
         begin
-            o = Order.new
+            order = Order.new
             ActiveRecord::Base.transaction do
-                o.account = @account
-                throw "Error creating order for account #{@account.primary_phone_number}" unless o.save  
+                order.account = @account
                 @recipients.each{ |r| 
-                    p = create_pass(r, o)
-                    throw "Error create pass for order #{o.id}" unless p.save 
+                    throw "Recipient phone number cannot be empty" unless r
+                    # This will format the phone number
+                    create_pass(PhoneNumber.new(r).to_s, order)
                 }
             end
-            return o
+            return order
         rescue => e
-            return errors.add(:internal_server_error, "Error creating order: #{e.message}")
+            message = "Error creating order: #{e.message}"
+            Log.create(log_type: Log::ERROR, context: self.class.name, current_user: @account.id, message: message)
+            errors.add(:internal_server_error, message)
         end
     end
     
     private
     
-    def create_pass(recipient, order) 
+    def create_pass(recipient_phone, order) 
        p = Pass.create
        p.message = @message
        p.expiration = Date.today + 8.days
-       p.account = Account.search_or_create_by_recipient(recipient)
+       p.account = Account.find_or_create_by(phone_number: recipient_phone)
        p.order = order
-       return p
+       p.save
     end
     
 end

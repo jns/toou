@@ -1,17 +1,14 @@
 require 'test_helper'
 
-class PhoneNumberTest < ActiveSupport::TestCase
-
+class PhoneNumberTest  < ActiveSupport::TestCase
+    
   def setup()
-    PhoneNumber.all.each{|p| p.destroy}
-    load "#{Rails.root}/db/seeds.rb"
     @us = Country.find_by_abbreviation("US")
     @mx = Country.find_by_abbreviation("MX")
     @jp = Country.find_by_abbreviation("JP")
   end
 
   def teardown()
-    PhoneNumber.all.each{|p| p.destroy}
   end
   
   test "Countries loaded" do
@@ -43,97 +40,86 @@ class PhoneNumberTest < ActiveSupport::TestCase
   
   test "correctly parses area code and phone number without country code" do
     
-    p = PhoneNumber.find_or_create_from_string("(310) 909-7243")
+    p = PhoneNumber.new("(310) 909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("(310)-909-7243")
+    p = PhoneNumber.new("(310)-909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("310-909-7243")
+    p = PhoneNumber.new("310-909-7243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
     
-    p = PhoneNumber.find_or_create_from_string("3109097243")
+    p = PhoneNumber.new("3109097243")
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
   end
   
   test "correctly parses area code and phone number with a country code" do
     
-    p = PhoneNumber.find_or_create_from_string("1 (310) 909-7243")
+    p = PhoneNumber.new("1 (310) 909-7243")
     assert_equal "1", p.country_code
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("81 (010)-909-7243")
+    p = PhoneNumber.new("81 (010)-909-7243")
     assert_equal "81", p.country_code
     assert_equal "010", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("+52 310-909-7243")
+    p = PhoneNumber.new("+52 310-909-7243")
     assert_equal "52", p.country_code
     assert_equal "", p.area_code
     assert_equal "3109097243", p.phone_number
-    p.destroy
     
     
-    p = PhoneNumber.find_or_create_from_string("+81 0609097243")
+    p = PhoneNumber.new("+81 0609097243")
     assert_equal "81", p.country_code
     assert_equal "060", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("+13109097243")
+    p = PhoneNumber.new("+13109097243")
     assert_equal "1", p.country_code
     assert_equal "310", p.area_code
     assert_equal "9097243", p.phone_number
-    p.destroy
     
   end
   
   test "country code defaults to U.S." do
   
-    p = PhoneNumber.find_or_create_from_string("3109097243")
+    p = PhoneNumber.new("3109097243")
     assert_equal "1", p.country_code
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("8187577604")
+    p = PhoneNumber.new("8187577604")
     assert_equal "1", p.country_code
-    p.destroy
     
-    p = PhoneNumber.find_or_create_from_string("5258887604")
+    p = PhoneNumber.new("5258887604")
     assert_equal "1", p.country_code
-    p.destroy
     
   end
 
   test "fails for U.S. numbers shorter or longer than 10 digits" do
     
-    p = PhoneNumber.find_or_create_from_string("1 (8188) 351-5155")
-    assert_nil p
+    assert_raise do
+      PhoneNumber.new("1 (8188) 351-5155")
+    end
     
-    p = PhoneNumber.find_or_create_from_string("(520) 035-15155")
-    assert_nil p
+    assert_raise do
+      PhoneNumber.new("(520) 035-15155")
+    end
     
-    
-    p = PhoneNumber.find_or_create_from_string("535-5155")
-    assert_nil p
-    
+    assert_raise do
+      PhoneNumber.new("535-5155")
+    end
   end
   
   test "phone number formatting" do
-    p = PhoneNumber.find_or_create_from_string("(310) 909-7243")
+    p = PhoneNumber.new("(310) 909-7243")
     assert_equal "+13109097243", p.to_s
   end
-  
+
 end

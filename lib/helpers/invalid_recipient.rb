@@ -1,10 +1,9 @@
 class InvalidRecipient
 
-    attr_reader :name, :primary_phone_number, :email
+    attr_reader :phone_number, :email
     
     def initialize() 
-        @name = "invalid"
-        @primary_phone_number = "invalid"
+        @phone_number = "invalid"
         @email = "invalid"
     end
 end

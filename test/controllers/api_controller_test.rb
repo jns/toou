@@ -26,7 +26,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
 
     MessageSender.client.messages.clear
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.primary_phone_number.to_s), "name": @acct1.name, "device_id": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.phone_number.to_s), "device_id": @devId}, as: :json
     assert_response :success
     
     # Disabled SMS for now
@@ -40,18 +40,18 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Creates a new account" do
     number = "(555) 555-5555"
-    assert_nil PhoneNumber.find_by_string(number)
+    assert_nil Account.search_by_phone_number(number)
     
     post "/api/requestOneTimePasscode", params: {"phone_number": number, "name": "Name", "device_id": @devId}, as: :json
     assert_response :success
     
-    assert_not_nil Account.find_by_mobile(number)
+    assert_not_nil Account.search_by_phone_number(number)
   end
   
   
   test "Authentication Succeeds" do
 
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
     
     assert_response :success
     json = JSON.parse(@response.body) 
@@ -60,14 +60,14 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Authentication Fails" do
     bad_otp = @acct1.one_time_password_hash + "1"
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": bad_otp, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": bad_otp, "device_id": @devId}, as: :json  
     
     assert_response :unauthorized
   end
   
   test "Fetch Passes" do
     
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
@@ -77,10 +77,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, passes.size
     assert_equal "abc124", passes.first["serialNumber"]
     
-    assert_equal ["name", "mobile", "email"], passes.first["purchaser"].keys
+    assert_equal ["phone_number", "email"], passes.first["purchaser"].keys
     
-    assert_equal @acct2.name, passes.first["purchaser"]["name"]
-    assert_equal @acct2.primary_phone_number.to_s, passes.first["purchaser"]["mobile"]
+    assert_equal @acct2.phone_number.to_s, passes.first["purchaser"]["phone_number"]
     assert_equal @acct2.email, passes.first["purchaser"]["email"]
     
   
@@ -95,7 +94,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Fetch a pass with an emoji" do
-    post "/api/authenticate", params: {"phoneNumber": @acct3.primary_phone_number.to_s, "passCode": @acct3.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct3.phone_number.to_s, "pass_code": @acct3.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
@@ -109,7 +108,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch Invalid Pass" do
   
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
@@ -136,14 +135,14 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Place Order Succeeds" do
     
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
     
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order", headers: {"Authorization": "Bearer #{token}"}, 
-      params: {"recipients": [{"phoneNumber" => @acct1.primary_phone_number.to_s}],
+      params: {"recipients": [@acct1.phone_number.to_s],
                "message": "So Long and Thanks for all the Fish"
       }
     
@@ -157,8 +156,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
      
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order", headers: {"Authorization": "Bearer Not.A.Token"}, 
-      params: {"recipients": [{"phoneNumber" => "310-909-7243"}, 
-                              {"phoneNumber" =>  "5043834228"}],
+      params: {"recipients": ["310-909-7243","5043834228"],
                "message": "So Long and Thanks for all the Fish"
       }
     
@@ -166,7 +164,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Account History Succeeds" do
-    post "/api/authenticate", params: {"phoneNumber": @acct2.primary_phone_number.to_s, "passCode": @acct2.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct2.phone_number.to_s, "pass_code": @acct2.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
@@ -189,7 +187,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch an apple pkpass - Authorized" do
     
-    post "/api/authenticate", params: {"phoneNumber": @acct1.primary_phone_number.to_s, "passCode": @acct1.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
@@ -202,7 +200,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch another users apple pkpass - Not Found" do
     
-    post "/api/authenticate", params: {"phoneNumber": @acct2.primary_phone_number.to_s, "passCode": @acct2.one_time_password_hash, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": @acct2.phone_number.to_s, "pass_code": @acct2.one_time_password_hash, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   

@@ -16,19 +16,14 @@ class ApiController < ActionController::Base
     # @return 200 For a valid phone number and deviceID
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
-        acct_phone_number, name, device_id = params.require([:phone_number, :name, :device_id])
-        phone = PhoneNumber.find_or_create_from_string(acct_phone_number)
-        if phone then
-            acct = phone.account
-            unless acct  
-                acct = Account.new(name: name)
-                acct.phone_numbers << phone
-                if not (acct.save and phone.save)
-                   render status: :bad_request, json: {error: "Error creating account"}
-                   return
-                end
+        acct_phone_number, device_id = params.require([:phone_number, :device_id])
+        phone = PhoneNumber.new(acct_phone_number).to_s
+        if (phone) 
+            acct = Account.find_or_create_by(phone_number: phone)
+            if (! acct)
+                render status: :bad_request, json: {error: "Error creating account"}
             end
-            
+        
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
             MessageSender.new.send_code(phone.to_s, otp)

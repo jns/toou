@@ -2,15 +2,14 @@
 
 josh:
   id: 1
-  name: Josh
-  email: joshua.shapiro@gmail.com
-  
+  phone_number: '+13109097243'
+
 pete:
   id: 2
-  name: Pete
+  phone_number: '+15043834228'
   email: peter.shimpeno@gmail.com
 
 three:
   id: 3
-  name: someone who never ordered anything
   email: someone@somewhere
+  phone_number: '+18187577604'

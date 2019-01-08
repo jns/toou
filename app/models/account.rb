@@ -1,60 +1,23 @@
 class Account < ActiveRecord::Base
     has_many :passes
     has_many :orders
-    has_many :phone_numbers
-
-    def primary_phone_number
-       phone_numbers.first.to_s || ""
-    end
-
-    def Account.find_by_mobile(number)
-        if p = PhoneNumber.find_by_string(number) 
-           return p.account
-        end
-        return nil
-    end
-
-    # Find an account using a predicate that can contain any of the following keys
-    # phoneNumber, email
-    def Account.search_by(recipient)
-        
-        if recipient.is_a? Account
-            return recipient
-        end
-        
-        if recipient["phoneNumber"]
-            phone = PhoneNumber.find_by_string(recipient["phoneNumber"])
-            return phone.account if phone && phone.account
-        end
-        
-        if recipient["email"]
-            a = Account.find_by(email: recipient["email"])
-            return a if a != nil
-        end
-        
-        return nil
-    end
     
-    # Search for an account using the search_by function.  If the account isn't found, then create it
-    def Account.search_or_create_by_recipient(recipient)
-        a = Account.search_by(recipient)
-        if a == nil then
-            a = Account.create()
-            phone = PhoneNumber.find_or_create_from_string(recipient["phoneNumber"]) 
-            throw "Unable to create phone number: '#{recipient["phoneNumber"]}'" if phone == nil 
-            throw "Phone Number is already affiliated with an account" unless phone.account == nil 
-                
-            a.name = recipient["name"]
-            a.email = recipient["email"]
-            a.phone_numbers << phone
-            a.save
-        end
-        
-        return a
+    before_save :format_phone_number
+    
+    # Searches accounts by any unformatted string that resembles a phone number
+    # Throws an error if the string cannot be formatted into a phone number
+    def Account.search_by_phone_number(unformatted_phone_number)
+        Account.find_by_phone_number(PhoneNumber.new(unformatted_phone_number).to_s)
     end
     
     def authenticate(password)
         return self.one_time_password_hash == password
+    end
+    
+    # formats the phone number before save
+    def format_phone_number
+       pn = PhoneNumber.new(self.phone_number).to_s
+       self.phone_number = pn
     end
     
     def generate_otp

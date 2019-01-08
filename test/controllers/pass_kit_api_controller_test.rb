@@ -3,8 +3,6 @@ require 'test_helper'
 class PassKitApiControllerTest < ActionDispatch::IntegrationTest
 
   def setup()
-    # Seed test database with countries
-    load "#{Rails.root}/db/seeds.rb"
   end
 
   # This test asserts that a JWT generated for accessing the TooU client api 
@@ -18,7 +16,7 @@ class PassKitApiControllerTest < ActionDispatch::IntegrationTest
     otp = acct.generate_otp
     @devId = "12345"
     
-    post "/api/authenticate", params: {"phoneNumber": acct.primary_phone_number.to_s, "passCode": otp, "deviceId": @devId}, as: :json  
+    post "/api/authenticate", params: {"phone_number": acct.phone_number.to_s, "pass_code": otp, "device_id": @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
