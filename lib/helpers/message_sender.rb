@@ -22,4 +22,14 @@ class MessageSender
 
     message.status == 'queued'
   end
+  
+  def send_message(phone_number, message)
+    message = @client.messages.create(
+      from: ENV['TWILIO_NUMBER'],
+      to: phone_number,
+      body: message)  
+      
+      message.status == 'queued'
+  end
+  
 end

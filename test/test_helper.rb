@@ -16,7 +16,7 @@ module TestEnvironment
   
   # Returns a valid auth token for an account
   def authenticate(account)
-    phone_number = account.primary_phone_number
+    phone_number = account.phone_number
     one_time_passcode = account.generate_otp
     command = AuthenticateUser.call(phone_number, one_time_passcode)
     if command.success?

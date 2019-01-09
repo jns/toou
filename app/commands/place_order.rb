@@ -14,6 +14,7 @@ class PlaceOrder
     
     def call
         begin
+            Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
             order = Order.new
             ActiveRecord::Base.transaction do
                 order.account = @account
@@ -26,7 +27,7 @@ class PlaceOrder
             return order
         rescue => e
             message = "Error creating order: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: self.class.name, current_user: @account.id, message: message)
+            Log.create(log_type: Log::ERROR, context: PlaceOrder.name, current_user: @account.id, message: message)
             errors.add(:internal_server_error, message)
         end
     end
@@ -34,12 +35,21 @@ class PlaceOrder
     private
     
     def create_pass(recipient_phone, order) 
-       p = Pass.create
-       p.message = @message
-       p.expiration = Date.today + 8.days
-       p.account = Account.find_or_create_by(phone_number: recipient_phone)
-       p.order = order
-       p.save
+        
+        new_acct = false # is the recipient a new account
+        p = Pass.create
+        p.message = @message
+        p.expiration = Date.today + 8.days
+        p.account = Account.find_or_create_by(phone_number: recipient_phone) do |account|
+          # If account is created generate a redemption code for pass and text recipient
+            new_acct = true
+        end
+        p.order = order
+        p.save
+       
+        if new_acct
+           SendRedemptionCode.call(p)
+        end
     end
     
 end

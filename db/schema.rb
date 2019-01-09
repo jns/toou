@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_08_052433) do
+ActiveRecord::Schema.define(version: 2019_01_09_053903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 2019_01_08_052433) do
     t.string "message"
     t.integer "order_id"
     t.string "proof_of_purchase"
+    t.string "redemption_code"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
   end
