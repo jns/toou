@@ -36,17 +36,14 @@ class PlaceOrder
     
     def create_pass(recipient_phone, order) 
         
-        p = Pass.create
-        p.message = @message
-        p.expiration = Date.today + 8.days
-        p.account = Account.find_or_create_by(phone_number: recipient_phone) 
-        p.order = order
-        p.save
-       
-        if p.account.can_receive_notifications?
-            SendDeviceNotification.call(p)
+        expiry = Date.today + 8.days
+        acct = Account.find_or_create_by(phone_number: recipient_phone) 
+        pass = Pass.create(message: @message, expiration: expiry, account: acct, order: order )
+        
+        if acct.can_receive_notifications?
+            SendDeviceNotification.call(acct)
         else
-           SendRedemptionCode.call(p)
+           SendRedemptionCode.call(pass)
         end
     end
     

@@ -13,3 +13,9 @@ three:
   id: 3
   email: someone@somewhere
   phone_number: '+18187577604'
+  
+notifiable:
+  id: 4
+  phone_number: "+12052070297"
+  device_id: ABC123
+

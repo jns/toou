@@ -18,6 +18,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        @message = "Test Message"
        
        cmd = PlaceOrder.call(@account, @recipients, @message)
+       puts cmd.errors
        assert cmd.success? 
       
        # This should be the only order

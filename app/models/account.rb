@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     
     # The account can receive notifications if there is a valid device id
     def can_receive_notifications? 
-       false
+       device_id != nil
     end
     
     def authenticate(password)
