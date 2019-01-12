@@ -10,6 +10,11 @@ class Account < ActiveRecord::Base
         Account.find_by_phone_number(PhoneNumber.new(unformatted_phone_number).to_s)
     end
     
+    # The account can receive notifications if there is a valid device id
+    def can_receive_notifications? 
+       false
+    end
+    
     def authenticate(password)
         return self.one_time_password_hash == password
     end

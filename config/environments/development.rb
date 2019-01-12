@@ -41,4 +41,7 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  
+  # Configure the Message Sender to use a fake SMS client
+  MessageSender.client = FakeSMS
 end

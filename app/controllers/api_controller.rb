@@ -5,9 +5,6 @@ class ApiController < ActionController::Base
     # autheticates user with JWT
     before_action :authorize_request, except: [:requestOneTimePasscode, :redeemCode, :authenticate]
     
-    # Sends texts for two-factor auth
-    @messageSender = MessageSender.new
-
 
     # Delivers a one time passcode to the users mobile device 
     #

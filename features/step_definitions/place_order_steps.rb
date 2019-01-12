@@ -6,12 +6,12 @@ When("The user named {string} sends a drink to {string}") do |name, recipient_ph
     assert last_response.ok?
 end
 
-Then("A test message is sent to {string} with a redemption code") do |phone_number|
+Then("A text message is sent to {string} with a redemption code") do |phone_number|
   last_message = FakeSMS.messages.last
   assert_equal phone_number, last_message.to
   puts last_message.body
 end
 
 Then("A notification is sent to the device {string}") do |string|
-  pending # Write code here that turns the phrase above into concrete actions
+  assert !SendDeviceNotification.notifications.empty?
 end

@@ -36,18 +36,16 @@ class PlaceOrder
     
     def create_pass(recipient_phone, order) 
         
-        new_acct = false # is the recipient a new account
         p = Pass.create
         p.message = @message
         p.expiration = Date.today + 8.days
-        p.account = Account.find_or_create_by(phone_number: recipient_phone) do |account|
-          # If account is created generate a redemption code for pass and text recipient
-            new_acct = true
-        end
+        p.account = Account.find_or_create_by(phone_number: recipient_phone) 
         p.order = order
         p.save
        
-        if new_acct
+        if p.account.can_receive_notifications?
+            SendDeviceNotification.call(p)
+        else
            SendRedemptionCode.call(p)
         end
     end

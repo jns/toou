@@ -14,6 +14,7 @@ module TestEnvironment
   ENV["WEB_SERVICE_URL"]="https://toou-shaprioj.c9users.io"
   ENV["PKPASS_CERTIFICATE_PASSWORD"]="password123"  
   
+  
   # Returns a valid auth token for an account
   def authenticate(account)
     phone_number = account.phone_number
@@ -27,29 +28,6 @@ module TestEnvironment
   end
   
 end
-
-class FakeSMS
-  Message = Struct.new(:from, :to, :body, :status)
-
-  cattr_accessor :messages
-  self.messages = []
-
-  def initialize(_account_sid, _auth_token)
-  end
-
-  # To mimic behavior of Twilio client, messages must return an object that implements "#create"
-  def messages
-    self
-  end
-
-  def create(from:, to:, body:)
-    m = Message.new(from, to, body, "queued")
-    self.class.messages << m
-    return m
-  end
-end
-
-
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
