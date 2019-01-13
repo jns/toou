@@ -30,7 +30,11 @@ class ApiController < ActionController::Base
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
-            MessageSender.new.send_code(phone.to_s, otp)
+            begin
+                MessageSender.new.send_code(phone.to_s, otp)
+            rescue => err 
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: err.to_s)
+            end
             render json: {passcode: otp}, status: :ok
             
         else
