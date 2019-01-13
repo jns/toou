@@ -14,7 +14,6 @@ class ApiController < ActionController::Base
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
         
-        begin
         acct_phone_number = params.require(:phone_number)
         device_id = params.permit(:device_id)[:device_id]
             
@@ -33,16 +32,19 @@ class ApiController < ActionController::Base
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
-            MessageSender.new.send_code(phone.to_s, otp)
+            begin
+                MessageSender.new.send_code(phone.to_s, otp)
+            rescue Exception => err 
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
+                render status: :internal_server_error, json: {error: "Error sending SMS"}
+                return
+            end
            render json: {passcode: otp}, status: :ok
             
         else
             render status: :bad_request, json: {error: "Invalid phone number."}
         end
-        rescue => err 
-            Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: err.to_s)
-            render status: :internal_server_error, json: {error: err.to_s}
-        end
+
             
     end
     

@@ -17,6 +17,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
     @acct3 = Account.find(3)
     @acct3.generate_otp
+    
+    # Don't throw errors from the SMS client
+    FakeSMS.throw_error = nil
   end
 
   # test "the truth" do
@@ -72,6 +75,20 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     acct = Account.search_by_phone_number(number)
     assert_not_nil acct
     assert_nil acct.device_id
+  end
+  
+  test "Catches Error" do
+    FakeSMS.throw_error = "Testing Error"
+    
+    number = "(555) 555-5557"
+    assert_nil Account.search_by_phone_number(number)
+    
+    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": ""}, as: :json
+    assert_response :internal_server_error
+    
+    log_entry = Log.last
+    assert log_entry.message.index(FakeSMS.throw_error)
+    
   end
   
   test "Authentication Succeeds" do
