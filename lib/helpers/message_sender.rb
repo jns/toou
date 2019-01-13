@@ -1,7 +1,7 @@
 class MessageSender
 
   cattr_accessor :client
-  @@client = Twilio::REST::Client
+  self.client = Twilio::REST::Client
 
 
   def initialize

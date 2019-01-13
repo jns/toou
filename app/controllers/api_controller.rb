@@ -20,7 +20,8 @@ class ApiController < ActionController::Base
         if (phone) 
             acct = Account.find_or_create_by(phone_number: phone)
             if (! acct)
-                render status: :bad_request, json: {error: "Error creating account"}
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: "Error Creating Account with phone number #{phone}")
+                render status: :internal_server_error, json: {error: "Error creating account"}
             end
             
             if device_id and !device_id.empty?
