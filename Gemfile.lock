@@ -44,6 +44,9 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    apnotic (1.4.1)
+      connection_pool (~> 2.0)
+      net-http2 (>= 0.18, < 2)
     arel (9.0.0)
     autoprefixer-rails (9.1.4)
       execjs
@@ -138,6 +141,7 @@ GEM
     houston (2.3.0)
       commander (~> 4.4)
       json
+    http-2 (0.9.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (1.1.0)
@@ -182,6 +186,8 @@ GEM
     net-http-digest_auth (1.4.1)
     net-http-persistent (3.0.0)
       connection_pool (~> 2.2)
+    net-http2 (0.18.0)
+      http-2 (= 0.9.0)
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (5.0.2)
@@ -323,6 +329,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  apnotic (~> 1.4.1)
   bcrypt (~> 3.1.7)
   bootstrap (~> 4.1.3)
   byebug

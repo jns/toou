@@ -14,6 +14,6 @@ Before do
     FakeSMS.messages.clear
     MessageSender.client = FakeSMS
     
-    ServerRequest.delegate = MockServer
+    SendDeviceNotification.connector = MockApnoticConnector
 end
 

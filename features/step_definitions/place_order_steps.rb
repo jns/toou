@@ -12,6 +12,7 @@ Then("A text message is sent to {string} with a redemption code") do |phone_numb
 end
 
 Then("A notification is sent to the device {string}") do |device_id|
-  last_request = MockServer.requests.last
-  assert_not_nil last_request[:uri].path.index(device_id) 
+  notification = MockApnoticConnector.notifications.last
+  assert_not_nil notification
+  assert_equal device_id, notification[:notification].token
 end

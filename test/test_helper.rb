@@ -18,7 +18,6 @@ module TestEnvironment
   ENV["WEB_SERVICE_URL"]="https://toou-shaprioj.c9users.io"
   ENV["PKPASS_CERTIFICATE_PASSWORD"]="password123"  
 
-  ENV["APN_SERVER"]="http://127.0.0.1:8181"
   
   # Returns a valid auth token for an account
   def forceAuthenticate(account)
@@ -29,7 +28,6 @@ module TestEnvironment
       command.result
     else
       puts "Error in test harness authenticating account #{account.to_json}"
-      puts command.errors
       nil
     end
   end
@@ -43,5 +41,5 @@ class ActiveSupport::TestCase
   include TestEnvironment
   
   MessageSender.client = FakeSMS
-  ServerRequest.delegate = MockServer
+  SendDeviceNotification.connector = MockApnoticConnector
 end

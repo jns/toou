@@ -44,6 +44,9 @@ gem 'simple_command'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
+# Use Apnotic for Apple User Notifications
+gem 'apnotic', '~> 1.4.1'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
