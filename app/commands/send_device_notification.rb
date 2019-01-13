@@ -38,12 +38,12 @@ class SendDeviceNotification < ServerRequest
             message = "The Authentication token was rejected"
             Log.create(log_type: Log::ERROR, context: SendDeviceNotification
             .name, current_user: @account.id, message: message)
-            errors.add(:remote_server_error, message)
+            # errors.add(:remote_server_error, message) 
         else
             message = "SendDeviceNotification failed with error code: #{response.code}"
             Log.create(log_type: Log::ERROR, context: SendDeviceNotification
             .name, current_user: @account.id, message: message)
-            errors.add(:remote_server_error, message)
+            # errors.add(:remote_server_error, message)
         end
     end
     
