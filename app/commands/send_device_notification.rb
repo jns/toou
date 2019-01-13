@@ -50,7 +50,7 @@ class SendDeviceNotification < ServerRequest
     def generate_token
         epoch  = Time.new.getutc.to_i
         headers = {"kid": "WDP9STG6UT"}
-        payload = {"iss": "", "iat": epoch }
+        payload = {"iss": "8Q9F954LPX", "iat": epoch }
         key = OpenSSL::PKey::EC.new File.read Rails.application.secrets.apn_key_file
         JWT.encode(payload, key, 'ES256', headers)
     end
