@@ -8,7 +8,6 @@
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Name</th>
       <th scope="col">Mobile</th>
       <th scope="col">Email</th>
       <th colspan="2"></th>
@@ -19,8 +18,7 @@
     <% @accounts.each do |account| %>
       <tr>
         <td><%= link_to account.id, admin_account_path(account) %></td>
-        <td><%= link_to account.name, admin_account_path(account) %></td>
-        <td><%= account.primary_phone_number %></td>
+        <td><%= link_to account.phone_number, admin_account_path(account) %></td>
         <td><%= account.email %></td>
         <td><%= link_to 'Edit', edit_admin_account_path(account) %></td>
         <td><%= link_to 'Destroy', admin_account_path(account), method: :delete, data: { confirm: 'Are you sure?' } %></td>
