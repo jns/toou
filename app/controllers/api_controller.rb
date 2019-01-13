@@ -16,6 +16,8 @@ class ApiController < ActionController::Base
         acct_phone_number = params.require(:phone_number)
         device_id = params.permit(:device_id)[:device_id]
         
+        begin
+            
         phone = PhoneNumber.new(acct_phone_number).to_s
         if (phone) 
             acct = Account.find_or_create_by(phone_number: phone)
@@ -31,16 +33,17 @@ class ApiController < ActionController::Base
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
-            begin
-                MessageSender.new.send_code(phone.to_s, otp)
-            rescue => err 
-                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: err.to_s)
-            end
-            render json: {passcode: otp}, status: :ok
+            MessageSender.new.send_code(phone.to_s, otp)
+           render json: {passcode: otp}, status: :ok
             
         else
             render status: :bad_request, json: {error: "Invalid phone number."}
         end
+        rescue => err 
+            Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: err.to_s)
+            render status: :internal_server_error, json: {error: err.to_s}
+        end
+            
     end
     
     # Delivers a one time passcode to the users mobile device
