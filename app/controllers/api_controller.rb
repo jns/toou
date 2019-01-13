@@ -13,14 +13,21 @@ class ApiController < ActionController::Base
     # @return 200 For a valid phone number and deviceID
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
-        acct_phone_number, device_id = params.require([:phone_number, :device_id])
+        acct_phone_number = params.require(:phone_number)
+        device_id = params.permit(:device_id)[:device_id]
+        
         phone = PhoneNumber.new(acct_phone_number).to_s
         if (phone) 
             acct = Account.find_or_create_by(phone_number: phone)
             if (! acct)
                 render status: :bad_request, json: {error: "Error creating account"}
             end
-        
+            
+            if device_id and !device_id.empty?
+                acct.device_id = device_id
+                acct.save
+            end
+            
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
             MessageSender.new.send_code(phone.to_s, otp)
@@ -44,10 +51,9 @@ class ApiController < ActionController::Base
     # Authenticates the parameters and returns a json web token
     # @param [String] phone_number The phone number of the device to authenticate
     # @param [String] pass_code a one time passcode returned by requestOneTimePasscode
-    # @param [String] device_id a unique id of the device
     # @return 200 {"auth_token", jwt} a json web token or 401 for an invalid set of credentials
     def authenticate
-        otp, phoneNumber = params.require([:pass_code, :phone_number, :device_id])
+        otp, phoneNumber = params.require([:pass_code, :phone_number])
         command = AuthenticateUser.call(phoneNumber, otp)
     
        if command.success?

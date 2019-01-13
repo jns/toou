@@ -7,6 +7,10 @@ Before do
     Rails.application.load_seed
     @people = []
     
+    Account.destroy_all
+    Order.destroy_all
+    Pass.destroy_all
+    
     FakeSMS.messages.clear
     MessageSender.client = FakeSMS
     

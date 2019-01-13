@@ -42,16 +42,48 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5555"
     assert_nil Account.search_by_phone_number(number)
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number, "name": "Name", "device_id": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": @devId}, as: :json
     assert_response :success
-    
-    assert_not_nil Account.search_by_phone_number(number)
+        
+    acct = Account.search_by_phone_number(number)
+    assert_not_nil acct
+    assert_equal @devId, acct.device_id
   end
   
+  test "Creates an account without a device id" do
+    number = "(555) 555-5556"
+    assert_nil Account.search_by_phone_number(number)
+    
+    post "/api/requestOneTimePasscode", params: {"phone_number": number}, as: :json
+    assert_response :success
+    
+    acct = Account.search_by_phone_number(number)
+    assert_not_nil acct
+    assert_nil acct.device_id
+  end
+  
+  test "Creates an account without an empty device id" do
+    number = "(555) 555-5556"
+    assert_nil Account.search_by_phone_number(number)
+    
+    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": ""}, as: :json
+    assert_response :success
+    
+    acct = Account.search_by_phone_number(number)
+    assert_not_nil acct
+    assert_nil acct.device_id
+  end
   
   test "Authentication Succeeds" do
-
     post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": @devId}, as: :json  
+    
+    assert_response :success
+    json = JSON.parse(@response.body) 
+    assert_not_nil json["auth_token"]
+  end
+  
+  test "Authenticate without deviceid" do
+    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1.one_time_password_hash, "device_id": ""}, as: :json  
     
     assert_response :success
     json = JSON.parse(@response.body) 
