@@ -13,10 +13,10 @@ class ApiController < ActionController::Base
     # @return 200 For a valid phone number and deviceID
     # @return 400 For an invalid phone number or a suspicious deviceId    
     def requestOneTimePasscode
-        acct_phone_number = params.require(:phone_number)
-        device_id = params.permit(:device_id)[:device_id]
         
         begin
+        acct_phone_number = params.require(:phone_number)
+        device_id = params.permit(:device_id)[:device_id]
             
         phone = PhoneNumber.new(acct_phone_number).to_s
         if (phone) 
