@@ -1,8 +1,6 @@
-require 'net/https'
 
-class SendDeviceNotification
+class SendDeviceNotification < ServerRequest
     
-    cattr_reader :notifications
     prepend SimpleCommand
     
     
@@ -30,7 +28,7 @@ class SendDeviceNotification
         header["apns-priority"] = "10"
         
         uri = URI("#{ENV["APN_SERVER"]}/3/device/#{@account.device_id}")
-        response = Net::HTTP.post(uri, payload.to_json, header)
+        response = post(uri, payload.to_json, header)
         
         case response
         when Net::HTTPOK 

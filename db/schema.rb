@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 2019_01_12_195305) do
     t.integer "phone_number_digits_max"
     t.string "area_code_regex"
     t.index ["abbreviation"], name: "index_countries_on_abbreviation"
-    t.index ["country_code"], name: "index_countries_on_country_code"
+    t.index ["country_code"], name: "index_countries_on_country_code", unique: true
   end
 
   create_table "logs", force: :cascade do |t|

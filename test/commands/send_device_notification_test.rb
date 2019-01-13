@@ -3,24 +3,9 @@ require 'net/http'
 class SendDeviceNotificationTest < ActiveJob::TestCase
 
     def setup
-        ENV["APN_SERVER"] = "http://127.0.0.1:8181"
-        @app = Proc.new do |env|
-            ['200', {'Content-Type' => 'text/html'}, ['A barebones rack app.']]
-        end
- 
-        @rackpid = fork do
-            Signal.trap("HUP") {exit}
-            Rack::Handler::WEBrick.run(@app, {:Port => 8181, :Logger => Rack::NullLogger})
-        end
     end
     
     def teardown
-       Process.kill("HUP", @rackpid)
-    end
-    
-    test "Rack Server Works" do
-       response = Net::HTTP.get_response(URI(ENV["APN_SERVER"]))
-       assert  response.is_a?(Net::HTTPSuccess)
     end
 
     test "Cannot send notifications to account that does not support notifications" do
@@ -37,6 +22,6 @@ class SendDeviceNotificationTest < ActiveJob::TestCase
         assert account.can_receive_notifications?
         
         cmd = SendDeviceNotification.call(account)
-        assert cmd.success
+        assert cmd.success?
     end
 end

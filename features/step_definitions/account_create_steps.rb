@@ -5,7 +5,7 @@ Given("The user/person named {string} is authenticated") do |name|
   assert_not_nil person
   assert_not_nil person.account
   
-  auth_token = authenticate(person.account)
+  auth_token = forceAuthenticate(person.account)
   assert_not_nil auth_token
   person.auth_token = auth_token
 end
@@ -45,7 +45,7 @@ Given("The person named {string} is a current user") do |name|
   person = @people.find{|p| p.name == name}
   unless person.account
     pn = PhoneNumber.new(person.phone_number).to_s
-    acct = Account.create(phone_number: pn)
+    acct = Account.create(phone_number: pn, device_id: person.device_id)
     acct.save
     person.account = acct
   end

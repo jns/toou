@@ -13,13 +13,12 @@ class AuthenticateUser
 
   private
 
-  attr_accessor :phone, :otp
 
   def user
     user = Account.find_by_phone_number(@phone)
-    return user if user && user.authenticate(otp)
+    return user if user && user.authenticate(@otp)
 
-    errors.add :user_authentication, 'invalid credentials'
+    errors.add :unauthorized, 'invalid credentials'
     nil
   end
 end

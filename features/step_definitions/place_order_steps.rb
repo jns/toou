@@ -9,9 +9,9 @@ end
 Then("A text message is sent to {string} with a redemption code") do |phone_number|
   last_message = FakeSMS.messages.last
   assert_equal phone_number, last_message.to
-  puts last_message.body
 end
 
-Then("A notification is sent to the device {string}") do |string|
-  assert !SendDeviceNotification.notifications.empty?
+Then("A notification is sent to the device {string}") do |device_id|
+  last_request = MockServer.requests.last
+  assert_not_nil last_request[:uri].path.index(device_id) 
 end
