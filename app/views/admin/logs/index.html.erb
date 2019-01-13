@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+
+<div class="card card-body content-width mx-auto">
+
+<h4>Admin Logs</h4>
+
+      <table class="table" >
+        <thead>
+          <th scope="col">Time</th>
+          <th scope="col">User</th>
+          <th scope="col">Context</th>
+          <th scope="col">Message</th>
+        </thead>
+        <tbody>
+          <% @admin_logs.each do |admin_log| %>
+              <tr>
+                <td><%= admin_log.created_at %></td>
+                <td><%= admin_log.current_user %></td>
+                <td><%= admin_log.context %></td>
+                <td><%= admin_log.message %></td>
+              </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+</div>

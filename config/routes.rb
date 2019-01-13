@@ -73,5 +73,6 @@ Rails.application.routes.draw do
     resources :passes
     resources :orders
     resources :accounts
+    resources :logs
   end
 end
