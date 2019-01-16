@@ -1,6 +1,6 @@
 class AdminController < ApplicationController
 
-    skip_before_action :validate_auth_token, only: [:login, :authenticate]
+    skip_before_action :validate_auth_token, only: [:login, :authenticate, :logout]
     
     def index
     end
@@ -12,7 +12,7 @@ class AdminController < ApplicationController
     # resets the session and redirects to home
     def logout
         reset_session
-        redirect_to root_url
+        redirect_to controller: "welcome", action: "index"
     end
     
     def restricted

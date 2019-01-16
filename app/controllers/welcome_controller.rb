@@ -10,4 +10,7 @@ class WelcomeController < ApplicationController
     def about
     end
     
+    # Slideshow for primary use cases
+    def howitworks
+    end
 end
