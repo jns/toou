@@ -47,6 +47,9 @@ gem 'bcrypt', '~> 3.1.7'
 # Use Apnotic for Apple User Notifications
 gem 'apnotic', '~> 1.4.1'
 
+# Use Stripe for payment processing
+gem 'stripe', '3.17.0'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

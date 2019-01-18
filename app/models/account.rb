@@ -3,6 +3,7 @@ class Account < ActiveRecord::Base
     has_many :orders
     
     before_save :format_phone_number
+    after_create :generate_stripe_customer
     
     # Searches accounts by any unformatted string that resembles a phone number
     # Throws an error if the string cannot be formatted into a phone number
@@ -16,7 +17,7 @@ class Account < ActiveRecord::Base
     end
     
     def authenticate(password)
-        return self.one_time_password_hash == password
+        BCrypt::Password.new(self.one_time_password_hash) == password and self.one_time_password_validity > Time.new
     end
     
     # formats the phone number before save
@@ -25,15 +26,20 @@ class Account < ActiveRecord::Base
        self.phone_number = pn
     end
     
+    # Generates a one time passcode for accounts to authenticate
     def generate_otp
         otp = rand(100000...999999).to_s
-        self.one_time_password_hash = otp
-        self.one_time_password_validity = Time.new
+        self.one_time_password_hash = BCrypt::Password.create(otp)
+        self.one_time_password_validity = Time.new + 10.minutes
         if self.save
             otp
         else
             raise "Error generating password"
         end
+    end
+    
+    def generate_stripe_customer
+        CreateStripeCustomerJob.perform_later(self.id)
     end
     
 end

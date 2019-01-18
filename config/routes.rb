@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  post 'payments/ephemeral_keys'
+  post 'payments/charge'
   get 'v1/passes/*pass_type_id/:serial_number', to: 'pass_kit_api#fetch'
   
   # The priority is based upon order of creation: first created -> highest priority.

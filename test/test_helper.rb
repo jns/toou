@@ -1,6 +1,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'minitest/autorun'
 
 Dir.glob("#{Rails.root}/test/mocks/*.rb").each do |rb_file|
   require rb_file
@@ -42,4 +43,5 @@ class ActiveSupport::TestCase
   
   MessageSender.client = FakeSMS
   SendDeviceNotification.connector = MockApnoticConnector
+  CreateStripeCustomerJob.client = MockStripeCustomer
 end

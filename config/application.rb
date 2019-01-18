@@ -27,5 +27,7 @@ module Workspace
     # Set the encoding
     config.encoding="utf-8"
     
+    # Set the stripe configuration
+    Stripe.api_key = Rails.application.secrets.stripe_api_key
   end
 end

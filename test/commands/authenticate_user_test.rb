@@ -8,10 +8,10 @@ class AuthenticateUserTest < ActiveSupport::TestCase
     
     test "authenticate user succeeds" do
         acct = Account.find(1)
-        acct.one_time_password_hash = "12345"
+        otp = acct.generate_otp
         acct.save
         
-        cmd = AuthenticateUser.new(number_to_phone(acct.phone_number), acct.one_time_password_hash).call
+        cmd = AuthenticateUser.new(number_to_phone(acct.phone_number), otp).call
         assert cmd.success?
         
         token = cmd.result
@@ -23,10 +23,10 @@ class AuthenticateUserTest < ActiveSupport::TestCase
    
    test "authenticate user fails" do
       acct = accounts(:josh)
-      acct.one_time_password_hash = "12345"
+      otp = acct.generate_otp
       acct.save
       
-      cmd = AuthenticateUser.call(number_to_phone(acct.phone_number), acct.one_time_password_hash.succ)
+      cmd = AuthenticateUser.call(number_to_phone(acct.phone_number), otp.succ)
       assert !cmd.success?
       assert_not_nil cmd.errors[:unauthorized]
    end

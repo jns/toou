@@ -1,9 +1,9 @@
-class ApiController < ActionController::Base
+class ApiController < ApiBaseController
 
     include PassesHelper
 
     # autheticates user with JWT
-    before_action :authorize_request, except: [:requestOneTimePasscode, :redeemCode, :authenticate]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate]
     
 
     # Delivers a one time passcode to the users mobile device 
