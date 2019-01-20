@@ -53,20 +53,20 @@ class PassBuilderJob < ActiveJob::Base
     webServiceUrl = ENV["WEB_SERVICE_URL"] or throw "Environment variable for WEB_SERVICE_URL is missing"
     
     pkpass = {}
-    pkpass[:description] = "A TooU payment pass"
+    pkpass[:description] = "A TooU Drink Coupon"
     pkpass[:formatVersion] = 1
     pkpass[:organizationName] = "Josh Shapiro"
     pkpass[:passTypeIdentifier] = p.passTypeIdentifier
     pkpass[:authenticationToken] = authToken
-    pkpass[:webServiceURL] = ENV['WEB_SERVICE_URL']
+    pkpass[:webServiceURL] = webServiceUrl
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601
     pkpass[:voided] = false
-    pkpass[:logoText] = "Drink TooU"
-    pkpass[:backgroundColor] = "rgb(10, 10, 10)"
-    pkpass[:labelColor] = "rgb(255, 255, 255)"
-    pkpass[:foregroundColor] = "rgb(255, 255, 255)"
+    pkpass[:logoText] = "Treat Someone"
+    pkpass[:backgroundColor] = "rgb(131, 214, 222)"
+    pkpass[:labelColor] = "rgb(142, 142, 142)"
+    pkpass[:foregroundColor] = "rgb(250, 250, 250)"
     pkpass[:generic] = {
       :primaryFields => [
         {:key => "message", :label => "", :value => p.message}
