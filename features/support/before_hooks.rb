@@ -3,6 +3,7 @@ require File.expand_path( File.join(File.dirname(__FILE__), "../../test/test_hel
 
 include TestEnvironment
 
+
 Before do
     Rails.application.load_seed
     @people = []

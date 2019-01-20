@@ -31,7 +31,12 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal "+18185551212", acct.phone_number
   end
   
-  
+  # Accounts that have a device id can receive notifications
+  test "can receive notifications" do
+    
+    assert accounts(:notifiable).can_receive_notifications?
+    refute accounts(:not_notifiable).can_receive_notifications?
+  end
   
   
 end

@@ -192,7 +192,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order", headers: {"Authorization": "Bearer #{token}"}, 
       params: {"recipients": [@acct1.phone_number.to_s],
-               "message": "So Long and Thanks for all the Fish"
+               "message": "So Long and Thanks for all the Fish",
+               "payment_source": "mock_payment_source_token"
       }
     
     assert_response :success

@@ -1,9 +1,12 @@
 
-When("The user named {string} sends a drink to {string}") do |name, recipient_phone_number|
+
+When("The user named {string} sends a drink to {string} using a valid payment") do |name, recipient_phone_number|
     person = @people.find{|p| p.name == name}
     header "Authorization", "Bearer #{person.auth_token}"
-    post "api/place_order", recipients: [recipient_phone_number], message: "ha ha"
-    assert last_response.ok?
+    perform_enqueued_jobs do 
+      post "api/place_order", recipients: [recipient_phone_number], message: "ha ha", payment_source: "valid_payment_token"
+      assert last_response.ok?
+    end
 end
 
 Then("A text message is sent to {string} with a redemption code") do |phone_number|

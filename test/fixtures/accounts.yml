@@ -19,3 +19,7 @@ notifiable:
   phone_number: "+12052070297"
   device_id: ABC123
 
+  
+not_notifiable:
+  id: 5
+  phone_number: "+16263983837"

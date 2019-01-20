@@ -77,8 +77,8 @@ class ApiController < ApiBaseController
     # @param Array of phone numbers who will receive passes
     # @param String the message to include in the delivered pass
     def placeOrder
-        recipients, message = params.require([:recipients, :message])
-        command = PlaceOrder.call(@current_user, recipients, message)
+        recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
+        command = PlaceOrder.call(@current_user, payment_source, recipients, message)
         if command.success?
             render json: {order_id: command.result.id}, status: :ok
         else

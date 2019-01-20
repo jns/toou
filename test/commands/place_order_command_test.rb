@@ -2,38 +2,36 @@ require 'test_helper'
 
 class PlaceOrderCommandTest < ActiveSupport::TestCase
    
-   include ActionView::Helpers::NumberHelper
- 
-   def setup
+    include ActionView::Helpers::NumberHelper
+    
+    def setup
     accounts(:josh).orders.clear    
-   end
+    end
    
-   test "Send an order to all existing account phone numbers succeeds" do
-       @account = Account.find(3)
-
+    test "Send an order to all existing account phone numbers succeeds" do
+        @account = Account.find(3)
+    
         toaccounts = Account.all
-
+    
         # Build the recipient array
-       @recipients = toaccounts.collect{|a| a.phone_number}
-       @message = "Test Message"
-       
-       cmd = PlaceOrder.call(@account, @recipients, @message)
-       puts cmd.errors
+        @recipients = toaccounts.collect{|a| a.phone_number}
+        @message = "Test Message"
+        
+           
+       cmd = PlaceOrder.call(@account, "payment source", @recipients, @message)
        assert cmd.success? 
-      
-       # This should be the only order
-       assert_equal(1, @account.orders.size)
-       order = @account.orders[0]
-       
+       order = cmd.result
+        # This should be the only order
+        assert_equal(order, @account.orders.last)
        # Confirm that each intended recipient received a pass from this order
        toaccounts.each{|a|
             assert a.passes.find{|p| p.order == order}
        }
-       
-   end
+    
+    end
     
     test "sending an order to an empty number fails" do
-        cmd = PlaceOrder.call accounts(:josh), [nil], "Invalid"
+        cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "Invalid"
         assert_equal false, cmd.success?
         assert_nil cmd.result
         assert_equal 0, accounts(:josh).orders.size
@@ -50,7 +48,8 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       
       # Create parameters for api and invoke command
       recipients = [newAcct]
-      cmd = PlaceOrder.call(purchaser, recipients, "Message")
+      
+      cmd = PlaceOrder.call(purchaser, "payment source", recipients, "Message")
       assert cmd.success?
       
       # Assert that the phone number now exists and has an associated account
