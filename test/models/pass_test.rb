@@ -6,8 +6,12 @@ class PassTest < ActiveSupport::TestCase
       assert_equal Pass::EXPIRED, passes(:expired).status
   end
   
-  test "Pass statis is valid if in the distant future" do
+  test "Pass status is valid if in the distant future" do
       assert_equal Pass::VALID, passes(:distant_future).status
   end
 
+  test "Pass is assigned an associated credit card when created" do
+    p = Pass.create
+    assert_not_nil p.card
+  end
 end

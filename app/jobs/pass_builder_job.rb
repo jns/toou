@@ -50,6 +50,7 @@ class PassBuilderJob < ActiveJob::Base
     
     authToken = JsonWebToken.encode(pass_id: p.id) or throw "Error generating web token for pass #{p.serialNumber}"
     webServiceUrl = ENV["WEB_SERVICE_URL"] or throw "Environment variable for WEB_SERVICE_URL is missing"
+    card = p.card or throw "Cannot build pass without associated payment source"
     
     pkpass = {}
     pkpass[:description] = "A TooU Drink Coupon"
@@ -71,9 +72,9 @@ class PassBuilderJob < ActiveJob::Base
         {:key => "message", :label => "", :value => p.message}
       ],
       :secondaryFields => [
-        {:key => "pan", :label => "Card Number", :value => p.card.pan},
-        {:key => "expiration", :label => "EXPIRES", :value => p.card.expiration, :isRelative => true, :dateStyle => "PKDateStyleShort"},
-        {:key => "CVC", :label => "CVC", :value => p.card.cvc}
+        {:key => "pan", :label => "Card Number", :value => card.pan},
+        {:key => "expiration", :label => "EXPIRES", :value => card.expiration, :isRelative => true, :dateStyle => "PKDateStyleShort"},
+        {:key => "CVC", :label => "CVC", :value => card.cvc}
       ]
     }
     

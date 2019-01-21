@@ -15,12 +15,12 @@ class Pass < ActiveRecord::Base
     
     alias :recipient :account
     
+    # Assign a serial number and a credit card from the pool upon creation
     before_create do
         self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
     end
     
-    # Assign a card before saving
-    after_save :assign_card
+    after_create :assign_card
     
     def purchaser
        order.account 

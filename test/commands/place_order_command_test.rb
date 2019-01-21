@@ -27,6 +27,9 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        toaccounts.each{|a|
             assert a.passes.find{|p| p.order == order}
        }
+
+        # assert all passes have a valid payment method
+        order.passes.each{|p| assert_not_nil p.card}
     
     end
     
@@ -55,4 +58,6 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       # Assert that the phone number now exists and has an associated account
       assert_not_nil Account.search_by_phone_number(newAcct)
    end
+   
+   
 end
