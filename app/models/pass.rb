@@ -19,6 +19,9 @@ class Pass < ActiveRecord::Base
         self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
     end
     
+    # Assign a card before saving
+    after_save :assign_card
+    
     def purchaser
        order.account 
     end
@@ -49,4 +52,15 @@ class Pass < ActiveRecord::Base
        return !used? 
     end
     
+    private 
+    
+    def assign_card
+       c = Card.where(:pass => nil).first
+       if c
+           c.pass = self
+           c.save
+       else
+          Log.create(log_type: Log::ERROR, context: "Pass#assign_card", current_user: self.serialNumber, message: "No available cards for pass") 
+       end
+    end
 end

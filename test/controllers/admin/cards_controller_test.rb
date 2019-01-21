@@ -2,7 +2,12 @@ require 'test_helper'
 
 class Admin::CardsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @admin_card = admin_cards(:one)
+    @admin_card = cards(:one)
+    password = "a password"
+    acct = admin_accounts(:admin)
+    acct.password = password
+    acct.save
+    post admin_authenticate_url, params: {username: "admin", password: password}
   end
 
   test "should get index" do
@@ -16,16 +21,17 @@ class Admin::CardsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create admin_card" do
-    assert_difference('Admin::Card.count') do
-      post admin_cards_url, params: { admin_card: {  } }
+    assert_difference('Card.count') do
+      post admin_cards_url, params: { card: { pan: "1234 1234 1234 1234", expiration: "2023/01/01", cvc: "123" } }
     end
 
-    assert_redirected_to admin_card_url(Admin::Card.last)
+    assert_redirected_to admin_card_url(Card.last)
   end
 
   test "should show admin_card" do
-    get admin_card_url(@admin_card)
-    assert_response :success
+    @session
+      get admin_card_url(@admin_card)
+      assert_response :success
   end
 
   test "should get edit" do
@@ -34,15 +40,16 @@ class Admin::CardsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update admin_card" do
-    patch admin_card_url(@admin_card), params: { admin_card: {  } }
+    patch admin_card_url(@admin_card), params: { card: { cvc: "111" } }
     assert_redirected_to admin_card_url(@admin_card)
   end
 
   test "should destroy admin_card" do
-    assert_difference('Admin::Card.count', -1) do
+    assert_difference('Card.count', -1) do
       delete admin_card_url(@admin_card)
     end
 
     assert_redirected_to admin_cards_url
   end
+  
 end

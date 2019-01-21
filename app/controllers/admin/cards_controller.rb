@@ -28,7 +28,7 @@ class Admin::CardsController < ApplicationController
 
     respond_to do |format|
       if @card.save
-        format.html { redirect_to admin_cards_path(@card), notice: 'Card was successfully created.' }
+        format.html { redirect_to admin_card_path(@card), notice: 'Card was successfully created.' }
         format.json { render :show, status: :created, location: @card }
       else
         format.html { render :new }
@@ -42,7 +42,7 @@ class Admin::CardsController < ApplicationController
   def update
     respond_to do |format|
       if @card.update(card_params)
-        format.html { redirect_to admin_cards_path(@card), notice: 'Card was successfully updated.' }
+        format.html { redirect_to admin_card_path(@card), notice: 'Card was successfully updated.' }
         format.json { render :show, status: :ok, location: @card }
       else
         format.html { render :edit }

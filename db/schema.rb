@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2019_01_20_234631) do
     t.bigint "pass_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["pan"], name: "pan_index"
+    t.index ["pan"], name: "index_cards_on_pan"
   end
 
   create_table "countries", force: :cascade do |t|

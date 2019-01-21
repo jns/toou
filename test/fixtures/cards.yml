@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  pan: 
-  expiration: 
-  cvc: 
+  pan: 4242 4242 4242 4242
+  expiration: 2023-01-01
+  cvc: 155
 
 two:
-  pan: 
-  expiration: 
-  cvc: 
+  pan: 4343 4343 4343 4343
+  expiration: 2023-01-01
+  cvc: 156

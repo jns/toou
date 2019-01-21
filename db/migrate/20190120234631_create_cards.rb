@@ -11,7 +11,8 @@ class CreateCards < ActiveRecord::Migration[5.2]
       
       t.timestamps
       
-      t.index [:pan], :name => "pan_index"
+      t.index :pan
     end
+    
   end
 end

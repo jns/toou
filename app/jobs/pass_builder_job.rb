@@ -28,9 +28,8 @@ class PassBuilderJob < ActiveJob::Base
         createTemplateDirectoryForPass(p)
         createPassJson(p)
         buildPass(p)
-      rescue => e
-        puts e.message
-        # Log error 
+      rescue Exception => e
+        Log.create(log_type: Log::ERROR, context: "PassBuilderJob", current_user: "", message: e.message) 
       end
     end
     
