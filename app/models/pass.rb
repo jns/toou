@@ -10,6 +10,9 @@ class Pass < ActiveRecord::Base
     # The Pass belongs to an Order.  Traverse pass.order.account to find the person who purchased the pass
     belongs_to :order
     
+    # Passes should have an associated credit card
+    has_one :card
+    
     alias :recipient :account
     
     before_create do

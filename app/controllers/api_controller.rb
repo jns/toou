@@ -58,6 +58,7 @@ class ApiController < ApiBaseController
         
     end
     
+    
     # Authenticates the parameters and returns a json web token
     # @param [String] phone_number The phone number of the device to authenticate
     # @param [String] pass_code a one time passcode returned by requestOneTimePasscode

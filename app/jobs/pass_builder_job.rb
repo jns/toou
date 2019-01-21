@@ -72,7 +72,9 @@ class PassBuilderJob < ActiveJob::Base
         {:key => "message", :label => "", :value => p.message}
       ],
       :secondaryFields => [
-        {:key => "expiration", :label => "EXPIRES", :value => p.expiration.iso8601, :isRelative => true, :dateStyle => "PKDateStyleShort"}
+        {:key => "pan", :label => "Card Number", :value => p.card.pan},
+        {:key => "expiration", :label => "EXPIRES", :value => p.card.expiration, :isRelative => true, :dateStyle => "PKDateStyleShort"},
+        {:key => "CVC", :label => "CVC", :value => p.card.cvc}
       ]
     }
     

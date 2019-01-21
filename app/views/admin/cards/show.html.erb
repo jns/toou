@@ -1,0 +1,8 @@
+<p id="notice"><%= notice %></p>
+
+PAN: <%= @card.pan %>
+Expiration: <%= @card.expiration %>
+CVC: <%= @card.cvc %>
+Pass: <%= if @card.pass ; link_to @card.pass.serialNumber, admin_pass_path(@card.pass) else "None" end %>
+<%= link_to 'Edit', edit_admin_card_path(@card) %> |
+<%= link_to 'Back', admin_cards_path %>
