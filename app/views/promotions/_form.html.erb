@@ -1,0 +1,69 @@
+<%= form_with(model: promotion, local: true) do |form| %>
+  <% if promotion.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(promotion.errors.count, "error") %> prohibited this promotion from being saved:</h2>
+
+      <ul>
+      <% promotion.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <%= form.label :name, "Promo Name" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>  
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <%= form.label :copy , "Promotion Ad Copy"%>
+        <%= form.text_field :copy, class: "form-control" %>
+      </div>  
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <%= form.label :product, "Redeemable Product" %>
+        <%= form.text_field :product, class: "form-control" %>
+      </div>  
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md">
+      <div class="form-group">
+        <%= form.label :value_cents, "Sale price in cents" %>
+        <%= form.number_field :value_cents, class: "form-control" %>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="form-group">
+        <%= form.label :end_date, "Promo End Date" %>
+        <%= form.date_field :end_date, class: "form-control" %>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="form-group">
+        <%= form.label :quantity, "Number of Coupons" %>
+        <%= form.number_field :quantity, class: "form-control" %>
+      </div>        
+    </div>
+  </div>
+
+
+
+
+  <div class="actions">
+    <%= form.submit class: "btn btn-primary"%>
+  </div>
+<% end %>
+

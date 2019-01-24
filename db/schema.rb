@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_20_234631) do
+ActiveRecord::Schema.define(version: 2019_01_23_010133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,19 @@ ActiveRecord::Schema.define(version: 2019_01_20_234631) do
     t.string "redemption_code"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+  end
+
+  create_table "promotions", force: :cascade do |t|
+    t.string "name"
+    t.string "copy"
+    t.string "product"
+    t.integer "value_cents"
+    t.datetime "end_date"
+    t.integer "quantity"
+    t.string "image_url"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

@@ -75,10 +75,18 @@ class ApiController < ApiBaseController
     end
     
     # Places an order for passes to be delivered to recipients
-    # @param Array of phone numbers who will receive passes
-    # @param String the message to include in the delivered pass
+    # @param recipients Array of phone numbers who will receive passes
+    # @param message String the message to include in the delivered pass
+    # @param payment_source String a payment token
+    # @param item_id String an id of the item being purchased (optional)
+    # @param item_type String the type of item being purchased (optional)
     def placeOrder
         recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
+        item_id, item_type = params.permit([:item_id, :item_type])
+        
+        item_type ||= "DRINK"
+        item_id ||= 0
+        
         command = PlaceOrder.call(@current_user, payment_source, recipients, message)
         if command.success?
             render json: {order_id: command.result.id}, status: :ok
@@ -86,7 +94,7 @@ class ApiController < ApiBaseController
             render json: {error: command.errors}, status: :bad_request
         end
     end
-    
+
     
     # Returns available passes for authenticated user
     # 

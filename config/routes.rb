@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   
+  resources :promotions
   post 'payments/ephemeral_keys'
   get 'v1/passes/*pass_type_id/:serial_number', to: 'pass_kit_api#fetch'
   

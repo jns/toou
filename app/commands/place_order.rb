@@ -13,7 +13,7 @@ class PlaceOrder
     # Recipients are specified as an array of phone numbers to receive passes
     # payment_source is a stripe payment source token
     # message is a message to deliver with the pass
-    # amount is the value of each pass
+    # amount is the value of each pass in cents
     def initialize(account, payment_source, recipients, message, amount=1000)
         @account = account
         @payment_source = payment_source

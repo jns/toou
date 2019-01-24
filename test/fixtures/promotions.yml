@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+expired:
+  name: MyString
+  copy: MyString
+  product: MyString
+  end_date: 2019-01-23 01:01:33
+  quantity: 1
+  image_url: MyString
+  value_cents: 1000
+
+not_expired:
+  name: MyString
+  copy: MyString
+  product: MyString
+  end_date: 2050-01-23 01:01:33
+  quantity: 1
+  image_url: MyString
+  value_cents: 500
