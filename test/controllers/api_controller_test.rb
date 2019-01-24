@@ -193,7 +193,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/place_order", headers: {"Authorization": "Bearer #{token}"}, 
       params: {"recipients": [@acct1.phone_number.to_s],
                "message": "So Long and Thanks for all the Fish",
-               "payment_source": "mock_payment_source_token"
+               "payment_source": "mock_payment_source_token",
+               "promotion_id": promotions(:generic).id
       }
     
     assert_response :success
@@ -207,7 +208,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order", headers: {"Authorization": "Bearer Not.A.Token"}, 
       params: {"recipients": ["310-909-7243","5043834228"],
-               "message": "So Long and Thanks for all the Fish"
+               "message": "So Long and Thanks for all the Fish", 
+               "promotion_id": promotions(:generic).id
       }
     
     assert_response :unauthorized

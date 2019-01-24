@@ -14,12 +14,12 @@ class PlaceOrder
     # payment_source is a stripe payment source token
     # message is a message to deliver with the pass
     # amount is the value of each pass in cents
-    def initialize(account, payment_source, recipients, message, amount=1000)
+    def initialize(account, payment_source, recipients, message, promotion)
         @account = account
         @payment_source = payment_source
         @recipients = recipients
         @message = message
-        @amount = amount
+        @promotion = if promotion.is_a? Promotion ; promotion ; else ; Promotion.find(promotion); end
     end
     
     def call
@@ -27,7 +27,7 @@ class PlaceOrder
             ActiveRecord::Base.transaction do 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
                 @order = Order.create(account: @account)
-                charge(@recipients.size * @amount)
+                charge(@recipients.size * @promotion.value_cents)
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
                   # This will format the phone number
@@ -68,7 +68,7 @@ class PlaceOrder
         expiry = Date.today + 6.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "PlaceOrder#create_pass", current_user: acct.id, message: "Creating pass for order #{@order.id}")
-        Pass.create(message: @message, expiration: expiry, account: acct, order: @order )
+        Pass.create(message: @message, expiration: expiry, account: acct, order: @order, promotion: @promotion)
     end
     
 end

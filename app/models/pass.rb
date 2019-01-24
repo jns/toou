@@ -10,6 +10,9 @@ class Pass < ActiveRecord::Base
     # The Pass belongs to an Order.  Traverse pass.order.account to find the person who purchased the pass
     belongs_to :order
     
+    # Passes redeem a promotion
+    belongs_to :promotion
+    
     # Passes should have an associated credit card
     has_one :card
     
@@ -21,6 +24,14 @@ class Pass < ActiveRecord::Base
     end
     
     after_create :assign_card
+    
+    # Passes must redeem a particular promotion
+    validates_presence_of :promotion
+    
+    # Passes cannot be updated after creation
+    before_update do 
+        throw "Passes cannot be updated"
+    end
     
     def purchaser
        order.account 

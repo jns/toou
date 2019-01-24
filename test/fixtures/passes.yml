@@ -9,6 +9,7 @@ abc123:
   expiration: 2018-09-18 02:35:30
   passTypeIdentifier: pass.com.toou
   message: This is pass one
+  promotion_id: 1
 
 distant_future:
   id: 2
@@ -19,6 +20,7 @@ distant_future:
   expiration: 2050-09-18 02:40:30
   passTypeIdentifier: pass.com.toou
   message: This is pass two
+  promotion_id: 1
 
 expired:
   id: 3
@@ -29,6 +31,7 @@ expired:
   expiration: 2018-09-18 02:35:30
   passTypeIdentifier: pass.com.toou
   message: This is pass three
+  promotion_id: 2
   
 abc126:
   id: 4
@@ -39,3 +42,4 @@ abc126:
   expiration: 2025-01-01 00:00:00
   passTypeIdentifier: pass.com.toou
   message: This pass has an emoji 👍
+  promotion_id: 1

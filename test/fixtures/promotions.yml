@@ -1,6 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+generic:
+  id: 1
+  name: Beer For Everyone
+  copy: Have a Beer
+  product: 1 16oz Beer
+  end_date: 2099-12-31
+  quantity: 1e12
+  value_cents: 1000
+
 expired:
+  id: 2
   name: MyString
   copy: MyString
   product: MyString
@@ -10,6 +20,7 @@ expired:
   value_cents: 1000
 
 not_expired:
+  id: 3
   name: MyString
   copy: MyString
   product: MyString

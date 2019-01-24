@@ -11,7 +11,8 @@ class PassTest < ActiveSupport::TestCase
   end
 
   test "Pass is assigned an associated credit card when created" do
-    p = Pass.create
+    p = Pass.create(promotion: promotions(:generic))
     assert_not_nil p.card
   end
+  
 end

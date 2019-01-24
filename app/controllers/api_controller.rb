@@ -81,13 +81,9 @@ class ApiController < ApiBaseController
     # @param item_id String an id of the item being purchased (optional)
     # @param item_type String the type of item being purchased (optional)
     def placeOrder
-        recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
-        item_id, item_type = params.permit([:item_id, :item_type])
+        recipients, message, payment_source, promo_id = params.require([:recipients, :message, :payment_source, :promotion_id])
         
-        item_type ||= "DRINK"
-        item_id ||= 0
-        
-        command = PlaceOrder.call(@current_user, payment_source, recipients, message)
+        command = PlaceOrder.call(@current_user, payment_source, recipients, message, promo_id)
         if command.success?
             render json: {order_id: command.result.id}, status: :ok
         else

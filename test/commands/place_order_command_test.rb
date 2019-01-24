@@ -5,7 +5,8 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     include ActionView::Helpers::NumberHelper
     
     def setup
-    accounts(:josh).orders.clear    
+        accounts(:josh).orders.clear   
+        @promo = promotions(:generic)
     end
    
     test "Send an order to all existing account phone numbers succeeds" do
@@ -18,7 +19,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         @message = "Test Message"
         
            
-       cmd = PlaceOrder.call(@account, "payment source", @recipients, @message)
+       cmd = PlaceOrder.call(@account, "payment source", @recipients, @message, @promo)
        assert cmd.success? 
        order = cmd.result
         # This should be the only order
@@ -34,7 +35,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     end
     
     test "sending an order to an empty number fails" do
-        cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "Invalid"
+        cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
         assert_equal false, cmd.success?
         assert_nil cmd.result
         assert_equal 0, accounts(:josh).orders.size
@@ -52,7 +53,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       # Create parameters for api and invoke command
       recipients = [newAcct]
       
-      cmd = PlaceOrder.call(purchaser, "payment source", recipients, "Message")
+      cmd = PlaceOrder.call(purchaser, "payment source", recipients, "Message", @promo)
       assert cmd.success?
       
       # Assert that the phone number now exists and has an associated account
