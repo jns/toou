@@ -23,8 +23,6 @@ class Pass < ActiveRecord::Base
         self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
     end
     
-    after_create :assign_card
-    
     # Passes must redeem a particular promotion
     validates_presence_of :promotion
     
@@ -63,15 +61,4 @@ class Pass < ActiveRecord::Base
        return !used? 
     end
     
-    private 
-    
-    def assign_card
-       c = Card.where(:pass => nil).first
-       if c
-           c.pass = self
-           c.save
-       else
-          Log.create(log_type: Log::ERROR, context: "Pass#assign_card", current_user: self.serialNumber, message: "No available cards for pass") 
-       end
-    end
 end

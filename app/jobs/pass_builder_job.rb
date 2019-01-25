@@ -50,7 +50,6 @@ class PassBuilderJob < ActiveJob::Base
     
     authToken = JsonWebToken.encode(pass_id: p.id) or throw "Error generating web token for pass #{p.serialNumber}"
     webServiceUrl = ENV["WEB_SERVICE_URL"] or throw "Environment variable for WEB_SERVICE_URL is missing"
-    card = p.card or throw "Cannot build pass without associated payment source"
     
     pkpass = {}
     pkpass[:description] = "A TooU Drink Coupon"
@@ -62,23 +61,30 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:serialNumber] = p.serialNumber
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601
-    pkpass[:voided] = false
+    pkpass[:voided] = p.expired?
     pkpass[:logoText] = "Treat Someone"
     pkpass[:backgroundColor] = "rgb(131, 214, 222)"
     pkpass[:labelColor] = "rgb(142, 142, 142)"
     pkpass[:foregroundColor] = "rgb(250, 250, 250)"
-    pkpass[:generic] = {
+    pkpass[:locations] = [{"latitude" => 32.8306228, "longitude" => -117.1414313}]
+    pkpass[:barcodes]  =[{
+         "format" => "PKBarcodeFormatPDF417",
+         "message" => p.serialNumber,
+         "messageEncoding" => "iso-8859-1"}]
+    pkpass[:storeCard] = {
       :primaryFields => [
-        {:key => "message", :label => "", :value => p.message}
+        {:key => "message", :label => "", :value => ""}
       ],
-      :secondaryFields => [
-        {:key => "pan", :label => "Card Number", :value => card.pan},
-        {:key => "expiration", :label => "EXPIRES", :value => card.expiration, :isRelative => true, :dateStyle => "PKDateStyleShort"},
-        {:key => "CVC", :label => "CVC", :value => card.cvc}
+      :backFields => [
+        {:key => "instructions", :label => "", :value => "Redeem at Quantum Brewing"}
+      ],
+      :secondaryFields => [ 
+        {:key => "message", :label => "Message", :value => p.message},
+        {:key => "sender", :label => "Sender", :value => p.purchaser.phone_number.to_s}
       ]
     }
     
-    File.open(File.join(passDirectory(p), "pass.json"), "w+") do |f|
+    File.open(File.join(passDirectory(p), "pass.json"), "w") do |f|
       f.puts pkpass.to_json
     end
   end
@@ -90,7 +96,7 @@ class PassBuilderJob < ActiveJob::Base
     Dubai::Passbook.certificate, Dubai::Passbook.password = File.join(pkpassCertificateDir, "PassSigningCert.p12"), certificatePassword
     
     # Example.pass is a directory with files "pass.json", "icon.png" & "icon@2x.png"
-    File.open(passFileName(p), 'w+') do |f|
+    File.open(passFileName(p), 'w') do |f|
       f.write Dubai::Passbook::Pass.new(passDirectory(p)).pkpass.string
     end
     

@@ -3,12 +3,12 @@ class PassNotificationJob < ApplicationJob
 
   def perform(*passes)
     passes.each do |pass_id|
-      acct = Pass.find(pass_id).account
+      pass = Pass.find(pass_id)
+      acct = pass.account
         if acct.can_receive_notifications?
             SendDeviceNotification.call(acct)
         else
-          pass = Pass.find(pass_id)
-          SendRedemptionCode.call(pass)
+          SendSmsNotification.call(pass)
         end
       end
   end
