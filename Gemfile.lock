@@ -207,6 +207,8 @@ GEM
     plist (3.1.0)
     popper_js (1.14.3)
     public_suffix (3.0.3)
+    pundit (2.0.1)
+      activesupport (>= 3.0.0)
     rack (2.0.5)
     rack-protection (2.0.0)
       rack
@@ -344,6 +346,7 @@ DEPENDENCIES
   nomad-cli (~> 0.0.2)
   open-iconic-rails
   pg
+  pundit (~> 2.0.1)
   rails (~> 5.2.1)
   sass-rails (~> 5.0.7)
   sdoc (~> 0.4.0)

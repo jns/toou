@@ -4,26 +4,31 @@ class Admin::CardsController < ApplicationController
   # GET /admin/cards
   # GET /admin/cards.json
   def index
+    authorize Card
     @cards = Card.all
   end
 
   # GET /admin/cards/1
   # GET /admin/cards/1.json
   def show
+    authorize @card
   end
 
   # GET /admin/cards/new
   def new
+    authorize Card
     @card = Card.new
   end
 
   # GET /admin/cards/1/edit
   def edit
+    authorize @card
   end
 
   # POST /admin/cards
   # POST /admin/cards.json
   def create
+    authorize Card
     @card = Card.new(card_params)
 
     respond_to do |format|
@@ -40,6 +45,7 @@ class Admin::CardsController < ApplicationController
   # PATCH/PUT /admin/cards/1
   # PATCH/PUT /admin/cards/1.json
   def update
+    authorize @card
     respond_to do |format|
       if @card.update(card_params)
         format.html { redirect_to admin_card_path(@card), notice: 'Card was successfully updated.' }
@@ -54,6 +60,7 @@ class Admin::CardsController < ApplicationController
   # DELETE /admin/cards/1
   # DELETE /admin/cards/1.json
   def destroy
+    authorize @card
     @card.destroy
     respond_to do |format|
       format.html { redirect_to admin_cards_url, notice: 'Card was successfully destroyed.' }

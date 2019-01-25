@@ -9,21 +9,19 @@
   <thead>
     <tr>
       <th>Serialnumber</th>
+      <th>Account</th>
       <th>Expiration</th>
       <th>Passtypeidentifier</th>
-      <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
     <% @passes.each do |pass| %>
       <tr>
-        <td><%= pass.serialNumber %></td>
+        <td><%= link_to pass.serialNumber, admin_pass_path(pass) %></td>
+        <td><%= link_to pass.account.phone_number, admin_account_path(pass.account) %></td>
         <td><%= pass.expiration %></td>
         <td><%= pass.passTypeIdentifier %></td>
-        <td><%= link_to 'Show', admin_pass_path(pass) %></td>
-        <td><%= link_to 'Edit', edit_admin_pass_path(pass) %></td>
-        <td><%= link_to 'Destroy', admin_pass_path(pass), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

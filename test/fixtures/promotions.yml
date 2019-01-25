@@ -8,6 +8,7 @@ generic:
   end_date: 2099-12-31
   quantity: 1e12
   value_cents: 1000
+  status: Active
 
 expired:
   id: 2
@@ -18,6 +19,7 @@ expired:
   quantity: 1
   image_url: MyString
   value_cents: 1000
+  status: Closed
 
 not_expired:
   id: 3
@@ -28,3 +30,25 @@ not_expired:
   quantity: 1
   image_url: MyString
   value_cents: 500
+  status: Active
+  
+draft:
+  id: 4
+  name: A Draft Promotion
+  copy: Get your stuff
+  product: Stuff
+  end_date: 2050-01-01
+  quantity: 99999
+  value_cents: 1000
+  status: Draft
+
+
+active:
+  id: 5
+  name: An Active Promotion
+  copy: Get your stuff
+  product: Stuff
+  end_date: 2050-01-01
+  quantity: 99999
+  value_cents: 1000
+  status: Active

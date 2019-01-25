@@ -9,26 +9,31 @@ class PassesController < ApplicationController
   # GET /passes
   # GET /passes.json
   def index
+    authorize Pass
     @passes = Pass.all
   end
 
   # GET /passes/1
   # GET /passes/1.json
   def show
+    authorize @pass
   end
 
   # GET /passes/new
   def new
+    authorize Pass
     @pass = Pass.new
   end
 
   # GET /passes/1/edit
   def edit
+    authorize @pass
   end
 
   # POST /passes
   # POST /passes.json
   def create
+    authorize Pass
     @pass = Pass.new(pass_params)
     respond_to do |format|
       if @pass.save
@@ -45,7 +50,7 @@ class PassesController < ApplicationController
   # PATCH/PUT /passes/1
   # PATCH/PUT /passes/1.json
   def update
-    
+    authorize @pass
     respond_to do |format|
       if @pass.update(pass_params)
         format.html { redirect_to @pass, notice: 'Pass was successfully updated.' }
@@ -60,6 +65,7 @@ class PassesController < ApplicationController
   # DELETE /passes/1
   # DELETE /passes/1.json
   def destroy
+    authorize @pass
     @pass.destroy
     respond_to do |format|
       format.html { redirect_to admin_passes_url, notice: 'Pass was successfully destroyed.' }

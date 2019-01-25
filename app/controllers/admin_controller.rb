@@ -20,6 +20,9 @@ class AdminController < ApplicationController
     
     # Authenticates the admin 
     def authenticate
+        
+        skip_authorization
+        
         username, password = getCredentials
         command = AuthenticateAdmin.call(username, password)
     

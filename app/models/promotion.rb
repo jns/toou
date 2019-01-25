@@ -30,6 +30,21 @@ class Promotion < ApplicationRecord
         self.save
     end
     
+    # Returns true if promotion is in draft mode
+    def is_draft?
+       self.status == DRAFT 
+    end
+    
+    # Returns true if promotion is active
+    def is_active?
+        self.status == ACTIVE
+    end
+    
+    # Returns true if promotion is closed
+    def is_closed?
+        self.status == CLOSED
+    end
+    
     # True if the expiration date is passed
     def expired?
         Time.now > self.end_date.at_end_of_day

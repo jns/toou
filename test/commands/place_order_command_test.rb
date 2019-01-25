@@ -29,9 +29,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
             assert a.passes.find{|p| p.order == order}
        }
 
-        # assert all passes have a valid payment method
-        order.passes.each{|p| assert_not_nil p.card}
-    
+        
     end
     
     test "sending an order to an empty number fails" do

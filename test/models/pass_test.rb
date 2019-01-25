@@ -10,9 +10,4 @@ class PassTest < ActiveSupport::TestCase
       assert_equal Pass::VALID, passes(:distant_future).status
   end
 
-  test "Pass is assigned an associated credit card when created" do
-    p = Pass.create(promotion: promotions(:generic))
-    assert_not_nil p.card
-  end
-  
 end
