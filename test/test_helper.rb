@@ -46,4 +46,5 @@ class ActiveSupport::TestCase
   SendDeviceNotification.connector = MockApnoticConnector
   CreateStripeCustomerJob.client = MockStripeCustomer
   PlaceOrder.charge_client = MockStripeCharge
+  PlaceOrder.customer_client = MockStripeCustomer
 end

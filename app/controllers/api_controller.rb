@@ -99,7 +99,7 @@ class ApiController < ApiBaseController
         if command.success?
             render json: {}, status: :ok
         else
-            render json: {errors: "Error placing order"}, status: :bad_request
+            render json: {error: "Please provide a valid phone number"}, status: :bad_request
         end
     end
 

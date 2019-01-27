@@ -6,8 +6,9 @@ class PlaceOrder
 
     prepend SimpleCommand
     
-    cattr_accessor :charge_client
+    cattr_accessor :charge_client, :customer_client
     self.charge_client = Stripe::Charge
+    self.customer_client = Stripe::Customer
     
     # Account is the account placing the order
     # Recipients are specified as an array of phone numbers to receive passes
@@ -27,14 +28,19 @@ class PlaceOrder
             ActiveRecord::Base.transaction do 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
                 @order = Order.create(account: @account)
-                charge(@recipients.size * @promotion.value_cents)
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
                   # This will format the phone number
                   pass = create_pass(PhoneNumber.new(r).to_s)
-                  PassNotificationJob.perform_later(pass.id)
                 }
             end
+            
+            # Charge and notify if order and passes are successfully created
+            charge(@recipients.size * @promotion.value_cents)
+            @order.passes.each do |pass|
+                PassNotificationJob.perform_later(pass.id)
+            end
+            
             return @order
         rescue Stripe::StripeError => e
           m = "Error creating charge: #{e.message}"
@@ -48,6 +54,11 @@ class PlaceOrder
     end
     
     def charge(amount)
+        
+        customer = @@customer_client.retrieve @account.stripe_customer_id
+        unless customer.sources.member? @payment_source
+            @payment_source = customer.sources.create(source: @payment_source)
+        end
         
         Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charging account for order #{@order.id}")
         # Create the charge on Stripe's servers - this will charge the user's card

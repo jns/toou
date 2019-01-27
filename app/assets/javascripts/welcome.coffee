@@ -27,7 +27,7 @@ addPaymentButton = (stripe, paymentRequest) ->
         if result? 
             prButton.mount('#payment-request-button') 
         else
-            $("#payment-request-button").innerHTML = "Your Browser Does Not Support Apple or Google Pay"
+            $("#payment-request-button").html( "Your Browser Does Not Support Apple or Google Pay")
 
    
 processPayment = (promo, event) ->
@@ -45,6 +45,11 @@ processPayment = (promo, event) ->
         body: JSON.stringify(payload)
         headers: {'content-type': 'application/json'})
 
+showErrors = (errors) ->
+    console.log(errors)
+    $('#payment_errors').show()
+    $('#recipient_phone').addClass('is-invalid')
+    
 fetchPromotions = () ->
     fetch('/api/promotions', 
         method: 'GET'
@@ -72,5 +77,7 @@ $(document).ready ->
             processPayment(promo, event).then (response) ->
                 if response.ok
                     event.complete('success')
+                    console.log(response.json())
                 else
                     event.complete('fail')    
+                    showErrors(response.json())

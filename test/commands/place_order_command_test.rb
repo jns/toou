@@ -5,6 +5,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     include ActionView::Helpers::NumberHelper
     
     def setup
+        MockStripeCharge.charges.clear
         accounts(:josh).orders.clear   
         @promo = promotions(:generic)
     end
@@ -58,5 +59,11 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       assert_not_nil Account.search_by_phone_number(newAcct)
    end
    
-   
+   test "Do not charge unless order is successful" do
+        cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
+        assert_equal false, cmd.success?
+        assert_nil cmd.result
+        assert_equal 0, accounts(:josh).orders.size
+        assert MockStripeCharge.charges.empty?
+    end
 end

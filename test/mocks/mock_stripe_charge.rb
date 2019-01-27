@@ -1,9 +1,14 @@
 class MockStripeCharge
    
+   cattr_accessor :charges
+   self.charges = []
+   
    attr_reader :options, :id
    
    def MockStripeCharge.create(options = {})
-       MockStripeCharge.new(options)
+       c = MockStripeCharge.new(options)
+       self.charges << c
+       return c
    end
    
    def initialize(options = {})
