@@ -15,6 +15,7 @@ class WelcomeController < ApplicationController
     end
     
     def promotions
-        @promotions = Promotion.where(status: Promotion::ACTIVE)
+        @promotion = Promotion.where(status: Promotion::ACTIVE).first
     end
+    
 end

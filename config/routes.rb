@@ -14,10 +14,12 @@ Rails.application.routes.draw do
   get 'promos', to: 'welcome#promotions'
   
   # API Endpoints
+  get 'api/promotions', to: 'api#promotions'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
+  post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
   get  'api/pass/:serial_number', to: 'api#pass'
   

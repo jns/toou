@@ -3,8 +3,13 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate, :promotions, :order]
     
+
+    def promotions
+        @promotions = Promotion.where(status: Promotion::ACTIVE)
+        render 'promotions.json.jbuilder', status: :ok
+    end
 
     # Delivers a one time passcode to the users mobile device 
     #
@@ -73,6 +78,31 @@ class ApiController < ApiBaseController
          render json: { error: command.errors }, status: :unauthorized
        end
     end
+    
+    # Alternate order that doesn't require auth
+    def order
+        purchaser = params.require(:purchaser).permit(:name, :phone, :email)
+        recipients, payment_source, promo_id = params.require([:recipients, :payment_source, :promotion_id])
+        message = params.permit(:message)
+        
+        phone = PhoneNumber.new(purchaser[:phone]).to_s
+        unless phone
+            render json: {error: "Invalid Phone Number"}, status: :bad_request
+            return
+        end
+        
+        acct = Account.find_or_create_by(phone_number: phone)
+        acct.email = purchaser[:email]
+        acct.save
+        
+        command = PlaceOrder.call(acct, payment_source, recipients, message, promo_id)
+        if command.success?
+            render json: {}, status: :ok
+        else
+            render json: {errors: "Error placing order"}, status: :bad_request
+        end
+    end
+
     
     # Places an order for passes to be delivered to recipients
     # @param recipients Array of phone numbers who will receive passes
