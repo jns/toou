@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   root 'welcome#index'
   get 'about', to: 'welcome#about'
   get 'howitworks', to: 'welcome#howitworks'
+  get 'promos', to: 'welcome#promotions'
   
   # API Endpoints
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'

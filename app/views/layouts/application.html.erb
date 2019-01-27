@@ -4,6 +4,8 @@
   <title>TooU</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  
+  <script src="https://js.stripe.com/v3/"></script>
   <%= csrf_meta_tags %>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -11,8 +13,8 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
-  <ul class="navbar-nav">
-      <% if session["auth_token"] %>
+  <% if session["auth_token"] %>
+    <ul class="navbar-nav">
         <li class="dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Go To</a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -25,10 +27,8 @@
             <%= link_to "logout", '/admin/logout', class: 'dropdown-item' %>
           </div>
         </li>
-      <% else %>
-        <li class="nav-link"><%= link_to "login", 'admin/login', class: 'nav-link'%></li>
-      <% end %>
-  </ul>
+    </ul>
+  <% end %>
   <a class="navbar-brand mx-auto" href="/"></a>
   
 </nav>

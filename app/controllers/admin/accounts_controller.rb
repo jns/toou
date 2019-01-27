@@ -1,6 +1,7 @@
 module Admin
 class AccountsController < ApplicationController
   
+  skip_before_action :validate_auth_token, only: [:new, :create]
   before_action :set_account, only: [:show, :edit, :update, :destroy]
   
   # GET /accounts

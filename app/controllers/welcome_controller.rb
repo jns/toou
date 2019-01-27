@@ -13,4 +13,8 @@ class WelcomeController < ApplicationController
     # Slideshow for primary use cases
     def howitworks
     end
+    
+    def promotions
+        @promotions = Promotion.where(status: Promotion::ACTIVE)
+    end
 end

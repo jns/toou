@@ -78,8 +78,7 @@ class ApiController < ApiBaseController
     # @param recipients Array of phone numbers who will receive passes
     # @param message String the message to include in the delivered pass
     # @param payment_source String a payment token
-    # @param item_id String an id of the item being purchased (optional)
-    # @param item_type String the type of item being purchased (optional)
+    # @param promotion_id String an id of the item being purchased (optional)
     def placeOrder
         recipients, message, payment_source, promo_id = params.require([:recipients, :message, :payment_source, :promotion_id])
         

@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
     
     # Add authorization 
     include Pundit
-    after_action :verify_authorized
+    #after_action :verify_authorized
     
     rescue_from Pundit::NotAuthorizedError, :with => :record_not_found
     

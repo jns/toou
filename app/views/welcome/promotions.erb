@@ -1,0 +1,53 @@
+
+<div class="content-width mx-auto">
+
+<% @promotions.each do |promo| %>
+
+<div class="card">
+  <div class="card-body">
+    <div class="card-title">
+      <h4><%= promo.name %></h4>
+    </div>
+    
+    <div class="card-text">
+      <h3>
+        <%= promo.copy %>
+      </h3>
+      <strong>
+        <%= number_to_currency(promo.value_dollars) %> for <%= promo.product %>
+      </strong>
+      
+      <div class="text-center">
+            
+        <form class="mx-auto w-75 mt-3">
+          <input type="hidden" name="promotion_id" id="promotion_id" value="<%= promo.id %>"></input>
+          <div class="form-group row">
+            <label for="recipient_phone" class="col-sm-3 col-form-label h6 text-center">Send To:</label>
+            <div class="col-sm-9">
+            <input id="recipient_phone" name="recipient_phone" type="text" class="form-control" placeholder="10 digit phone number"></input>
+            </div>
+          </div>            
+        </form>
+        
+          
+        <div>
+          <%= promo.quantity %> left
+        </div>
+       
+        <div>
+          Ends <%= promo.end_date.to_date.to_formatted_s(:short) %>
+        </div>
+       
+        <div id="payment-request-button" class="mt-3 mx-auto w-50">
+          <%= link_to "Add A Payment Method", "https://support.google.com/pay/answer/7625139" , target: "_blank", class: "btn btn-info" %>
+        </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+<% end %>
+
+</div>
+
