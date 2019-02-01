@@ -18,4 +18,6 @@ class WelcomeController < ApplicationController
         @promotion = Promotion.where(status: Promotion::ACTIVE).first
     end
     
+    def dashboard
+    end
 end

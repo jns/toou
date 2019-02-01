@@ -1,0 +1,14 @@
+
+<div id="OneTimePasscode" class="container mt-3 mx-auto" style="max-width: 600px">
+    <%= form_with url: "api/authenticate", local: false do |form| %>
+    <div class="row m-2 align-items-center">
+        <div class="col-sm-10">
+            <%= form.text_field :pass_code, class: "form-control", placeholder: "One Time Passcode" %>
+        </div>
+        <div class="col-sm-2">
+            <%= form.submit "Login", class: "btn btn-primary" %>
+        </div>
+    </div>
+    <% end %>
+</div>
+

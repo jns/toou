@@ -13,7 +13,7 @@ class ApiController < ApiBaseController
 
     # Delivers a one time passcode to the users mobile device 
     #
-    # @param [String] phoneNumber The phone number of the device to deliver a one time passcode
+    # @param [String] phone_number The phone number of the device to deliver a one time passcode
     # @param [String] deviceId A unique id of the device 
     # @return 200 For a valid phone number and deviceID
     # @return 400 For an invalid phone number or a suspicious deviceId    
@@ -80,21 +80,28 @@ class ApiController < ApiBaseController
     end
     
     # Alternate order that doesn't require auth
+    # @param a purchaser name, phone, and email
+    # @param recipients a list of phone numbers
+    # @param payment_source a stripe payment token
+    # @param promotion_id the promotion being purchased
     def order
         purchaser = params.require(:purchaser).permit(:name, :phone, :email)
         recipients, payment_source, promo_id = params.require([:recipients, :payment_source, :promotion_id])
         message = params.permit(:message)
         
+        # Sanitize and format the phone number
         phone = PhoneNumber.new(purchaser[:phone]).to_s
         unless phone
             render json: {error: "Invalid Phone Number"}, status: :bad_request
             return
         end
         
+        # Find or generate an account
         acct = Account.find_or_create_by(phone_number: phone)
         acct.email = purchaser[:email]
         acct.save
         
+        # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, promo_id)
         if command.success?
             render json: {}, status: :ok

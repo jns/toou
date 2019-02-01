@@ -1,0 +1,41 @@
+<div id="Passes" class="container mx-auto content-width">
+    
+    <h4>My Passes</h4>
+    <%= link_to 'refresh', "#", class: "refresh-link" %>
+    <div data-each>
+        <div class="pass card">
+            <div class="card-body card-text">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            Pass
+                        </div>
+                        <div class="col" data-property="serialNumber"></div>
+                    </div>
+                    <div class="row">
+                        <div data-property="message"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        Expires
+                    </div>
+                    <div class="col" data-property="expiration"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        Status
+                    </div>
+                    <div class="col" data-property="status"></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        Sent by
+                    </div>
+                    <div class="col" data-property="purchaser.email"></div>
+                    <div class="col" data-property="purchaser.phone_number"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
