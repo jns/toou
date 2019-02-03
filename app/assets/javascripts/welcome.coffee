@@ -38,7 +38,7 @@ processPayment = (promo, event) ->
             email: event.payerEmail
             phone: event.payerPhone
         recipients: [document.getElementById('recipient_phone').value]
-        message: ""
+        message: "Test Message"
         payment_source: event.token.id
         promotion_id: promo.id
     fetch('/api/order', 
@@ -215,6 +215,7 @@ class LoginWidget
     
     invalidOTP: ->
         $(@otpForm).find('[name=pass_code]').addClass("is-invalid")
+
 
 
 credentials = new Credentials(showPasses)

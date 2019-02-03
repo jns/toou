@@ -2,6 +2,9 @@ class WelcomeController < ApplicationController
 
     skip_before_action :validate_auth_token
     
+    def mithril_test
+    end
+    
     # presents the welcome screen
     def index
     end
