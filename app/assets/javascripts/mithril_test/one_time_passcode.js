@@ -22,19 +22,17 @@ var OneTimePasscode = (function() {
                 m(".row.text-center", [
                     m(".col", "We just texted you a passocde")
                     ]),
-                m(".row.text-center", [
-                    m(".col-sm-10.m-1", [
+                m(".row", [
+                    m(".col.input-group", [
                         m("input.form-control.text-center[type=text][placeholder=Passcode]", {
                             value: passcode, 
                             oninput: function(e) { passcode = e.target.value; }
                             }),
+                        m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),
-                    m(".col-sm-2.m-1", [
-                        m("input.btn.btn-primary[type=button]", {value:"Login", onclick: authenticate}),
-                        ]),
-                    ])
-            ])
-    }
+                    ]),
+            ]);
+    };
     
-    return {view: view}
+    return {view: view};
 })();

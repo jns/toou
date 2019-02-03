@@ -7,25 +7,27 @@ var Splash = (function() {
     };
     
     var view = function() {
-        return m(".container-fluid.pt-5", [
+        return m(".container-fluid", [
             m(".row", [
-                m(".col.text-center", [
+                m(".col.text-center.mt-3", [
                     m("a[href='/promos']", {oncreate: m.route.link}, [
-                        m("span.regular-28pt", "Treat Someone")
+                        m(".buy-graphic"),
+                        m("span.regular-20pt.darkgray", "Treat Someone")
                         ])
                     ])
                 ]),
+            // m(".row", [
+            //     m(".col.text-center", [
+            //         m("a[href='/promos']", {oncreate: m.route.link}, [
+            //             m("div[id=HandGlass]")
+            //             ])
+            //         ])
+            //     ]),
             m(".row", [
-                m(".col.text-center", [
-                    m("a[href='/promos']", {oncreate: m.route.link}, [
-                        m("div[id=HandGlass]")
-                        ])
-                    ])
-                ]),
-            m(".row", [
-                m(".col.text-center.mt-5", [
+                m(".col.text-center.mt-3", [
                     m("a[href='/passes']", {oncreate: m.route.link}, [
-                        m("span.regular-28pt", "My Drink Passes")
+                        m(".drink-graphic"),
+                        m("span.regular-20pt.darkgray", "My Drink Passes")
                         ])
                     ])
                 ]),

@@ -104,10 +104,13 @@ var Promos = (function() {
         });
             
         paymentRequest.canMakePayment().then(function(result) {
-           if (typeof result !== "undefined" && result !== null) 
-                prButton.mount('#payment-request-button') 
-            else
-                $("#payment-request-button").html( "Your Browser Does Not Support Apple or Google Pay") 
+           if (typeof result !== "undefined" && result !== null) {
+                prButton.mount('#payment-request-button') ;
+            } else {
+                $('#payment-request-button').text("Add a payment method to your browser to purchase.")
+                // var card = elements.create('card');
+                // card.mount('#payment-request-button');
+            }
         });
     }
     

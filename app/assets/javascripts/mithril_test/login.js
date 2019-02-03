@@ -1,8 +1,9 @@
-/* global m, Credentials */
+/* global m, $, Credentials */
 
 var Login = (function() {
     
-    var phone_number = null
+    var phone_number = null;
+    var feedback = null;
     
     var requestOTP = function() {
         return m.request({
@@ -13,32 +14,35 @@ var Login = (function() {
             Credentials.setPhoneNumber(phone_number);
             m.route.set("/otp");
         }).catch(function(e) {
-            console.log(e.message);
+            feedback = JSON.parse(e.message).error + " Please try again.";
+            $(".feedback").addClass("invalid-feedback");
+            $(".feedback").show();
         });
     };
     
     
     var view = function() {
-        return m(".container-fluid .mt-3 .mx-auto", [
-                m(".row.text-center", [
-                    m(".col.m-1", [
-                        m("label.label", "We need your phone number to lookup your passes.")
-                        ])
+        return m(".container-fluid.mt-3.mx-auto", [
+                m(".row", [
+                    m(".col-sm.m-1.text-center", [
+                        m("label.label[for=phone_number]", "We need your phone number to lookup your passes.")
+                        ]),
                     ]),
-                m(".row.text-center.no-gutters", [
-                    m(".col-10", [
-                        m("input.form-control.text-center[type=text][placeholder=10 digit phone number]", {
+                m(".row", [
+                    m(".col-sm.input-group", [
+                        m("input.form-control.text-center[name=phone_number][type=text][placeholder=10 digit phone number]", {
                             value: phone_number, 
                             oninput: function(e) { phone_number = e.target.value;  },
                             onkeyup: function(e) { if (e.key === "Enter") { requestOTP(); } }
-                            })
-                        ]),
-                    m(".col-2", [
-                        m("a.btn.btn-outline-dark", {onclick: requestOTP}, [
+                            }),
+                        m("a.btn.input-group-append.input-group-text", {onclick: requestOTP}, [
                             m("i.fas.fa-angle-right")
                             ]),
                         ]),
-                    ])
+                    ]),
+                m(".row.col.text-center", [
+                    m(".feedback", feedback)
+                    ]),
             ])
     }
     
