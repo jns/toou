@@ -1,4 +1,4 @@
-/* global m, Stripe, Credentials, $ */
+/* global m, Stripe, Credentials, Breadcrumb $ */
     
 var Promos = (function() {
     
@@ -9,6 +9,7 @@ var Promos = (function() {
     var current = {}
     
     var oninit = function() {
+        Breadcrumb.home();
         loadPromos();
         return null;
     };
@@ -21,7 +22,7 @@ var Promos = (function() {
             promotions = data;
             if (promotions.length > 0) {
                 setPromotion(promotions[0])    
-            }
+            }  
         }).catch(function(e) {
             console.log(e.message);
         });
@@ -38,11 +39,27 @@ var Promos = (function() {
     
     var setPromotion = function(promotion) {
         var paymentRequest;
-
         current = promotion;
         paymentRequest = createPaymentRequest(current);
         addPaymentButton(paymentRequest);
-        paymentRequest.on("token", function(event) {
+    };
+                    
+    var createPaymentRequest = function(promotion) {
+        console.log("Creating payment request for " + promotion.name)
+        var pr = stripe.paymentRequest({
+          country: 'US',
+          currency: 'usd',
+          total: {
+            label: promotion.name,
+            amount: promotion.value_cents,
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+          requestPayerPhone: true
+        });
+        
+        pr.on("token", function(event) {
+            console.log("processing token");
             processPayment(promotion, event).then(function(response) {
                     console.log(response);
                     event.complete('success');
@@ -54,20 +71,8 @@ var Promos = (function() {
                     console.log(err);
                });
             });
-        };
-                    
-    var createPaymentRequest = function(promotion) {
-        return stripe.paymentRequest({
-          country: 'US',
-          currency: 'usd',
-          total: {
-            label: promotion.name,
-            amount: promotion.value_cents,
-          },
-          requestPayerName: true,
-          requestPayerEmail: true,
-          requestPayerPhone: true
-        });
+
+        return pr;
     };
     
     var processPayment = function(promotion, event) {

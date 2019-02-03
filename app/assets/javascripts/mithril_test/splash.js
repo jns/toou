@@ -2,19 +2,23 @@
 
 var Splash = (function() {
     
+    var oninit = function() {
+        Breadcrumb.hide();    
+    };
+    
     var view = function() {
         return m(".container-fluid.pt-5", [
             m(".row", [
                 m(".col.text-center", [
                     m("a[href='/promos']", {oncreate: m.route.link}, [
-                        m("div[id=HandGlass]")
+                        m("span.regular-28pt", "Treat Someone")
                         ])
                     ])
                 ]),
             m(".row", [
-                m(".col.text-center.mt-5", [
+                m(".col.text-center", [
                     m("a[href='/promos']", {oncreate: m.route.link}, [
-                        m("span.regular-28pt", "Treat Someone")
+                        m("div[id=HandGlass]")
                         ])
                     ])
                 ]),

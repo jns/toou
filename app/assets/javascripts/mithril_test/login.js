@@ -1,3 +1,4 @@
+/* global m, Credentials */
 
 var Login = (function() {
     
@@ -14,20 +15,28 @@ var Login = (function() {
         }).catch(function(e) {
             console.log(e.message);
         });
-    }
+    };
     
     
     var view = function() {
-        return m(".container .mt-3 .mx-auto", [
+        return m(".container-fluid .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col-sm-10.m-1", [
-                        m("input.form-control[type=text][placeholder=10 digit phone number]", {
+                    m(".col.m-1", [
+                        m("label.label", "We need your phone number to lookup your passes.")
+                        ])
+                    ]),
+                m(".row.text-center.no-gutters", [
+                    m(".col-10", [
+                        m("input.form-control.text-center[type=text][placeholder=10 digit phone number]", {
                             value: phone_number, 
-                            oninput: function(e) { phone_number = e.target.value; }
-                            }),
+                            oninput: function(e) { phone_number = e.target.value;  },
+                            onkeyup: function(e) { if (e.key === "Enter") { requestOTP(); } }
+                            })
                         ]),
-                    m(".col-sm-2.m-1", [
-                        m("input.btn.btn-primary[type=button]", {value:"Login", onclick: requestOTP}),
+                    m(".col-2", [
+                        m("a.btn.btn-outline-dark", {onclick: requestOTP}, [
+                            m("i.fas.fa-angle-right")
+                            ]),
                         ]),
                     ])
             ])

@@ -20,8 +20,11 @@ var OneTimePasscode = (function() {
     var view = function() {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
+                    m(".col", "We just texted you a passocde")
+                    ]),
+                m(".row.text-center", [
                     m(".col-sm-10.m-1", [
-                        m("input.form-control[type=text][placeholder=Passcode]", {
+                        m("input.form-control.text-center[type=text][placeholder=Passcode]", {
                             value: passcode, 
                             oninput: function(e) { passcode = e.target.value; }
                             }),
