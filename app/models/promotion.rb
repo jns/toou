@@ -1,14 +1,16 @@
 class Promotion < ApplicationRecord
     
+    include Buyable
+    
     # Valid statuses
     DRAFT = "Draft"
     ACTIVE = "Active"
     CLOSED = "Closed"
     
     validates :status, inclusion: {in: [DRAFT, ACTIVE, CLOSED]}
-    validates :value_cents, numericality: {greater_than_or_equal_to: 0}
+    validates :price_cents, numericality: {greater_than_or_equal_to: 0}
     
-    has_many :passes
+    has_many :orders, as: :buyable
     
     # Set the status to draft if it isn't set
     before_validation do 
@@ -62,7 +64,7 @@ class Promotion < ApplicationRecord
     
     # The purchase price of the promotion product in dollars
     def value_dollars
-       value_cents/100.0
+       price_cents/100.0
     end
     
 end

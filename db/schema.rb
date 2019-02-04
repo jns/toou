@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_24_065123) do
+ActiveRecord::Schema.define(version: 2019_02_04_004422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,19 +34,6 @@ ActiveRecord::Schema.define(version: 2019_01_24_065123) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "cards", force: :cascade do |t|
-    t.string "pan"
-    t.string "token"
-    t.datetime "expiration"
-    t.string "cvc"
-    t.integer "spend_limit"
-    t.string "state"
-    t.bigint "pass_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["pan"], name: "index_cards_on_pan"
-  end
-
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
@@ -58,6 +45,19 @@ ActiveRecord::Schema.define(version: 2019_01_24_065123) do
     t.index ["country_code"], name: "index_countries_on_country_code", unique: true
   end
 
+  create_table "locations", force: :cascade do |t|
+    t.string "address1"
+    t.string "address2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
+    t.integer "merchant_id"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "logs", force: :cascade do |t|
     t.string "log_type"
     t.string "message"
@@ -67,9 +67,27 @@ ActiveRecord::Schema.define(version: 2019_01_24_065123) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "merchant_products", force: :cascade do |t|
+    t.integer "merchant_id"
+    t.integer "product_id"
+    t.integer "price_cents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "merchants", force: :cascade do |t|
+    t.string "name"
+    t.string "stripe_id"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at"
+    t.integer "buyable_id"
+    t.string "buyable_type"
     t.index ["account_id"], name: "index_orders_on_account_id"
   end
 
@@ -84,22 +102,51 @@ ActiveRecord::Schema.define(version: 2019_01_24_065123) do
     t.integer "order_id"
     t.string "proof_of_purchase"
     t.string "redemption_code"
-    t.bigint "promotion_id"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.string "icon"
+    t.integer "max_price_cents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "promotions", force: :cascade do |t|
     t.string "name"
     t.string "copy"
     t.string "product"
-    t.integer "value_cents"
+    t.integer "product_id"
+    t.integer "product_qty"
+    t.integer "price_cents"
     t.datetime "end_date"
-    t.integer "quantity"
     t.string "image_url"
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roles_on_name", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "password_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "users_roles", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
   end
 
 end

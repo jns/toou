@@ -86,8 +86,8 @@ class ApiController < ApiBaseController
     # @param promotion_id the promotion being purchased
     def order
         purchaser = params.require(:purchaser).permit(:name, :phone, :email)
-        recipients, payment_source, promo_id = params.require([:recipients, :payment_source, :promotion_id])
-        message = params.permit(:message)
+        recipients, payment_source = params.require([:recipients, :payment_source])
+        message = params.permit(:message)[:message]
         
         # Sanitize and format the phone number
         phone = PhoneNumber.new(purchaser[:phone]).to_s
@@ -101,8 +101,9 @@ class ApiController < ApiBaseController
         acct.email = purchaser[:email]
         acct.save
         
+
         # Place the order
-        command = PlaceOrder.call(acct, payment_source, recipients, message, promo_id)
+        command = PlaceOrder.call(acct, payment_source, recipients, message, product)
         if command.success?
             render json: {}, status: :ok
         else
@@ -117,9 +118,9 @@ class ApiController < ApiBaseController
     # @param payment_source String a payment token
     # @param promotion_id String an id of the item being purchased (optional)
     def placeOrder
-        recipients, message, payment_source, promo_id = params.require([:recipients, :message, :payment_source, :promotion_id])
+        recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
         
-        command = PlaceOrder.call(@current_user, payment_source, recipients, message, promo_id)
+        command = PlaceOrder.call(@current_user, payment_source, recipients, message, product)
         if command.success?
             render json: {order_id: command.result.id}, status: :ok
         else
@@ -206,6 +207,19 @@ class ApiController < ApiBaseController
        else
           values.select{|v| SerialNumber.isValid?(v)} 
        end
+    end
+    
+    def product
+        product_id, product_type = params.require([:product_id, :product_type])
+        
+        case product_type
+        when Product.name
+            Product.find(product_id)
+        when Promotion.name
+            Promotion.find(product_id)
+        else
+            render json: {error: "Invalid product"}, status: bad_product
+        end
     end
     
 end

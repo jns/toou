@@ -11,16 +11,17 @@ class PlaceOrder
     self.customer_client = Stripe::Customer
     
     # Account is the account placing the order
+    # payment_source is a stripe payment source token
     # Recipients are specified as an array of phone numbers to receive passes
     # payment_source is a stripe payment source token
     # message is a message to deliver with the pass
-    # amount is the value of each pass in cents
-    def initialize(account, payment_source, recipients, message, promotion)
+    # buyable is a product or promotion
+    def initialize(account, payment_source, recipients, message, buyable)
         @account = account
         @payment_source = payment_source
         @recipients = recipients
         @message = message
-        @promotion = if promotion.is_a? Promotion ; promotion ; else ; Promotion.find(promotion); end
+        @buyable = buyable
     end
     
     def call
@@ -31,12 +32,12 @@ class PlaceOrder
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
                   # This will format the phone number
-                  pass = create_pass(PhoneNumber.new(r).to_s)
+                  create_pass(PhoneNumber.new(r).to_s)
                 }
             end
             
             # Charge and notify if order and passes are successfully created
-            charge(@recipients.size * @promotion.value_cents)
+            charge(@recipients.size * @buyable.price(:cents))
             @order.passes.each do |pass|
                 PassNotificationJob.perform_later(pass.id)
             end

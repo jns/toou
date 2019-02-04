@@ -13,9 +13,6 @@ class Pass < ActiveRecord::Base
     # Passes redeem a promotion
     belongs_to :promotion
     
-    # Passes should have an associated credit card
-    has_one :card
-    
     alias :recipient :account
     
     # Assign a serial number and a credit card from the pool upon creation
@@ -23,8 +20,8 @@ class Pass < ActiveRecord::Base
         self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
     end
     
-    # Passes must redeem a particular promotion
-    validates_presence_of :promotion
+    # Passes must be part of an order
+    validates_presence_of :order
     
     # Passes cannot be updated after creation
     before_update do 
