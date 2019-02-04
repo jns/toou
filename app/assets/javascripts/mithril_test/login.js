@@ -11,6 +11,7 @@ var Login = (function() {
             url: "api/requestOneTimePasscode",
             data: {phone_number: phone_number},
         }).then(function(data) {
+            console.log(data);
             Credentials.setPhoneNumber(phone_number);
             m.route.set("/otp");
         }).catch(function(e) {
