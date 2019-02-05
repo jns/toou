@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  string: 
-  string: 
+beer:
+  name: Beer 
+  max_price_cents: 800 
 
-two:
-  string: 
-  string: 
+cupcake:
+  name: Cupcake 
+  max_price_cents: 500 

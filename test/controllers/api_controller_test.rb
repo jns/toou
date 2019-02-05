@@ -194,8 +194,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
       params: {"recipients": [@acct1.phone_number.to_s],
                "message": "So Long and Thanks for all the Fish",
                "payment_source": "mock_payment_source_token",
-               "promotion_id": promotions(:generic).id
-      }
+               "product_id": products(:beer).id, "product_type": "Product"}
     
     assert_response :success
     order = JSON.parse(@response.body)

@@ -6,8 +6,6 @@ class Order < ActiveRecord::Base
     # The recipients of the passes
     has_many :passes
     
-    # What was purchased
-    belongs_to :buyable, polymorphic: true
     
     def recipients 
        passes.collect{|p| p.account} 

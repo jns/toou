@@ -13,7 +13,6 @@
       <th>Product</th>
       <th>Price</th>
       <th>End date</th>
-      <th>Quantity</th>
       <th></th>
     </tr>
   </thead>
@@ -27,7 +26,6 @@
         <td><%= promotion.product %></td>
         <td><%= number_to_currency(promotion.value_dollars) %></td>
         <td><%= promotion.end_date.to_date.to_formatted_s(:short) %></td>
-        <td><%= promotion.quantity %></td>
         <td><%= link_to 'Edit', edit_promotion_path(promotion) %></td>
       </tr>
     <% end %>

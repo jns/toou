@@ -10,7 +10,7 @@ class Promotion < ApplicationRecord
     validates :status, inclusion: {in: [DRAFT, ACTIVE, CLOSED]}
     validates :price_cents, numericality: {greater_than_or_equal_to: 0}
     
-    has_many :orders, as: :buyable
+    has_many :passes, as: :buyable
     
     # Set the status to draft if it isn't set
     before_validation do 
@@ -52,14 +52,9 @@ class Promotion < ApplicationRecord
         Time.now > self.end_date.at_end_of_day
     end
     
-    # The remaining quantity available
-    def remaining_quantity
-        self.quantity - passes.size
-    end
-    
     # The promotion is purchaseable if it is active and not expired
     def can_purchase? 
-       status == ACTIVE and !expired? and remaining_quantity > 0
+       status == ACTIVE and !expired? 
     end
     
     # The purchase price of the promotion product in dollars

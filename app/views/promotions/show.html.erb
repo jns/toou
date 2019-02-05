@@ -19,9 +19,6 @@
       <div class="text-center">
         <div><h4><%= number_to_currency(@promotion.value_dollars) %></h4></div>
         <%= link_to "Buy Now", "#", class: "btn btn-primary" %>
-        <div>
-          <%= @promotion.quantity %> left
-        </div>
       </div>
       <div>
         Ends <%= @promotion.end_date.to_date.to_formatted_s(:short) %>

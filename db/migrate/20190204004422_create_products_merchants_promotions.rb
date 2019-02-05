@@ -2,8 +2,8 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
   def change
     
     # Orders will have a polymorphic buyable object that can be a promotion or a product
-    add_column :orders, :buyable_id, :integer
-    add_column :orders, :buyable_type, :string
+    add_column :passes, :buyable_id, :integer
+    add_column :passes, :buyable_type, :string
     
     # Promotions are created by merchants to sell specific products
     create_table :promotions do |t|
@@ -35,7 +35,7 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
       t.timestamps
     end
     
-    create_table :users_roles do |t|
+    create_table :roles_users do |t|
       t.integer :user_id
       t.integer :role_id
       

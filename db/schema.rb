@@ -86,8 +86,6 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
   create_table "orders", force: :cascade do |t|
     t.integer "account_id"
     t.datetime "created_at"
-    t.integer "buyable_id"
-    t.string "buyable_type"
     t.index ["account_id"], name: "index_orders_on_account_id"
   end
 
@@ -102,6 +100,8 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.integer "order_id"
     t.string "proof_of_purchase"
     t.string "redemption_code"
+    t.integer "buyable_id"
+    t.string "buyable_type"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
   end
@@ -135,18 +135,18 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
+  create_table "roles_users", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "role_id"
+    t.index ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["username"], name: "index_users_on_username", unique: true
-  end
-
-  create_table "users_roles", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "role_id"
-    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
   end
 
 end

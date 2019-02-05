@@ -29,7 +29,7 @@ class PromotionsControllerTest < ActionDispatch::IntegrationTest
   test "should create promotion if authenticated" do
     post admin_authenticate_url, params: {username: @acct.username, password: @password}
     assert_difference('Promotion.count') do
-      post promotions_url, params: { promotion: { copy: @draft_promotion.copy, end_date: @draft_promotion.end_date, name: @draft_promotion.name, product: @draft_promotion.product, quantity: @draft_promotion.quantity, value_cents: @draft_promotion.value_cents } }
+      post promotions_url, params: { promotion: { copy: @draft_promotion.copy, end_date: @draft_promotion.end_date, name: @draft_promotion.name, product: @draft_promotion.product, price_cents: @draft_promotion.price_cents } }
     end
 
     assert_redirected_to promotion_url(Promotion.last)
@@ -49,7 +49,7 @@ class PromotionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update draft promotion if authenticated" do
     post admin_authenticate_url, params: {username: @acct.username, password: @password}
-    patch promotion_url(@draft_promotion), params: { promotion: { copy: @draft_promotion.copy, end_date: @draft_promotion.end_date, image_url: @draft_promotion.image_url, name: @draft_promotion.name, product: @draft_promotion.product, quantity: @draft_promotion.quantity } }
+    patch promotion_url(@draft_promotion), params: { promotion: { copy: @draft_promotion.copy, end_date: @draft_promotion.end_date, image_url: @draft_promotion.image_url, name: @draft_promotion.name, product: @draft_promotion.product } }
     assert_redirected_to promotion_url(@draft_promotion)
   end
 

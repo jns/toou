@@ -10,8 +10,8 @@ class Pass < ActiveRecord::Base
     # The Pass belongs to an Order.  Traverse pass.order.account to find the person who purchased the pass
     belongs_to :order
     
-    # Passes redeem a promotion
-    belongs_to :promotion
+    # What was purchased
+    belongs_to :buyable, polymorphic: true
     
     alias :recipient :account
     

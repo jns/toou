@@ -7,6 +7,7 @@ include TestEnvironment
 Before do
     Rails.application.load_seed
     @people = []
+    @beer = Product.find_or_create_by(name: "Beer")
     
     Account.destroy_all
     Order.destroy_all
