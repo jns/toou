@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
+  get 'api/products', to: 'api#products'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'

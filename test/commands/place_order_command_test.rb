@@ -9,8 +9,25 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         accounts(:josh).orders.clear   
         @promo = promotions(:generic)
     end
+    
+    test "Order a Product" do
+       from = accounts(:pete)
+       to = [accounts(:josh).phone_number]
+       cmd = PlaceOrder.call(from, "payment source", to, "message", products(:beer))
+       assert cmd.success?
+       assert_equal products(:beer), cmd.result.passes.first.buyable
+    end
    
-    test "Send an order to all existing account phone numbers succeeds" do
+   
+    test "Order a Promotion" do
+       from = accounts(:pete)
+       to = [accounts(:josh).phone_number]
+       cmd = PlaceOrder.call(from, "payment source", to, "message", promotions(:active))
+       assert cmd.success?
+       assert_equal promotions(:active), cmd.result.passes.first.buyable
+    end
+    
+    test "Send an order to multiple recipients succeeds" do
         @account = Account.find(3)
     
         toaccounts = Account.all

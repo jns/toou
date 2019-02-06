@@ -22,6 +22,14 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     FakeSMS.throw_error = nil
   end
 
+
+  test "Fetch products" do 
+    get "/api/products"
+    assert_response :success
+    
+    assert_equal Product.count, JSON.parse(response.body).size 
+  end
+
   # test "the truth" do
   #   assert true
   # end
@@ -194,7 +202,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
       params: {"recipients": [@acct1.phone_number.to_s],
                "message": "So Long and Thanks for all the Fish",
                "payment_source": "mock_payment_source_token",
-               "product_id": products(:beer).id, "product_type": "Product"}
+               "product": {"id": products(:beer).id, "type": "Product"}}
     
     assert_response :success
     order = JSON.parse(@response.body)
@@ -208,7 +216,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/place_order", headers: {"Authorization": "Bearer Not.A.Token"}, 
       params: {"recipients": ["310-909-7243","5043834228"],
                "message": "So Long and Thanks for all the Fish", 
-               "promotion_id": promotions(:generic).id
+               "product": {"id": promotions(:generic).id, "type": "Promotion"}
       }
     
     assert_response :unauthorized

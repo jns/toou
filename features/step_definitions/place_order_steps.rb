@@ -4,7 +4,7 @@ When("The user named {string} sends a drink to {string} using a valid payment") 
     person = @people.find{|p| p.name == name}
     header "Authorization", "Bearer #{person.auth_token}"
     perform_enqueued_jobs do 
-      post "api/place_order", recipients: [recipient_phone_number], message: "ha ha", payment_source: "valid_payment_token", product_id: @beer.id, product_type: @beer.class.name 
+      post "api/place_order", recipients: [recipient_phone_number], message: "ha ha", payment_source: "valid_payment_token", product: {id: @beer.id, type: @beer.class.name} 
       assert last_response.ok?
     end
 end

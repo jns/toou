@@ -3,14 +3,20 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate, :promotions, :order]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeemCode, :authenticate, :promotions, :products, :order]
     
-
+    # Returns active promotions
     def promotions
         @promotions = Promotion.where(status: Promotion::ACTIVE)
         render 'promotions.json.jbuilder', status: :ok
     end
 
+    # returns products
+    def products
+        @products = Product.all
+        render 'products.json.jbuilder', status: :ok
+    end
+    
     # Delivers a one time passcode to the users mobile device 
     #
     # @param [String] phone_number The phone number of the device to deliver a one time passcode
@@ -53,15 +59,6 @@ class ApiController < ApiBaseController
             
     end
     
-    # Delivers a one time passcode to the users mobile device
-    # based on a redemption code linked to a mobile device
-    #
-    # @param [String] redemptionCode the redemption code 
-    # @return 200 For a valid redemption code
-    # @return 400 For an invalid redemption code
-    def redeemCode
-        
-    end
     
     
     # Authenticates the parameters and returns a json web token
@@ -210,15 +207,15 @@ class ApiController < ApiBaseController
     end
     
     def product
-        product_id, product_type = params.require([:product_id, :product_type])
+        buyable = params.require(:product).permit(:id, :type)
         
-        case product_type
+        case buyable["type"]
         when Product.name
-            Product.find(product_id)
+            Product.find(buyable["id"])
         when Promotion.name
-            Promotion.find(product_id)
+            Promotion.find(buyable["id"])
         else
-            render json: {error: "Invalid product"}, status: bad_product
+            render json: {error: "Invalid product"}, status: :bad_request
         end
     end
     
