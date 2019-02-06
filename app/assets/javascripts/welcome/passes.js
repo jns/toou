@@ -32,6 +32,8 @@ var Passes = (function() {
     var view = function() {
         if (passList.length > 0) {
             contents = passList.map(function(p) {return addPassCard(p);});
+        } else {
+            contents = m(".text-center.h4", "Sorry, You don't have any passes.")
         }
         return m(".container", contents);
     };

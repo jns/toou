@@ -1,11 +1,4 @@
-//= require mithril_test/credentials
-//= require mithril_test/hello
-//= require mithril_test/goodbye
-//= require mithril_test/login
-//= require mithril_test/one_time_passcode
-//= require mithril_test/passes
-//= require mithril_test/splash
-//= require mithril_test/promos
+//= require_directory ./welcome
 
 /* global m, $, Splash, Login, OneTimePasscode, Passes, Promos */
 
@@ -13,7 +6,7 @@ var Breadcrumb = (function() {
     
     // Shortcrumb to set the crumb to the default route and text
     var home = function() {
-        show("Home", "/mithril")
+        show("Home", "/")
     };
     
     var hide = function() {

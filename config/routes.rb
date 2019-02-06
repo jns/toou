@@ -11,9 +11,6 @@ Rails.application.routes.draw do
   root 'welcome#index'
   get 'about', to: 'welcome#about'
   get 'howitworks', to: 'welcome#howitworks'
-  get 'promos', to: 'welcome#promotions'
-  get 'dashboard', to:'welcome#dashboard'
-  get 'mithril', to:'welcome#mithril_test'
   
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'

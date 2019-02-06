@@ -51,7 +51,7 @@ var Promos = (function() {
           currency: 'usd',
           total: {
             label: promotion.name,
-            amount: promotion.value_cents,
+            amount: promotion.price_cents,
           },
           requestPayerName: true,
           requestPayerEmail: true,
@@ -121,7 +121,7 @@ var Promos = (function() {
                 ]),
             m(".card-body.card-text", [
                 m(".promo.promo-copy", current.copy),
-                m(".promo.promo-product", current.value_dollars + " for " + current.product),
+                m(".promo.promo-product", current.price_dollars + " for " + current.product),
                 // m(".promo.promo-qty-remaining", current.qty_remaining + " left"),
                 // m(".promo.promo-end-date", "Ends " + current.end_date),
                 m("form.mx-auto.w-75.mt-3", [

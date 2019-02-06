@@ -57,9 +57,4 @@ class Promotion < ApplicationRecord
        status == ACTIVE and !expired? 
     end
     
-    # The purchase price of the promotion product in dollars
-    def value_dollars
-       price_cents/100.0
-    end
-    
 end

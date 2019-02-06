@@ -1,26 +1,22 @@
-
-<div class="container-fluid pt-5">
-  
-    <div class="row">
-      <div class="col text-center">
-        <a href="/promos"><div id="HandGlass"></div></a>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Purchase Complete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    </div>  
-    <div class="row">
-      <div class="col text-center mt-5">
-         <a href="/promos"><span class="regular-28pt ">Treat Someone</span></a>
+      <div class="modal-body">
+        Thanks for purchasing a TooU <span id="purchaser_name"></span></br>
       </div>
-    </div>
-  
-  <div class="row">
-      <div class="col text-center mt-5">
-         Are you a merchant? Join the TooU Platform!  Start by checking in with Stripe below.
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Not Now</button>
       </div>
-  </div>
-  <div class="row">
-    <div class="col text-center mt-2">
-          <a href="/admin/accounts/create&client_id=ca_32D88BD1qLklliziD7gYQvctJIhWBSQ7" class="stripe-connect"><span>Connect with Stripe</span></a>
     </div>
   </div>
 </div>
 
+
+<div class="id" id="mithril_root">
+</div>
