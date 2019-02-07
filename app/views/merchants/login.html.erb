@@ -1,0 +1,29 @@
+
+<div class="content-width container">
+  <h5>Merchant Login</h5>
+<%= form_with url: merchants_authenticate_path, scope: 'user' do |form| %>
+    
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <%= form.label :username, "Username" %>
+        <%= form.text_field :username, class: "form-control" %>
+      </div>  
+    </div>
+  </div>
+  
+    <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <%= form.label :password, "Password" %>
+        <%= form.password_field :password, class: "form-control" %>
+      </div>  
+    </div>
+  </div>
+  
+  <div class="row col">
+      <%= form.submit "Login", class: "btn btn-primary" %>
+  </div>
+<% end %>    
+<%= link_to "Create an account", merchants_new_user_path %>
+</div>

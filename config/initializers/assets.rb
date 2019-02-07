@@ -11,6 +11,6 @@ Rails.application.config.assets.version = '1.0'
 # Rails.application.config.assets.precompile += %w( search.js )
 Rails.application.config.assets.precompile += %w( open-iconic.min.svg )
 Rails.application.config.assets.precompile += %w( welcome.js )
-Rails.application.config.assets.precompile += %w( mithril_test.js )
+Rails.application.config.assets.precompile += %w( merchant.js )
 Rails.application.config.assets.precompile += %w( admin.js )
 Rails.application.config.assets.precompile += %w( promotions.js )

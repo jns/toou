@@ -30,6 +30,13 @@ Rails.application.routes.draw do
   post 'admin/authenticate', to: 'admin#authenticate'
   get 'admin/restricted', to: 'admin#restricted'
   
+  get 'merchants/login', to: 'merchants#login'
+  get 'merchants/logout', to: 'merchants#logout'
+  get 'merchants/new_user', to: 'merchants#new_user'
+  post 'merchants/new_user', to: 'merchants#new_user'
+  post 'merchants/authenticate', to: 'merchants#authenticate'
+  resources :merchants
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

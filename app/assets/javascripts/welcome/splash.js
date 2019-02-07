@@ -1,6 +1,12 @@
-/* global m */
+/* global m, Breadcrumb */
 
 var Splash = (function() {
+    
+    var state_value = "";
+    var redirect_uri = "https://" + window.location.hostname + "/#!/merchant";
+    
+    var client_id = "ca_EPUvudB7OLfL6IQbqmlFprVhyOu5xTIi";
+    var stripe_oath_endpoint = "https://connect.stripe.com/express/oauth/authorize?client_id=" + client_id;
     
     var oninit = function() {
         Breadcrumb.hide();    
@@ -36,7 +42,9 @@ var Splash = (function() {
                 ]),
             m(".row", [
                 m(".col.text-center.mt-2", [
-                    m("a.stripe-connect", m("span", "Connect with Stripe"))
+                    m("a.stripe-connect", {
+                        "href": stripe_oath_endpoint
+                    },m("span", "Connect with Stripe"))
                     ])
                 ]),
             ]);

@@ -1,1 +1,2 @@
-//= require_directory merchant
+//= require_directory ./merchant
+//= require breadcrumb
