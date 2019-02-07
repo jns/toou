@@ -1,6 +1,5 @@
 //= require_directory ./welcome
 //= require_directory ./merchant
-//= require breadcrumb
 
 /* global m, $, Splash, Login, OneTimePasscode, Passes, Promos */
 

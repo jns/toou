@@ -38,15 +38,8 @@ var Splash = (function() {
                     ])
                 ]),
             m(".row", [
-                m(".col.text-center.mt-5", "Are you a merchant? Join the TooU Marketplace! Start by checking in with Stripe below...")
-                ]),
-            m(".row", [
-                m(".col.text-center.mt-2", [
-                    m("a.stripe-connect", {
-                        "href": stripe_oath_endpoint
-                    },m("span", "Connect with Stripe"))
-                    ])
-                ]),
+                m(".col.text-center.mt-5", m("a[href='/merchants']", "Are you a merchant? Join the TooU Marketplace!"))
+                ])
             ]);
     };
     

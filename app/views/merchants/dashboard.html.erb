@@ -1,3 +1,38 @@
-Hi <%= @current_user.username %>
+<div class="container content-width">
+
+<div>
+    Hi <%= @current_user.username %> | 
 <%= link_to "logout", merchants_logout_url %>
-<h4>Dashboard</h4>
+</div>
+
+
+<div class="card">
+    <div class="card-header">
+        Businesses
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Enrollment</th>
+            </tr>
+            <% @merchants.each do |m| %>
+                <tr>
+                    <td>
+                        <%= link_to m.name, "#" %>
+                    </td>
+                    <td>
+                        <% if m.stripe_id %>
+                            Yes
+                        <% else %>
+                            No <a class="stripe-connect" href="#"><span>Connect Now</span></a>
+                        <% end %>
+                    </td>
+                </tr> 
+            <% end %>
+        </table>
+        <div class="row col mt-5">
+            <%= link_to "Add a business", new_merchant_path, class: "btn btn-secondary" %>
+        </div>
+    </div>
+</div>

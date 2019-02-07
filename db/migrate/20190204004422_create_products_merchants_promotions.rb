@@ -44,6 +44,9 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
     
     create_table :users do |t|
       t.string :username
+      t.string :first_name
+      t.string :last_name
+      t.string :email
       t.string :password_digest
       t.index :username, unique: true
       
@@ -53,6 +56,8 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
     # Merchants redeem passes and deliver products or promotions
     create_table :merchants do |t|
       t.string :name
+      t.string :website
+      t.string :phone_number
       t.string :stripe_id
       t.integer :user_id
       
