@@ -19,20 +19,20 @@
             <% @merchants.each do |m| %>
                 <tr>
                     <td>
-                        <%= link_to m.name, "#" %>
+                        <%= link_to m.name, merchant_path(m) %>
                     </td>
                     <td>
                         <% if m.stripe_id %>
-                            Yes
+                            <a class="stripe-dashboard-link" data-merchant-id="<%= m.id %>" href="">Visit Dashboard</a>
                         <% else %>
-                            No <a class="stripe-connect" href="#"><span>Connect Now</span></a>
+                            <a class="stripe-connect" data-merchant-id="<%=m.id %>" href=""><span>Connect Now</span></a>
                         <% end %>
                     </td>
                 </tr> 
             <% end %>
         </table>
         <div class="row col mt-5">
-            <%= link_to "Add a business", new_merchant_path, class: "btn btn-secondary" %>
+            <%= link_to "Add a business", new_merchant_path, class: "btn btn-secondary btn-sm" %>
         </div>
     </div>
 </div>

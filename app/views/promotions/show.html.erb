@@ -17,7 +17,7 @@
       </strong>
       
       <div class="text-center">
-        <div><h4><%= number_to_currency(@promotion.value_dollars) %></h4></div>
+        <div><h4><%= number_to_currency(@promotion.price(:dollars)) %></h4></div>
         <%= link_to "Buy Now", "#", class: "btn btn-primary" %>
       </div>
       <div>

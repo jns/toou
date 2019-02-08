@@ -31,10 +31,11 @@ Rails.application.routes.draw do
   get 'admin/restricted', to: 'admin#restricted'
   
   get 'merchants/login', to: 'merchants#login'
+  post 'merchants/login', to: 'merchants#login'
   get 'merchants/logout', to: 'merchants#logout'
   get 'merchants/new_user', to: 'merchants#new_user'
   post 'merchants/new_user', to: 'merchants#new_user'
-  post 'merchants/authenticate', to: 'merchants#authenticate'
+  get 'merchants/enroll', to: 'merchants#enroll'
   resources :merchants
   
   # Example of regular route:

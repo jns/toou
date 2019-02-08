@@ -27,18 +27,21 @@ class MerchantsController < ApplicationController
     end
     
     def login
-        @user = User.new
-    end
-    
-    def authenticate
-        user_params = params.require(:user).permit(:username, :password)
-        user = User.find_by(username: user_params[:username]) 
-        if user and user.authenticate(user_params[:password])
-            set_user(user)
-        else
-            flash[:notice] = "Invalid login credentials"
+        if request.get?
+            @user = User.new
+            render 'login'
+        elsif request.post?
+            user_params = params.require(:user).permit(:username, :password)
+            user = User.find_by(username: user_params[:username]) 
+            if user and user.authenticate(user_params[:password])
+                flash[:notice] = ""
+                set_user(user)
+                redirect_to action: "index" 
+            else
+                flash[:notice] = "Invalid login credentials"
+                render 'login', status: :unauthorized
+            end       
         end
-        redirect_to action: "index"
     end
     
     def logout
@@ -59,18 +62,23 @@ class MerchantsController < ApplicationController
         redirect_to action: "index"
     end
     
+    def show
+       set_merchant 
+    end
+    
     # GET enrolls a new merchant with stripe
     def enroll
         state, code = params.require([:state, :code])
         merchant = Merchant.find(state)
         unless merchant
-            redirect_to merchants_url
+            render status: :bad_request
         end
         
         cmd = EnrollStripeConnectedAccount.call(merchant, code)
         if cmd.success?
-            redirect_to action: 'dashboard'
+            redirect_to action: 'index'
         else
+            flash[:notice] = cmd.errors(:enrollment_error)
             redirect_to merchants_url
         end
     
@@ -89,5 +97,9 @@ class MerchantsController < ApplicationController
                 @current_user = nil
             end
         end
+    end
+    
+    def set_merchant
+        @merchant = Merchant.find(params[:id]) 
     end
 end

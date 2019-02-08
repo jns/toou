@@ -59,15 +59,15 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
       t.string :website
       t.string :phone_number
       t.string :stripe_id
-      t.integer :user_id
+      t.belongs_to :user, index: true
       
       t.timestamps
     end
     
     # Merchants agree to redeem products at a given price
     create_table :merchant_products do |t|
-      t.integer :merchant_id
-      t.integer :product_id
+      t.belongs_to :merchant, index: true
+      t.belongs_to :product, index: true
       t.integer :price_cents
 
       t.timestamps
@@ -80,7 +80,7 @@ class CreateProductsMerchantsPromotions < ActiveRecord::Migration[5.2]
       t.string :city 
       t.string :state 
       t.string :zip 
-      t.integer :merchant_id 
+      t.belongs_to :merchant, index: true
       t.float :latitude
       t.float :longitude
       

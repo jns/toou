@@ -1,0 +1,31 @@
+
+<div class="container">
+    
+    <div class="row">
+        <div class="col">Name</div>
+        <div class="col">
+            <%= @merchant.name %>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">Website</div>
+        <div class="col">
+            <%= link_to @merchant.website, @merchant.website %>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">Phone Number</div>
+        <div class="col">
+            <%=  @merchant.phone_number %>
+        </div>
+    </div>
+    
+</div>
+
+<div class="products">
+    <table class="table">
+        
+    </table>
+</div>

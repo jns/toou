@@ -51,11 +51,12 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.string "city"
     t.string "state"
     t.string "zip"
-    t.integer "merchant_id"
+    t.bigint "merchant_id"
     t.float "latitude"
     t.float "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["merchant_id"], name: "index_locations_on_merchant_id"
   end
 
   create_table "logs", force: :cascade do |t|
@@ -68,11 +69,13 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
   end
 
   create_table "merchant_products", force: :cascade do |t|
-    t.integer "merchant_id"
-    t.integer "product_id"
+    t.bigint "merchant_id"
+    t.bigint "product_id"
     t.integer "price_cents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["merchant_id"], name: "index_merchant_products_on_merchant_id"
+    t.index ["product_id"], name: "index_merchant_products_on_product_id"
   end
 
   create_table "merchants", force: :cascade do |t|
@@ -80,9 +83,10 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.string "website"
     t.string "phone_number"
     t.string "stripe_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_merchants_on_user_id"
   end
 
   create_table "orders", force: :cascade do |t|

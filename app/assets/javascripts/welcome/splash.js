@@ -12,6 +12,10 @@ var Splash = (function() {
         Breadcrumb.hide();    
     };
     
+    var onupdate = function() {
+        Breadcrumb.hide();
+    }
+    
     var view = function() {
         return m(".container-fluid", [
             m(".row", [
@@ -43,5 +47,5 @@ var Splash = (function() {
             ]);
     };
     
-    return {view: view};
+    return {view: view, oninit: oninit, onupdate: onupdate};
 })();
