@@ -13,7 +13,15 @@ var stripeConnect = function(event) {
 
 };
 
+var setCrumb = function() {
+    if (window.location.pathname === '/merchants') {
+        Breadcrumb.home();   
+    } else {
+        Breadcrumb.show("Back", "/merchants");
+    }
+}
+
 $(document).on("turbolinks:load", function() {
-    Breadcrumb.home();   
     $('.stripe-connect').click(stripeConnect);
+    setCrumb();
 });

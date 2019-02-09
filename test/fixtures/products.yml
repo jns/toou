@@ -3,7 +3,9 @@
 beer:
   name: Beer 
   max_price_cents: 800 
+  icon: beer.jpg
 
 cupcake:
   name: Cupcake 
   max_price_cents: 500 
+  icon: cupcak.jpg

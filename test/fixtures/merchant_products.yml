@@ -1,6 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-qauntum_beer:
+quantum_beer:
   merchant: quantum 
   product: beer 
   price_cents: 675 

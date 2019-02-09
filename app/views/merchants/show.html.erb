@@ -24,8 +24,26 @@
     
 </div>
 
-<div class="products">
+<div class="container content-width products mt-5">
+    <h5>Products</h5>
     <table class="table">
-        
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Max Price</th>
+        </tr>
+        <% @merchant.products.each do |p| %>
+        <tr>
+            <td>
+                <%= p.name %>
+            </td>
+            <td>
+                <%= number_to_currency(p.price(:dollars,@merchant)) %>
+            </td>
+            <td>
+                <%= number_to_currency(p.price(:dollars)) %>
+            </td>
+        </tr>
+        <% end %>
     </table>
 </div>

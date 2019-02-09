@@ -6,4 +6,5 @@ class MerchantTest < ActiveSupport::TestCase
     refute_equal 0, merchants(:quantum).products.size
   end
 
+
 end
