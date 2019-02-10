@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get 'howitworks', to: 'welcome#howitworks'
   get 'send_gifts', to: 'welcome#send_gifts'
   get 'passes', to: 'welcome#passes'
+  get 'pass/:serial_number', to: 'welcome#pass'
   
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'

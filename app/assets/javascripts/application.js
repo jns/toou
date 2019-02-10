@@ -17,4 +17,48 @@
 //= require turbolinks
 //= require breadcrumb
 //= require modal
+//= require_tree .
+
+/* global $ */
+
+$(document).on("turbolinks:load", function() {
+    // var root = document.getElementById('mithril_root');
+    // m.route(root, "/", {
+    //     "/": Splash,
+    //     "/login": Login,
+    //     "/otp": OneTimePasscode,
+    //     "/passes": Passes,
+    //     "/promos": Promos,
+    //     });
+    
+    var path = window.location.pathname;
+    if (path === "/send_gifts") {
+        SendGifts.mount();
+        Breadcrumb.home();
+    }
+    
+    if (path === "/") {
+        Splash.mount();
+        Breadcrumb.hide();
+    }
+    
+    if (path === "/passes") {
+        Passes.mount();
+        Breadcrumb.home();
+    }
+    
+    if (path === "/merchants") {
+        Breadcrumb.home();
+        $('.stripe-connect').click(stripeConnect);
+    }
+    
+    if (path.match(/\/merchants\/\d+/)) {
+        Breadcrumb.show("Back", "/merchants");
+    }
+    
+    if (path.match(/\/pass\/.{30}/)) {
+        Breadcrumb.show("Passes", "/passes");
+    }
+    
+});
 

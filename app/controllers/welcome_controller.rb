@@ -21,4 +21,9 @@ class WelcomeController < ApplicationController
     # View passes
     def passes
     end
+    
+    # View a specific pass
+    def pass
+        @pass = Pass.find_by(serialNumber: params.require([:serial_number]))
+    end
 end

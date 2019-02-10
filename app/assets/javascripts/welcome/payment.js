@@ -1,4 +1,4 @@
-/* global $, m, Stripe, Credentials */
+/* global $, m, Stripe, Credentials, Modal */
 
 var Payment = (function() {
     

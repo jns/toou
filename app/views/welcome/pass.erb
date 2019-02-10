@@ -1,0 +1,21 @@
+
+<div class="card">
+    <div class="card-body">
+        <div class="product float-right" style="width: 75px; height: 75px;">
+            <div class="product-icon <%= @pass.buyable.icon %>"></div>
+        </div>
+        <div class="card-text pass-from">
+            From <%= @pass.purchaser.phone_number %>
+        </div>
+        <div class="card-text pass-message">
+            <%= @pass.message %>
+        </div>
+        <div class="card-text">
+            Good for <%= @pass.buyable.name %>
+        </div>
+        
+        <div class="barcode">
+            <%= barcode_for @pass %>
+        </div>
+    </div>
+</div>

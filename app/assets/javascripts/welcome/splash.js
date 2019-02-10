@@ -32,6 +32,7 @@ var Home = (function() {
 var Splash = (function() {
     
     var mount = function() {
+        Breadcrumb.hide();
        return m.mount($('#splash')[0], Home);
     }
     

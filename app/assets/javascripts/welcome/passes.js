@@ -25,9 +25,15 @@ var PassesComponent = (function() {
         });
     };
     
+    var showPass = function(ev) {
+        var pass_sn = $(ev.target.closest(".pass")).data('pass-serial-number');
+        window.location.pathname = "/pass/"+pass_sn;  
+    };
+    
     var addPassCard = function(pass) { 
-        return m(".card.pass", {key: pass.serialNumber}, [
+        return m(".card.pass", {key: pass.serialNumber, onclick: showPass, "data-pass-serial-number": pass.serialNumber }, [
                 m(".card-body.card-text",[
+                    m(".pass-product", "Good for one " + pass.buyable.name),
                     m(".pass-from", "From " + pass.purchaser.phone_number),
                     m(".pass-message", pass.message),
                     ])

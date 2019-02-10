@@ -53,6 +53,9 @@ gem 'stripe', '3.17.0'
 # Use pundit for authorization policies
 gem 'pundit', '~> 2.0.1'
 
+# Use barby for barcode generation
+gem 'barby'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

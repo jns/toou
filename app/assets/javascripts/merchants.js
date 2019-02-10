@@ -10,18 +10,5 @@ var stripeConnect = function(event) {
         stripe_connect_url += "&state="+merchant_id;
         window.location = stripe_connect_url;
     }
-
 };
 
-var setCrumb = function() {
-    if (window.location.pathname === '/merchants') {
-        Breadcrumb.home();   
-    } else {
-        Breadcrumb.show("Back", "/merchants");
-    }
-}
-
-$(document).on("turbolinks:load", function() {
-    $('.stripe-connect').click(stripeConnect);
-    setCrumb();
-});
