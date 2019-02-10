@@ -1,41 +1,20 @@
-/* global m, Breadcrumb */
+/* global $, m, Breadcrumb */
 
-var Splash = (function() {
-    
-    var state_value = "";
-    var redirect_uri = "https://" + window.location.hostname + "/#!/merchant";
-    
-    var client_id = "ca_EPUvudB7OLfL6IQbqmlFprVhyOu5xTIi";
-    var stripe_oath_endpoint = "https://connect.stripe.com/express/oauth/authorize?client_id=" + client_id;
-    
-    var oninit = function() {
-        Breadcrumb.hide();    
-    };
-    
-    var onupdate = function() {
-        Breadcrumb.hide();
-    }
+var Home = (function() {
     
     var view = function() {
         return m(".container-fluid", [
             m(".row", [
                 m(".col.text-center.mt-3", [
-                    m("a[href='/promos']", {oncreate: m.route.link}, [
+                    m("a[href='/send_gifts']", [
                         m(".buy-graphic"),
                         m("span.regular-20pt.darkgray", "Treat Someone")
                         ])
                     ])
                 ]),
-            // m(".row", [
-            //     m(".col.text-center", [
-            //         m("a[href='/promos']", {oncreate: m.route.link}, [
-            //             m("div[id=HandGlass]")
-            //             ])
-            //         ])
-            //     ]),
             m(".row", [
                 m(".col.text-center.mt-3", [
-                    m("a[href='/passes']", {oncreate: m.route.link}, [
+                    m("a[href='/passes']", [
                         m(".drink-graphic"),
                         m("span.regular-20pt.darkgray", "My Drink Passes")
                         ])
@@ -47,5 +26,14 @@ var Splash = (function() {
             ]);
     };
     
-    return {view: view, oninit: oninit, onupdate: onupdate};
+    return {view: view};
+})();
+
+var Splash = (function() {
+    
+    var mount = function() {
+       return m.mount($('#splash')[0], Home);
+    }
+    
+    return {mount: mount};
 })();

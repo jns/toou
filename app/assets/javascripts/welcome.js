@@ -16,6 +16,17 @@ $(document).on("turbolinks:load", function() {
     var path = window.location.pathname;
     if (path === "/send_gifts") {
         SendGifts.mount();
+        Breadcrumb.home();
+    }
+    
+    if (path === "/") {
+        Splash.mount();
+        Breadcrumb.hide();
+    }
+    
+    if (path === "/passes") {
+        Passes.mount();
+        Breadcrumb.home();
     }
     
 });

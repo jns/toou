@@ -16,6 +16,9 @@ class WelcomeController < ApplicationController
     
     # Send Gifts
     def send_gifts
-        @products = Product.all
+    end
+    
+    # View passes
+    def passes
     end
 end

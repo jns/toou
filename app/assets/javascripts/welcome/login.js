@@ -1,4 +1,4 @@
-/* global m, $, Credentials */
+/* global m, $, Credentials, Modal, OneTimePasscode */
 
 var Login = (function() {
     
@@ -13,7 +13,7 @@ var Login = (function() {
         }).then(function(data) {
             console.log(data);
             Credentials.setPhoneNumber(phone_number);
-            m.route.set("/otp");
+            Modal.setBody(OneTimePasscode);
         }).catch(function(e) {
             feedback = JSON.parse(e.message).error + " Please try again.";
             $(".feedback").addClass("invalid-feedback");

@@ -11,7 +11,7 @@ var OneTimePasscode = (function() {
             data: {phone_number: phone_number, pass_code: passcode},
         }).then(function(data) {
             Credentials.setToken(data["auth_token"]);
-            m.route.set("/passes");
+            Modal.dismiss();
         }).catch(function(e) {
             console.log(e.message);
         });

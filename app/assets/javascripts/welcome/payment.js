@@ -59,9 +59,11 @@ var Payment = (function() {
     };
     
     var completePurchase = function() {
-        $('#modal').modal('show');
-        $('#modal').on('hidden.bs.modal',function(e) { 
-            console.log("Closed Modal");
+        Modal.setTitle("Thanks");
+        Modal.setBody("We've sent a text");
+        Modal.setDismissalButton("Ok");
+        Modal.show(function() {
+            window.location.pathname = "/"; 
         });
     };
     

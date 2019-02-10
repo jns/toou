@@ -19,7 +19,7 @@ var Breadcrumb = (function() {
     
     var setCrumb = function(text, href) {
         $('#nav-breadcrumb-text').text(text);  
-        $('a.nav-breadcrumb').attr("href", href);
+        $('a.nav-breadcrumb').attr("href", href).data("turbolinks-action", "replace");
     }; 
     
     return {hide: hide, show: show, setCrumb: setCrumb, home: home};

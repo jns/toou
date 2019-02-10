@@ -16,4 +16,5 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require breadcrumb
+//= require modal
 

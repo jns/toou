@@ -1,13 +1,12 @@
-/* global m, Credentials */
-var Passes = (function() { 
+/* global m, $, Credentials */
+var PassesComponent = (function() { 
     
     var passList = []
     
-    var contents = "No Passes";
+    var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         
     var oninit = function() {
-        Breadcrumb.home();
-        contents = "Loading Passes";
+        contents = m(".text-center.h4", "Loading Passes...");
         return m.request({
             method: "POST",
             url: "api/passes",
@@ -15,8 +14,14 @@ var Passes = (function() {
             headers: Credentials.getAuthHeader(),
         }).then(function(data) {
             passList = data;
+            if (passList.length === 0) {
+                contents =  m(".text-center.h4", "Sorry, You don't have any passes.");
+            }
         }).catch(function(e) {
-            m.route.set("/login");
+            Modal.setTitle("Please Login To Access Your Passes");
+            Modal.setBody(Login);
+            Modal.setDismissalButton("Not Now");
+            Modal.show(oninit);
         });
     };
     
@@ -32,11 +37,16 @@ var Passes = (function() {
     var view = function() {
         if (passList.length > 0) {
             contents = passList.map(function(p) {return addPassCard(p);});
-        } else {
-            contents = m(".text-center.h4", "Sorry, You don't have any passes.")
         }
         return m(".container", contents);
     };
     
     return {view: view, oninit: oninit};
+})();
+
+var Passes = (function() {
+    var mount = function() {
+        m.mount($(".pass-list")[0], PassesComponent);
+    }
+    return {mount: mount};
 })();
