@@ -34,10 +34,10 @@ class PlaceOrder
                   # This will format the phone number
                   create_pass(PhoneNumber.new(r).to_s)
                 }
+                # Charge and notify if order and passes are successfully created
+                charge(@recipients.size * @buyable.price(:cents))
             end
             
-            # Charge and notify if order and passes are successfully created
-            charge(@recipients.size * @buyable.price(:cents))
             @order.passes.each do |pass|
                 PassNotificationJob.perform_later(pass.id)
             end
@@ -45,7 +45,7 @@ class PlaceOrder
             return @order
         rescue Stripe::StripeError => e
           m = "Error creating charge: #{e.message}"
-          Log.create(log_type: Log::ERROR, context: "PaymentsController#charge", current_user: @account.id, message: m)
+          Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
           errors.add(:stripe_error, m)
         rescue Exception => e
             message = "Error creating order: #{e.message}"

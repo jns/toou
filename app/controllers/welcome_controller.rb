@@ -14,4 +14,8 @@ class WelcomeController < ApplicationController
     def howitworks
     end
     
+    # Send Gifts
+    def send_gifts
+        @products = Product.all
+    end
 end

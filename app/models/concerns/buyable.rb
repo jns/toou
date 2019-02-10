@@ -9,13 +9,13 @@ module Buyable
         
         factor = case units
         when :cents
-            1.0
+            1
         when :dollars
             100.0
         end
         
         if self.method(:price_cents).arity === 0
-            price_cents/factor
+            (price_cents/factor).to_i
         else
             price_cents(merchant)/factor
         end

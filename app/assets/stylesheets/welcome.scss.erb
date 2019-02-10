@@ -5,6 +5,53 @@
 
 @import 'colors';
 
+.product-list-label {
+  text-align: center;
+}
+
+.product-list {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.product {
+  width: 100px;
+  height: 100px;
+  padding: 8px 8px 8px 8px;
+  margin: 8px 8px 8px 8px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 50% 50%;
+  background: darkgray;
+  color: white;
+}
+
+.product.selected {
+  background: indianred;
+}
+
+.product-name {
+
+}
+
+.porduct-price.selected {
+  color: indianred;
+}
+
+.product-price {
+  color: white;
+  font-size: 8pt;
+}
+
+.product-icon.beer {
+  width: 50px;
+  height: 50px;
+  mask: url(<%= asset_path 'product_images/beer-icon.png' %>);
+  background-color: white;
+  margin: 0 auto;
+}
+
+
 
 #HandGlass {
     width: 100%;
