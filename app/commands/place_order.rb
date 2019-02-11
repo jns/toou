@@ -35,7 +35,7 @@ class PlaceOrder
                   create_pass(PhoneNumber.new(r).to_s)
                 }
                 # Charge and notify if order and passes are successfully created
-                charge(@recipients.size * @buyable.price(:cents))
+                charge(@recipients.size,  @buyable.price(:cents))
             end
             
             @order.passes.each do |pass|
@@ -54,26 +54,25 @@ class PlaceOrder
         end
     end
     
-    def charge(amount)
+    def charge(qty, unit_price)
         
         customer = @@customer_client.retrieve @account.stripe_customer_id
         unless customer.sources.member? @payment_source
             @payment_source = customer.sources.create(source: @payment_source)
         end
         
-        Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charging account for order #{@order.id}")
+        Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charging fee for order #{@order.id}")
         # Create the charge on Stripe's servers - this will charge the user's card
         @@charge_client.create(
-            :amount => amount, # this number should be in cents
+            :amount => qty*100, # this number should be in cents
             :currency => "usd",
             :customer => @account.stripe_customer_id,
             :source => @payment_source,
-            :description => "Example Charge",
+            :description => "TooU Fee",
             :capture => true, 
             :metadata => {
                 :order_id => @order.id
         })  
-
     end
     
     def create_pass(recipient_phone) 

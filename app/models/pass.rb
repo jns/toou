@@ -1,5 +1,7 @@
 class Pass < ActiveRecord::Base
     
+    attr_readonly :serialNumber, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable
+    
     USED = "USED"
     EXPIRED = "EXPIRED"
     VALID = "VALID"
@@ -23,11 +25,6 @@ class Pass < ActiveRecord::Base
     # Passes must be part of an order
     validates_presence_of :order
     
-    # Passes cannot be updated after creation
-    before_update do 
-        throw "Passes cannot be updated"
-    end
-    
     def purchaser
        order.account 
     end
@@ -40,6 +37,10 @@ class Pass < ActiveRecord::Base
        else
            return VALID
        end
+    end
+    
+    def can_redeem?
+       status === VALID 
     end
     
     def expired? 

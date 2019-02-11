@@ -3,7 +3,7 @@
 class AccountHistoryTest < ActiveSupport::TestCase
 
     def setup()
-       @acct = Account.find(2) 
+       @acct = accounts(:pete) 
     end
 
     # Account 1 has 2 orders and 1 pass

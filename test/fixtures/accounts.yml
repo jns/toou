@@ -23,3 +23,27 @@ notifiable:
 not_notifiable:
   id: 5
   phone_number: "+16263983837"
+
+new_person_1:
+  phone_number: "+15555551212"
+  stripe_customer_id: np_1
+  
+new_person_2:
+  phone_number: "+15555551213"
+  stripe_customer_id: np_2
+
+cupcake_lover:
+  phone_number: "+15555551214"
+  stripe_customer_id: np_3
+
+cupcake_lovers_friend:
+  phone_number: "+15555551215"
+  stripe_customer_id: np_4
+
+beer_lover:
+  phone_number: "+15555551215"
+  stripe_customer_id: np_5
+
+beer_lovers_friend:
+  phone_number: "+15555551216"
+  stripe_customer_id: np_6

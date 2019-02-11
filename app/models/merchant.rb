@@ -5,5 +5,7 @@ class Merchant < ApplicationRecord
     has_many :merchant_products
     has_many :products, through: :merchant_products
     
-    
+    def can_redeem?(pass)
+       products.member?(pass.buyable) 
+    end
 end

@@ -2,10 +2,10 @@
 
 beer:
   name: Beer 
-  max_price_cents: 800 
-  icon: beer.jpg
+  max_price_cents: 1000 
+  icon: beer
 
 cupcake:
   name: Cupcake 
   max_price_cents: 500 
-  icon: cupcak.jpg
+  icon: cupcake

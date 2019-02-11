@@ -47,3 +47,45 @@ abc126:
   message: This pass has an emoji 👍
   buyable_id: 1
   buyable_type: Promotion
+
+redeemable_pass:
+  serialNumber: redeemable
+  account: new_person_2
+  order: redeemable_order
+  created_at: 2019-01-01 00:00:00
+  expiration: 2025-01-01 00:00:00
+  passTypeIdentifier: pass.com.toou
+  message: This pass has an emoji 👍
+  buyable: beer (Product)
+  
+redeemable_cupcake:
+  serialNumber: redeemablecupcake
+  account: cupcake_lover
+  order: order_for_cupcake_lover
+  created_at: 2019-01-01 00:00:00
+  expiration: 2025-01-01 00:00:00
+  passTypeIdentifier: pass.com.toou
+  message: Have a cupcake
+  buyable: cupcake (Product)
+  
+expired_beer:
+  serialNumber: expiredbeerpass
+  account: beer_lover
+  order: expired_order_for_beer_lover
+  created_at: 2018-01-01 00:00:00
+  expiration: 2018-01-10 00:00:00
+  passTypeIdentifier: pass.com.toou
+  message: Have a beer
+  buyable: beer (Product)
+
+used_beer_pass:
+  serialNumber: usedbeerpass
+  account: beer_lover
+  order: used_order_for_beer_lover
+  created_at: 2019-01-01 00:00:00
+  expiration: 2025-01-01 00:00:00
+  passTypeIdentifier: pass.com.toou
+  message: This pass was used
+  buyable: beer (Product)
+  proof_of_purchase: transaction12345
+  

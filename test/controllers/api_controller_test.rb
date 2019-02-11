@@ -275,4 +275,20 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
   
+  test "Merchant can redeem a pass" do
+    pass = passes(:redeemable_pass)
+    merchant = merchants(:quantum)
+    payload = {merchant_id: merchant.id}
+    token = JsonWebToken.encode(payload)
+    
+    post "/api/redeem", params: {authorization: token, pass: {serial_number: pass.serialNumber}}
+    assert_response :ok
+    
+    pass = Pass.find(pass.id)
+    assert pass.used?
+  end
+  
+  test "Redeem a used pass returns bad request" do
+    # A used pass should return a bad request
+  end
 end

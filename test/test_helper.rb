@@ -47,4 +47,5 @@ class ActiveSupport::TestCase
   CreateStripeCustomerJob.client = MockStripeCustomer
   PlaceOrder.charge_client = MockStripeCharge
   PlaceOrder.customer_client = MockStripeCustomer
+  CaptureOrder.charge_client = MockStripeCharge
 end

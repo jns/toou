@@ -14,4 +14,7 @@ class InvalidPass
         return InvalidRecipient.new
     end
     
+    def buyable
+       return InvalidProduct.new 
+    end
 end
