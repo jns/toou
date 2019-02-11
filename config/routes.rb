@@ -40,7 +40,12 @@ Rails.application.routes.draw do
   get 'merchants/new_user', to: 'merchants#new_user'
   post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
-  resources :merchants
+  
+  resources :merchants do
+    member do
+      get 'stripe_dashboard_link'
+    end
+  end
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

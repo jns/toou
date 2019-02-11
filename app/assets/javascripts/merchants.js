@@ -12,3 +12,18 @@ var stripeConnect = function(event) {
     }
 };
 
+var stripeDashboard = function(event) {
+    var merchant_id = $(event.currentTarget).data('merchant-id');
+    if (typeof merchant_id != undefined && merchant_id !== null) {
+        fetch("https://toou-shapiroj.c9users.io/merchants/"+merchant_id+"/stripe_dashboard_link")
+        .then(function(response) {
+            if (response.ok) {
+                var data = response.json();
+                return data;
+            }
+        })
+        .then(function(data) {
+            window.location = data.url;
+        });
+    }
+}

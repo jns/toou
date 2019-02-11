@@ -50,6 +50,7 @@ $(document).on("turbolinks:load", function() {
     if (path === "/merchants") {
         Breadcrumb.home();
         $('.stripe-connect').click(stripeConnect);
+        $('.stripe-dashboard-link').click(stripeDashboard);
     }
     
     if (path.match(/\/merchants\/\d+/)) {

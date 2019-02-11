@@ -84,6 +84,21 @@ class MerchantsController < ApplicationController
     
     end
     
+    def stripe_dashboard_link 
+        begin
+            m = Merchant.find(params["id"])
+            if m.stripe_id
+                account = Stripe::Account.retrieve(m.stripe_id)
+                links = account.login_links.create()
+                render json: links, status: :ok
+            else
+               render json: {error: "Merchant is not enrolled in Stripe"}, status: :bad_request 
+            end
+        rescue
+            render json: {error: "Merchant Not Found"}, status: :not_found
+        end
+    end
+    
     private
     
     def set_user(user = nil)
