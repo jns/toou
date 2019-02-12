@@ -32,33 +32,25 @@ $(document).on("turbolinks:load", function() {
     //     });
     
     var path = window.location.pathname;
+    
     if (path === "/send_gifts") {
         SendGifts.mount();
         Breadcrumb.home();
-    }
-    
-    if (path === "/") {
+    } else if (path === "/") {
         Splash.mount();
         Breadcrumb.hide();
-    }
-    
-    if (path === "/passes") {
+    } else if (path === "/passes") {
         Passes.mount();
         Breadcrumb.home();
-    }
-    
-    if (path === "/merchants") {
+    } else if (path === "/merchants") {
+        Merchants.mount();
         Breadcrumb.home();
-        $('.stripe-connect').click(stripeConnect);
-        $('.stripe-dashboard-link').click(stripeDashboard);
-    }
-    
-    if (path.match(/\/merchants\/\d+/)) {
+    } else if (path.match(/\/merchants\/\d+/)) {
         Breadcrumb.show("Back", "/merchants");
-    }
-    
-    if (path.match(/\/pass\/.{30}/)) {
+    } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
+    } else {
+        Breadcrumb.home();
     }
     
 });

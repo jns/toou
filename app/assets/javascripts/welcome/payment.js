@@ -3,15 +3,15 @@
 var Payment = (function() {
     
     var stripe = Stripe('pk_test_0H9zeU0MikaqcvxovYGpV1pp');
+    var toou_fee = 100; // $1 to send
     
     var createPaymentRequest = function(buyable) {
-        console.log("Creating payment request for " + buyable.name);
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
           total: {
             label: buyable.name,
-            amount: buyable.max_price_cents,
+            amount: buyable.max_price_cents + toou_fee,
           },
           requestPayerName: true,
           requestPayerEmail: true,
