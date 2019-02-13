@@ -28,9 +28,9 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     end
     
     test "Send an order to multiple recipients succeeds" do
-        @account = Account.find(3)
+        @account = accounts(:three)
     
-        toaccounts = Account.all
+        toaccounts = [accounts(:josh), accounts(:pete), accounts(:three)]
     
         # Build the recipient array
         @recipients = toaccounts.collect{|a| a.phone_number}

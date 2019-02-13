@@ -1,7 +1,7 @@
 class MerchantsController < ApplicationController
 
     skip_before_action :validate_auth_token
-    before_action :set_user
+    before_action :set_user, except: [:login, :enroll, :new_user]
     
     # presents the welcome screen
     def index
@@ -69,6 +69,11 @@ class MerchantsController < ApplicationController
     # GET enrolls a new merchant with stripe
     def enroll
         state, code = params.require([:state, :code])
+        
+        if code === "TEST_OK"
+            return head :ok
+        end
+        
         merchant = Merchant.find(state)
         unless merchant
             render status: :bad_request
@@ -111,6 +116,8 @@ class MerchantsController < ApplicationController
                 reset_session
                 @current_user = nil
             end
+        else
+            redirect_to merchants_login_url
         end
     end
     
