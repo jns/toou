@@ -6,15 +6,16 @@ class MerchantsController < ApplicationController
     # presents the welcome screen
     def index
         if @current_user
-            @merchants = Merchant.where(user: @current_user)
+            authorize Merchant
+            @merchants = policy_scope(Merchant)
             render 'dashboard'
         else
-            @user = User.new
-            render 'login'
+            redirect_to action: 'login'
         end
     end
     
     def new_user
+        authorize User, :new?
         if request.get?
             @new_user = User.new
         elsif request.post? 
@@ -27,6 +28,7 @@ class MerchantsController < ApplicationController
     end
     
     def login
+        authorize User
         if request.get?
             @user = User.new
             render 'login'
@@ -50,11 +52,13 @@ class MerchantsController < ApplicationController
     end
     
     def new
+        authorize Merchant
        @merchant = Merchant.new
     end
     
     # POST creates a new merchant with data from the form
     def create
+        authorize Merchant
         merchant_params = params.require(:merchant).permit(:name, :website, :phone_number)
         @merchant = Merchant.create(merchant_params)
         @merchant.user = @current_user
@@ -63,11 +67,13 @@ class MerchantsController < ApplicationController
     end
     
     def show
-       set_merchant 
+       set_merchant
+       authorize @merchant
     end
     
     # GET enrolls a new merchant with stripe
     def enroll
+        authorize Merchant
         state, code = params.require([:state, :code])
         
         if code === "TEST_OK"
@@ -92,6 +98,7 @@ class MerchantsController < ApplicationController
     def stripe_dashboard_link 
         begin
             m = Merchant.find(params["id"])
+            authorize m
             if m.stripe_id
                 account = Stripe::Account.retrieve(m.stripe_id)
                 links = account.login_links.create()

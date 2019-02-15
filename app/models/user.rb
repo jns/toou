@@ -1,4 +1,12 @@
 class User < ApplicationRecord
     has_secure_password
     has_and_belongs_to_many :roles
+    
+    def admin?
+       roles.member?(Role.admin) 
+    end
+    
+    def merchant?
+       roles.member?(Role.merchant) 
+    end
 end

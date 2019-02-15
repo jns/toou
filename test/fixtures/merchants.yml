@@ -3,5 +3,10 @@
 quantum:
   name: Quantum
   stripe_id: stripeid12345
+  user: quantum_user
   
+cupcake_store:
+  name: Cupcake Store
+  stripe_id: stripeid54321
+  user: cupcake_user
   

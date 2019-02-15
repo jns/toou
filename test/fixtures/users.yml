@@ -7,3 +7,7 @@ quantum_user:
 admin_user:
   username: admin_user
   roles: admin_role
+  
+cupcake_user:
+  username: cupcake_user
+  roles: merchant_role
