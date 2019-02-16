@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_04_004422) do
+ActiveRecord::Schema.define(version: 2019_02_16_231122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,16 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "charges", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "merchant_id"
+    t.integer "source_amount_cents"
+    t.integer "destination_amount_cents"
+    t.string "stripe_id"
+    t.index ["account_id"], name: "index_charges_on_account_id"
+    t.index ["merchant_id"], name: "index_charges_on_merchant_id"
   end
 
   create_table "countries", force: :cascade do |t|
@@ -104,11 +114,12 @@ ActiveRecord::Schema.define(version: 2019_02_04_004422) do
     t.integer "account_id"
     t.string "message"
     t.integer "order_id"
-    t.string "proof_of_purchase"
     t.string "redemption_code"
     t.integer "buyable_id"
     t.string "buyable_type"
+    t.bigint "charge_id"
     t.index ["account_id"], name: "index_passes_on_account_id"
+    t.index ["charge_id"], name: "index_passes_on_charge_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
   end
 

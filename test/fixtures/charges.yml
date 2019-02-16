@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+beer_lover_charge:
+  account: new_person_1
+  merchant: quantum
+  source_amount_cents: 700 
+  destination_amount_cents: 650
+  stripe_id: charge1234
+
