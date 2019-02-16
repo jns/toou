@@ -87,5 +87,5 @@ used_beer_pass:
   passTypeIdentifier: pass.com.toou
   message: This pass was used
   buyable: beer (Product)
-  proof_of_purchase: transaction12345
+  charge: beer_lover_charge
   

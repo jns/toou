@@ -1,6 +1,7 @@
 class Account < ActiveRecord::Base
     has_many :passes
     has_many :orders
+    has_many :charges
     
     before_save :format_phone_number
     after_create :generate_stripe_customer

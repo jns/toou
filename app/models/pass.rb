@@ -15,6 +15,9 @@ class Pass < ActiveRecord::Base
     # What was purchased
     belongs_to :buyable, polymorphic: true
     
+    # When a pass is used, a charge is created
+    belongs_to :charge
+    
     alias :recipient :account
     
     # Assign a serial number and a credit card from the pool upon creation
@@ -52,7 +55,7 @@ class Pass < ActiveRecord::Base
     end
     
     def used?
-       return (self.proof_of_purchase != nil) 
+       return (self.charge != nil) 
     end
     
     def not_used?

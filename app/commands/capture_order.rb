@@ -34,8 +34,15 @@ class CaptureOrder
         end
         
         begin
-            response = charge(amount, sender, receiver, @merchant, @pass.order)
-            @pass.proof_of_purchase = response.id
+            dst_amount = amount
+            src_amount = amount + FEE_CENTS
+            response = charge(src_amount, dst_amount, sender, receiver, @merchant, @pass.order)
+            c = Charge.create(account: @pass.account, 
+                              merchant: @merchant, 
+                              stripe_id: response.id, 
+                              source_amount_cents: src_amount, 
+                              destination_amount_cents: dst_amount)
+            @pass.charge = c
             @pass.save
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
@@ -67,15 +74,15 @@ class CaptureOrder
     end
    
    
-    def charge(amount, sender, receiver, merchant, order)
+    def charge(src_amount, dst_amount, sender, receiver, merchant, order)
         Log.create(log_type: Log::INFO, context: "CaptureOrder#charge", current_user: receiver.id, message: "Capturing order for #{order.id}")
         @@charge_client.create(
-            :amount => amount + FEE_CENTS, # this number should be in cents
+            :amount => src_amount, # this number should be in cents
             :currency => "usd",
             :customer => sender.stripe_customer_id,
             :description => "TooU redeemed by #{receiver.phone_number}",
             :destination => {
-                :amount => amount,
+                :amount => dst_amount,
                 :account => merchant.stripe_id  
             },
             :metadata => {
