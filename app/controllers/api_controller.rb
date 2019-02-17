@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeem, :authenticate, :promotions, :products, :order]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeem, :authenticate, :promotions, :products, :order, :credits]
     
     # Returns active promotions
     def promotions
@@ -15,6 +15,15 @@ class ApiController < ApiBaseController
     def products
         @products = Product.all
         render 'products.json.jbuilder', status: :ok
+    end
+    
+    # Returns all credits for a merchant
+    def credits
+        authorization = params[:authorization]
+        decoded_auth_token = JsonWebToken.decode(authorization)
+        merchant_id = decoded_auth_token["merchant_id"] if decoded_auth_token
+        @charges = Merchant.find(merchant_id).charges
+        render 'charges.json.jbuilder', status: :ok
     end
     
     # Redeems a specific product
@@ -41,8 +50,6 @@ class ApiController < ApiBaseController
         rescue ActiveRecord::RecordNotFound => e
             render json: {error: "Not Authorized"}, status: :unauthorized
         end
-        
-        
     end
     
     # Delivers a one time passcode to the users mobile device 

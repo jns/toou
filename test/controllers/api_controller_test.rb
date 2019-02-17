@@ -288,7 +288,25 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert pass.used?
   end
   
-  test "Redeem a used pass returns bad request" do
-    # A used pass should return a bad request
+  test "Redeem a used pass returns bad request and generates no charge" do
+    pass = passes(:used_beer_pass)
+    merchant = merchants(:quantum)
+    payload = {merchant_id: merchant.id}
+    token = JsonWebToken.encode(payload)
+    
+    assert_no_difference 'Charge.count' do
+      post "/api/redeem", params: {authorization: token, pass: {serial_number: pass.serialNumber}}
+      assert_response :bad_request
+    end
+  end
+  
+  test "Merchant credits endpoint returns charges credited to merchant" do
+    merchant = merchants(:quantum)
+    payload = {merchant_id: merchant.id}
+    token = JsonWebToken.encode(payload)
+    post "/api/credits", params: {authorization: token}
+    assert_response :ok
+    credits = JSON.parse(response.body)
+    assert_equal 1, credits.size
   end
 end
