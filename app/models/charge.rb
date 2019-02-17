@@ -12,4 +12,12 @@ class Charge < ApplicationRecord
 		throw Exception.new("Charges are not editable")
 	end
 	
+	def source_amount_dollars
+		source_amount_cents/100.0
+	end
+	
+	def destination_amount_dollars
+		destination_amount_cents/100.0	
+	end
+	
 end

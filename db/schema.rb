@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(version: 2019_02_16_231122) do
     t.integer "source_amount_cents"
     t.integer "destination_amount_cents"
     t.string "stripe_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_charges_on_account_id"
     t.index ["merchant_id"], name: "index_charges_on_merchant_id"
   end

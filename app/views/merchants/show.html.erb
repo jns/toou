@@ -1,5 +1,5 @@
 
-<div class="container">
+<div class="container content-width">
     
     <div class="row">
         <div class="col">Name</div>
@@ -43,6 +43,22 @@
             <td>
                 <%= number_to_currency(p.price(:dollars)) %>
             </td>
+        </tr>
+        <% end %>
+    </table>
+</div>
+
+<div class="container content-width charges mt-5">
+    <h5>Credits</h5>
+    <table class="table">
+        <tr>
+            <th>Date</th>
+            <th>Amount</th>
+        </tr>
+        <% @merchant.charges.each do |c| %>
+        <tr>
+            <td><%= c.created_at.to_date.to_formatted_s(:short) %></td>
+            <td><%= number_to_currency(c.destination_amount_dollars) %></td>
         </tr>
         <% end %>
     </table>
