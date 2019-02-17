@@ -6,8 +6,10 @@ class Charge < ApplicationRecord
 	alias_attribute :destination, :merchant
 	belongs_to :merchant
 	
+	validates_presence_of :account, :merchant, :source_amount_cents, :destination_amount_cents, :stripe_id
+	
 	before_update do 
-		throw "Charges are not editable"
+		throw Exception.new("Charges are not editable")
 	end
 	
 end

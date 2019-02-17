@@ -11,9 +11,11 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:redeemable_pass)
 		refute pass.used?
 		
-		cmd = CaptureOrder.call(merchant, pass)
-		assert cmd.success?
-		assert Pass.find(pass.id).used?
+		assert_difference "Charge.count" do 
+			cmd = CaptureOrder.call(merchant, pass)
+			assert cmd.success?
+			assert Pass.find(pass.id).used?
+		end
 	end
 	
 	test "merchant cannot redeem product" do
