@@ -41,6 +41,7 @@ class Account < ActiveRecord::Base
     
     def generate_stripe_customer
         CreateStripeCustomerJob.perform_now(self.id)
+        reload
     end
     
 end

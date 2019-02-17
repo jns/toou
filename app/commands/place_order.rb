@@ -48,21 +48,30 @@ class PlaceOrder
             # Since it's a decline, Stripe::CardError will be caught
             body = e.json_body
             err  = body[:error]
-            errors.add(:stripe_card_error, err)
+            m = "Stripe Card Error: #{err}"
+            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
+            errors.add(:stripe_card_error, m)
         rescue Stripe::RateLimitError => e
             # Too many requests made to the API too quickly
+            m = "Stripe Rate Limit Error: #{e.message}"
+            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
             errors.add(:stripe_rate_limit_error, e.message)
         rescue Stripe::InvalidRequestError => e
             # Invalid parameters were supplied to Stripe's API
-            errors.add(:stripe_invalid_request_error, e.message)
+            m = "Stripe Invalid Request Error: #{e.message}"
+            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
+            errors.add(:stripe_invalid_request_error, m)
         rescue Stripe::AuthenticationError => e
             # Authentication with Stripe's API failed
             # (maybe you changed API keys recently)
-            errors.add(:stripe_authentication_error, "Stripe authentication error #{e.message}")
+            m = "Stripe Authentication Error: #{e.message}"
+            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
+            errors.add(:stripe_authentication_error, m)
         rescue Stripe::APIConnectionError => e
             # Network communication with Stripe failed
+            m = "Stripe API Connection Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_connect_error, "Stripe API Connection Error: #{e.message}")
+            errors.add(:stripe_connect_error, m)
         rescue Stripe::StripeError => e
             m = "Error creating charge: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
@@ -75,9 +84,6 @@ class PlaceOrder
     end
     
     def charge(qty, unit_price)
-        
-        # Create a stripe customer unless the id is set
-        CreateStripeCustomerJob.perform_now(@account.id) unless @account.stripe_customer_id
         
         customer = @@customer_client.retrieve @account.stripe_customer_id
         unless customer.sources.member? @payment_source
