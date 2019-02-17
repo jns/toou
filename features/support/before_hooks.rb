@@ -8,10 +8,11 @@ Before do
     Rails.application.load_seed
     @people = []
     @beer = Product.find_or_create_by(name: "Beer")
-    
     Account.destroy_all
     Order.destroy_all
     Pass.destroy_all
+    
+    @admin_account = Account.find_or_create_by(phone_number: "+10000000000")
     
     FakeSMS.messages.clear
     MessageSender.client = FakeSMS

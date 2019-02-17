@@ -131,7 +131,11 @@ class ApiController < ApiBaseController
         # Find or generate an account
         acct = Account.search_by_phone_number(phone) || 
                 Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
-
+        
+        # Update name and email if they are nil
+        acct.update(email: purchaser[:email]) unless acct.email
+        acct.update(name: purchaser[:name]) unless acct.name
+        
         # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, product)
         if command.success?

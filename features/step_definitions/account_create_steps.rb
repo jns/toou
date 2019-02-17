@@ -22,9 +22,10 @@ end
 
 
 # Caches the named person in a local instance variable
-Given("A person named {string} with phone number {string} and device {string}") do |name, phone_number, device_id|
+Given("A person named {string} with phone number {string}, email {string}, and device {string}") do |name, phone_number, email, device_id|
   p = Person.new()
   p.name = name
+  p.email = email
   p.phone_number = phone_number
   p.device_id = device_id
   @people << p

@@ -1,5 +1,5 @@
 
 
 class Person
-  attr_accessor :name, :phone_number, :device_id, :auth_token, :account
+  attr_accessor :name, :phone_number, :device_id, :auth_token, :account, :email
 end
