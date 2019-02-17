@@ -129,17 +129,15 @@ class ApiController < ApiBaseController
         end
         
         # Find or generate an account
-        acct = Account.find_or_create_by(phone_number: phone)
-        acct.email = purchaser[:email]
-        acct.save
-        
+        acct = Account.search_by_phone_number(phone) || 
+                Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
 
         # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, product)
         if command.success?
             render json: {}, status: :ok
         else
-            render json: {error: "Please provide a valid phone number"}, status: :bad_request
+            render json: {error: command.errors}, status: :bad_request
         end
     end
 
@@ -250,7 +248,7 @@ class ApiController < ApiBaseController
         when Promotion.name
             Promotion.find(buyable["id"])
         else
-            render json: {error: "Invalid product"}, status: :bad_request
+            nil
         end
     end
     

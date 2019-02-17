@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
     end
     
     def generate_stripe_customer
-        CreateStripeCustomerJob.perform_later(self.id)
+        CreateStripeCustomerJob.perform_now(self.id)
     end
     
 end

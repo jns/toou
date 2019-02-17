@@ -309,4 +309,18 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     credits = JSON.parse(response.body)
     assert_equal 1, credits.size
   end
+  
+  test "Unknown user places an order" do
+    purchaser = {name: "New User", phone: "000-000-0000", email: "test@toou.gifts"}
+    product = {type: "Product", id: products(:beer).id}
+    recipients = [accounts(:josh).phone_number]
+    payment_source = "visa_tok"
+    message = "Test"
+    
+    assert_nil Account.search_by_phone_number(purchaser[:phone])
+    
+    post "/api/order", params: {purchaser: purchaser, product: product, recipients: recipients, payment_source: payment_source, message: message}
+    assert_response :ok
+    
+  end
 end
