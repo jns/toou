@@ -2,8 +2,14 @@
 
 var Payment = (function() {
     
-    var stripe = Stripe('pk_test_0H9zeU0MikaqcvxovYGpV1pp');
+    var stripe
     var toou_fee = 100; // $1 to send
+    
+    fetch("/keys/stripe_key").then(function(response) {
+        return response.json();    
+    }).then(function(data) { 
+        stripe = Stripe(data["stripe_public_api_key"]);
+    });
     
     var createPaymentRequest = function(buyable) {
         var pr = stripe.paymentRequest({

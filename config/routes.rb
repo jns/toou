@@ -42,6 +42,9 @@ Rails.application.routes.draw do
   post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
   
+  get 'keys/stripe_key', to: 'public_keys#stripe_key'
+  get 'keys/stripe_client_id', to: 'public_keys#stripe_client_id' 
+  
   resources :merchants do
     member do
       get 'stripe_dashboard_link'
