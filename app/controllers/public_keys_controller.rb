@@ -1,7 +1,7 @@
 class PublicKeysController < ApplicationController
 	
 	layout false
-	skip_before_action :validate_auth_token
+	skip_before_action :set_user
     
 	# GET returns the stripe public api key
 	def stripe_key

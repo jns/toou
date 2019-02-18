@@ -11,8 +11,9 @@ class ApplicationController < ActionController::Base
     # For APIs, you may want to use :null_session instead.
     protect_from_forgery with: :exception
 
-    before_action :validate_auth_token
-
+    #before_action :validate_auth_token
+    before_action :set_user
+    
     private
     
     attr_reader :current_user
@@ -27,6 +28,21 @@ class ApplicationController < ActionController::Base
         else
             flash[:notice] = "Invalid Credentials"
             redirect_to '/admin/login'
+        end
+    end
+    
+    def set_user(user = nil)
+        if user
+            session[:user_id] = user.id
+        elsif session[:user_id]
+            begin
+                @current_user = User.find(session[:user_id])
+            rescue ActiveRecord::RecordNotFound
+                reset_session
+                @current_user = nil
+            end
+        else
+            redirect_to login_url
         end
     end
     

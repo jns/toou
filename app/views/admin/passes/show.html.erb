@@ -26,10 +26,6 @@
 </p>
 
 <p>
-  <strong>Card</strong>
-  <%= link_to @pass.card.pan, admin_card_path(@pass.card) %>
-</p>
-<p>
   <%= link_to 'Download', pkpassUrl(@pass), download: true %>
 </p>
 <%= link_to 'Back', admin_passes_path %>

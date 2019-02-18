@@ -1,6 +1,6 @@
 class WelcomeController < ApplicationController
 
-    skip_before_action :validate_auth_token
+    skip_before_action :set_user
     
     # presents the welcome screen
     def index

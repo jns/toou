@@ -28,18 +28,19 @@ Rails.application.routes.draw do
   post 'api/redeem', to: 'api#redeem'
   post 'api/credits', to: 'api#credits'
   
+  # User Routes
+  get 'login', to: 'user#login'
+  post 'login', to: 'user#login'
+  get 'logout', to: 'user#logout'
+  
+  
   # Admin Routes
   get 'admin', to: 'admin#index'
-  get 'admin/login', to: 'admin#login'
-  get 'admin/logout', to: 'admin#logout'
   post 'admin/authenticate', to: 'admin#authenticate'
   get 'admin/restricted', to: 'admin#restricted'
   
-  get 'merchants/login', to: 'merchants#login'
-  post 'merchants/login', to: 'merchants#login'
-  get 'merchants/logout', to: 'merchants#logout'
   get 'merchants/new_user', to: 'merchants#new_user'
-  post 'merchants/new_user', to: 'merchants#new_user'
+  #post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
   
   get 'keys/stripe_key', to: 'public_keys#stripe_key'

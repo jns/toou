@@ -1,7 +1,11 @@
 class MerchantsController < ApplicationController
 
-    skip_before_action :validate_auth_token
-    before_action :set_user, except: [:login, :enroll, :new_user]
+    #skip_before_action :validate_auth_token
+    skip_before_action :set_user, only: [:enroll, :new_user]
+    
+    # Info message for now
+    def new_user
+    end
     
     # presents the welcome screen
     def index
@@ -10,45 +14,8 @@ class MerchantsController < ApplicationController
             @merchants = policy_scope(Merchant)
             render 'dashboard'
         else
-            redirect_to action: 'login'
+            redirect_to controller: 'user', action: 'login'
         end
-    end
-    
-    def new_user
-        authorize User, :new?
-        if request.get?
-            @new_user = User.new
-        elsif request.post? 
-            user_params = params.require(:user).permit(:username, :password)
-            user = User.create(user_params)
-            user.roles << Role.merchant
-            set_user(user)
-            redirect_to action: 'index'
-        end
-    end
-    
-    def login
-        authorize User
-        if request.get?
-            @user = User.new
-            render 'login'
-        elsif request.post?
-            user_params = params.require(:user).permit(:username, :password)
-            user = User.find_by(username: user_params[:username]) 
-            if user and user.authenticate(user_params[:password])
-                flash[:notice] = ""
-                set_user(user)
-                redirect_to action: "index" 
-            else
-                flash[:notice] = "Invalid login credentials"
-                render 'login', status: :unauthorized
-            end       
-        end
-    end
-    
-    def logout
-        reset_session
-        redirect_to action: 'index'
     end
     
     def new
@@ -112,21 +79,6 @@ class MerchantsController < ApplicationController
     end
     
     private
-    
-    def set_user(user = nil)
-        if user
-            session[:user_id] = user.id
-        elsif session[:user_id]
-            begin
-                @current_user = User.find(session[:user_id])
-            rescue ActiveRecord::RecordNotFound
-                reset_session
-                @current_user = nil
-            end
-        else
-            redirect_to merchants_login_url
-        end
-    end
     
     def set_merchant
         @merchant = Merchant.find(params[:id]) 

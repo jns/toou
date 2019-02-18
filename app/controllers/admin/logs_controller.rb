@@ -1,5 +1,5 @@
-class Admin::LogsController < ApplicationController
-  before_action :set_admin_log, only: [:show, :edit, :update, :destroy]
+class Admin::LogsController < AdminController
+  before_action :set_admin_log, only: [:show]
 
   # GET /admin/logs
   # GET /admin/logs.json
