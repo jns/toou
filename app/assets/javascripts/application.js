@@ -43,9 +43,9 @@ $(document).on("turbolinks:load", function() {
         Passes.mount();
         Breadcrumb.home();
     } else if (path === "/merchants") {
-        Merchants.mount();
         Breadcrumb.home();
     } else if (path.match(/\/merchants\/\d+/)) {
+        Merchants.mount();
         Breadcrumb.show("Back", "/merchants");
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");

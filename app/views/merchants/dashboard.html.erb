@@ -14,19 +14,11 @@
         <table class="table">
             <tr>
                 <th>Name</th>
-                <th>Enrollment</th>
             </tr>
             <% @merchants.each do |m| %>
                 <tr>
                     <td>
                         <%= link_to m.name, merchant_path(m) %>
-                    </td>
-                    <td>
-                        <% if m.stripe_id %>
-                            <a class="stripe-dashboard-link" data-merchant-id="<%= m.id %>" href="">Visit Dashboard</a>
-                        <% else %>
-                            <a class="stripe-connect" data-merchant-id="<%=m.id %>" href=""><span>Connect Now</span></a>
-                        <% end %>
                     </td>
                 </tr> 
             <% end %>
