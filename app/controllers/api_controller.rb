@@ -85,7 +85,7 @@ class ApiController < ApiBaseController
                 render status: :internal_server_error, json: {error: "Error sending SMS"}
                 return
             end
-           render json: {passcode: otp}, status: :ok
+           render json: {}, status: :ok
             
         else
             render status: :bad_request, json: {error: "Invalid phone number."}
