@@ -34,7 +34,7 @@ var PassesComponent = (function() {
         return m(".card.pass", {key: pass.serialNumber, onclick: showPass, "data-pass-serial-number": pass.serialNumber }, [
                 m(".card-body.card-text",[
                     m(".pass-product", "Good for one " + pass.buyable.name),
-                    m(".pass-from", "From " + pass.purchaser.phone_number),
+                    m(".pass-from", "From " + pass.purchaser.name + "(" + pass.purchaser.phone_number + ")"),
                     m(".pass-message", pass.message),
                     ])
             ]);

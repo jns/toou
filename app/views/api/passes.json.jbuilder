@@ -8,6 +8,7 @@ json.array! @passes do |pass|
         json.name pass.buyable.name
     end
     json.purchaser do 
+        json.name pass.purchaser.name
         json.phone_number pass.purchaser.phone_number
         json.email pass.purchaser.email
     end

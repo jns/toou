@@ -5,7 +5,7 @@
             <div class="product-icon <%= @pass.buyable.icon %>"></div>
         </div>
         <div class="card-text pass-from">
-            From <%= @pass.purchaser.phone_number %>
+            From <%= @pass.purchaser.name %> (<%= @pass.purchaser.phone_number %>)
         </div>
         <div class="card-text pass-message">
             <%= @pass.message %>
