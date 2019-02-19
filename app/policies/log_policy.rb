@@ -1,0 +1,2 @@
+class LogPolicy < AdminPolicy
+end
