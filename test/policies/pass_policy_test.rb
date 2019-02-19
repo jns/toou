@@ -3,25 +3,47 @@ require 'test_helper'
 class PassPolicyTest < ActiveSupport::TestCase
   
   def setup
-    @admin_policy = PassPolicy.new(admin_accounts(:admin), passes(:distant_future))
   end
   
-  def test_scope
+  test "admin scope is all" do
+    assert_equal Pass.all.count, PassPolicy::Scope.new(users(:admin_user), Pass.all).resolve.count
+  end
+  
+  test "merchant scope is none" do
+    assert_equal 0, PassPolicy::Scope.new(users(:quantum_user), Pass.all).resolve.count
+  end
+  
+  test "admin can index" do
+    assert PassPolicy.new(users(:admin_user), nil).index?
   end
 
-  def test_show
-    assert @admin_policy.show?
+  test "merchant cannot index" do
+    refute PassPolicy.new(users(:quantum_user), nil).index?
   end
 
-  def test_create
-    refute @admin_policy.create?
+  test "admin show any" do
+    assert PassPolicy.new(users(:admin_user), nil).show?
   end
 
-  def test_update
-    refute @admin_policy.update?
+  test "merchant show none" do
+    refute PassPolicy.new(users(:quantum_user),nil).show?  
+  end
+  
+  test "deny create" do
+    refute PassPolicy.new(nil, nil).create?
+    refute PassPolicy.new(users(:quantum_user), nil).create?
+    refute PassPolicy.new(users(:admin_user), nil).create?
   end
 
-  def test_destroy
-    refute @admin_policy.destroy?
+  test "deny update" do 
+    refute PassPolicy.new(nil, nil).update?
+    refute PassPolicy.new(users(:quantum_user), nil).update?
+    refute PassPolicy.new(users(:admin_user), nil).update?
+  end
+
+  test "deny destroy" do
+    refute PassPolicy.new(nil, nil).destroy?
+    refute PassPolicy.new(users(:quantum_user), nil).destroy?
+    refute PassPolicy.new(users(:admin_user), nil).destroy?
   end
 end

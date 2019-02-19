@@ -6,19 +6,21 @@ class OrdersController < AdminController
   # GET /orders
   # GET /orders.json
   def index
-    @orders = Order.all
+    authorize Order
+    @orders = policy_scope(Order)
   end
 
   # GET /orders/1
   # GET /orders/1.json
   def show
+    @order.show?
   end
 
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_order
-      @order = Order.find(params[:id])
+      @order = policy_scope(Order).find(params[:id])
     end
 
 end

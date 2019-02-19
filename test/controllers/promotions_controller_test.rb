@@ -5,7 +5,7 @@ class PromotionsControllerTest < ActionDispatch::IntegrationTest
     @draft_promotion = promotions(:draft)
     @active_promotion = promotions(:active)
     @password = "a password"
-    @acct = admin_accounts(:admin)
+    @acct = users(:admin_user)
     @acct.password = @password
     @acct.save
   end

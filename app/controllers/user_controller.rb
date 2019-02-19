@@ -19,7 +19,6 @@ class UserController < ApplicationController
         authorize User
         if request.get?
             @user = User.new
-            session[:return_to] ||= request.referer
             render 'login'
         elsif request.post?
             user_params = params.require(:user).permit(:username, :password)
@@ -27,7 +26,7 @@ class UserController < ApplicationController
             if user and user.authenticate(user_params[:password])
                 flash[:notice] = ""
                 set_user(user)
-                destination = session.delete(:return_to) || "/"
+                destination = session[:last] || "/"
                 redirect_to destination
             else
                 flash[:notice] = "Invalid login credentials"

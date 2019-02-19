@@ -10,7 +10,7 @@ class PassesController < AdminController
   # GET /passes.json
   def index
     authorize Pass
-    @passes = Pass.all
+    @passes = policy_scope Pass
   end
 
   # GET /passes/1
@@ -23,7 +23,7 @@ class PassesController < AdminController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_pass
-      @pass = Pass.find(params[:id])
+      @pass = policy_scope(Pass).find(params[:id])
     end
 
 

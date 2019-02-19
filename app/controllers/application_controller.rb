@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
     #before_action :validate_auth_token
     before_action :set_user
     
+    
     private
     
     attr_reader :current_user
@@ -32,6 +33,8 @@ class ApplicationController < ActionController::Base
     end
     
     def set_user(user = nil)
+        session[:last] = session[:current]
+        session[:current] = request.fullpath
         if user
             session[:user_id] = user.id
         elsif session[:user_id]

@@ -1,3 +1,6 @@
-<p id="notice"><%= notice %></p>
-
-<%= link_to 'Back', admin_logs_path %>
+<div class="container container-width">
+	<div class="row col">Created At: <%= @log.created_at %></div>
+	<div class="row col">Context: <%= @log.context %></div>
+	<div class="row col">User: <%= @log.current_user %></div>
+	<div class="row col">Created At: <%= @log.message %></div>
+</div>

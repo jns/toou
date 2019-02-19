@@ -37,15 +37,10 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
 
     MessageSender.client.messages.clear
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.phone_number.to_s), "device_id": @devId}, as: :json
-    assert_response :success
-    
-    # Disabled SMS for now
-    # assert_equal 1, MessageSender.client.messages.size
-    
-    # Temporarily return passcode inside response
-    json = JSON.parse(@response.body)
-    assert_not_nil(json["passcode"])
+    assert_difference 'MessageSender.client.messages.size', 1 do
+      post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.phone_number.to_s), "device_id": @devId}, as: :json
+      assert_response :success
+    end
     
   end
   
@@ -134,7 +129,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, passes.size
     assert_equal "abc124", passes.first["serialNumber"]
     
-    assert_equal ["phone_number", "email"], passes.first["purchaser"].keys
+    assert_equal ["name", "phone_number", "email"], passes.first["purchaser"].keys
     
     assert_equal @acct2.phone_number.to_s, passes.first["purchaser"]["phone_number"]
     assert_equal @acct2.email, passes.first["purchaser"]["email"]

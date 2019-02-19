@@ -17,7 +17,7 @@
 //= require turbolinks
 //= require breadcrumb
 //= require modal
-//= require_tree .
+//= require splash
 
 /* global $ */
 

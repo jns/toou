@@ -6,6 +6,7 @@
 
       <table class="table" >
         <thead>
+          <th scope="col"></th>
           <th scope="col">Time</th>
           <th scope="col">User</th>
           <th scope="col">Context</th>
@@ -14,6 +15,7 @@
         <tbody>
           <% @admin_logs.each do |admin_log| %>
               <tr>
+                <td><%= link_to 'show', admin_log_path(admin_log) %></td>
                 <td><%= admin_log.created_at %></td>
                 <td><%= admin_log.current_user %></td>
                 <td><%= admin_log.context %></td>

@@ -6,12 +6,14 @@ class AccountsController < AdminController
   # GET /accounts
   # GET /accounts.json
   def index
-    @accounts = Account.all
+    authorize Account
+    @accounts = policy_scope(Account)
   end
 
   # GET /accounts/1
   # GET /accounts/1.json
   def show
+    authorize(@account)
   end
 
  
