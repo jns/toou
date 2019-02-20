@@ -21,6 +21,12 @@
 
 /* global $ */
 
+var Routes = {
+    goHome: function() { 
+        window.location.pathname = "/";
+    }
+}
+
 $(document).on("turbolinks:load", function() {
     // var root = document.getElementById('mithril_root');
     // m.route(root, "/", {
@@ -31,7 +37,12 @@ $(document).on("turbolinks:load", function() {
     //     "/promos": Promos,
     //     });
     
+    
     var path = window.location.pathname;
+    
+    routes = [];
+    
+    routes.push({location: "Home"})
     
     if (path === "/send_gifts") {
         SendGifts.mount();

@@ -20,7 +20,8 @@ var PassesComponent = (function() {
         }).catch(function(e) {
             Modal.setTitle("Please Login To Access Your Passes");
             Modal.setBody(Login);
-            Modal.setDismissalButton("Not Now");
+            Modal.setOkButton(null);
+            Modal.setCancelButton("Not Now", Routes.goHome);
             Modal.show(oninit);
         });
     };

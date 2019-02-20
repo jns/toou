@@ -11,7 +11,6 @@ var Login = (function() {
             url: "api/requestOneTimePasscode",
             data: {phone_number: phone_number},
         }).then(function(data) {
-            console.log(data);
             Credentials.setPhoneNumber(phone_number);
             Modal.setBody(OneTimePasscode);
         }).catch(function(e) {
@@ -37,6 +36,7 @@ var Login = (function() {
                             onkeyup: function(e) { if (e.key === "Enter") { requestOTP(); } }
                             }),
                         m("a.btn.input-group-append.input-group-text", {onclick: requestOTP}, [
+                            "Send",
                             m("i.fas.fa-angle-right")
                             ]),
                         ]),

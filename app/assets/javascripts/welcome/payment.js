@@ -27,14 +27,11 @@ var Payment = (function() {
         pr.on("token", function(event) {
             console.log("processing token");
             processPayment(buyable, event).then(function(response) {
-                    console.log(response);
                     event.complete('success');
-                    console.log("Purchase successful");
                     completePurchase();
                 }).catch(function(err) {
                     event.complete('fail');
-                    console.log("Purchase failed");
-                    console.log(err);
+                    purchaseFailed(err);
                });
             });
     
@@ -66,13 +63,19 @@ var Payment = (function() {
     
     var completePurchase = function() {
         Modal.setTitle("Thanks");
-        Modal.setBody("We've sent a text");
-        Modal.setDismissalButton("Ok");
-        Modal.show(function() {
-            window.location.pathname = "/"; 
-        });
+        Modal.setBody("We've sent the TooU to " + document.getElementById('recipient_phone').value);
+        Modal.setOkButton("Ok", Routes.goHome);
+        Modal.setCancelButton(null);
+        Modal.show();
     };
     
+    var purchaseFailed = function(err) {
+        Modal.setTitle("Whoops");
+        Modal.setBody("Looks like there was a problem with the purchase.\n" + err);
+        Modal.setOkButton("Ok", Routes.goHome);
+        Modal.setCancelButton(null);
+        Modal.show();
+    }
     
     var addPaymentButton = function(paymentRequest) {
         var elements = stripe.elements();
