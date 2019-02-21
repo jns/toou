@@ -39,11 +39,11 @@ var ProductList = (function() {
     var view = function() {
         return products.map(function(p) { 
             var selected = (selectedProductId === p.id) ? ".selected" : "";
-            return m(".product"+selected, {onclick: selectProduct, "data-product-id": p.id}, 
+            return m(".product"+selected, {onclick: selectProduct, "data-product-id": p.id}, [
                 m(".product-icon." + p.icon),
                 m(".product-name", p.name),
                 m(".product-price", "up to $" + p.max_price_dollars),
-            );
+            ]);
         });
     };
     
