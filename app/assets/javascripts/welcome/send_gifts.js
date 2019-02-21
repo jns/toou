@@ -52,10 +52,10 @@ var ProductList = (function() {
 
 var RecipientForm = (function() {
     var view = function() {
-        return m("form.mx-auto.w-75.mt-3", [
+        return m("form.mt-3", [
             m(".form-group.row", [
-                m("label.col-sm-3.col-form-label.promo", "Send to:"),
-                m("input.form-control.col-sm-9.text-center[id=recipient_phone][type=text][placeholder='10 digit phone']"),
+                m("label.col-sm-3.col-form-label.promo.p-0", "Send to:"),
+                m("input.form-control.col-sm-9.text-center.p-0[id=recipient_phone][type=text][placeholder='10 digit phone']"),
                 ])
             ]);
     };
