@@ -2,6 +2,7 @@
 
 When("The user named {string} sends a drink to {string} using a valid payment") do |name, recipient_phone_number|
     person = @people.find{|p| p.name == name}
+    puts @beer
     perform_enqueued_jobs do 
       post "api/order", purchaser: {name: person.name, email: person.email, phone: person.phone_number}, recipients: [recipient_phone_number], message: "ha ha", payment_source: "valid_payment_token", product: {id: @beer.id, type: @beer.class.name} 
       puts last_response.body
@@ -23,6 +24,7 @@ end
 Given("The person named {string} has received a complimentary Toou") do |name|
   receiver = @people.find{|p| p.name === name}
   cmd = PlaceOrder.call(@admin_account ,"visa_tok", [receiver.phone_number], "complimentary toou", @beer) 
+  puts cmd.errors
   assert cmd.success?
 end
 
