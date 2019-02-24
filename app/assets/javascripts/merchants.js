@@ -4,9 +4,7 @@ var Merchants = (function() {
 
     var client_id;
     
-    fetch("/keys/stripe_client_id").then(function(response) {
-       return response.json(); 
-    }).then(function(data) {
+    $.get("/keys/stripe_client_id", function(data) {
         client_id = data["stripe_client_id"];
     });
 
@@ -25,14 +23,7 @@ var Merchants = (function() {
     var stripeDashboard = function(event) {
         var merchant_id = $(event.currentTarget).data('merchant-id');
         if (typeof merchant_id != undefined && merchant_id !== null) {
-            fetch("/merchants/"+merchant_id+"/stripe_dashboard_link")
-            .then(function(response) {
-                if (response.ok) {
-                    var data = response.json();
-                    return data;
-                }
-            })
-            .then(function(data) {
+            $.get("/merchants/"+merchant_id+"/stripe_dashboard_link",function(data) {
                 window.location = data.url;
             });
         }

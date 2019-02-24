@@ -5,9 +5,7 @@ var Payment = (function() {
     var stripe
     var toou_fee = 100; // $1 to send
     
-    fetch("/keys/stripe_key").then(function(response) {
-        return response.json();    
-    }).then(function(data) { 
+    $.get("/keys/stripe_key", function(data) { 
         stripe = Stripe(data["stripe_public_api_key"]);
     });
     
