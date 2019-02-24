@@ -10,7 +10,7 @@ class PaymentsControllerTest < ActionDispatch::IntegrationTest
     
     # the post method should call Stripe::EphemeralKey and return a key in the json
     Stripe::EphemeralKey.stub :create, mock_key do
-      post payments_ephemeral_keys_url, params: {"api_version": "1"}, headers: {"Authorization": "Bearer #{token}"}, as: :json
+      post payments_ephemeral_keys_url, params: {authorization: token, data: {"api_version": "1"}}, as: :json
       assert_response :success
       assert_equal response.body, "a.mock.ephemeral.key"
     end

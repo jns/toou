@@ -1,4 +1,4 @@
-class AuthenticateAdmin
+class CreateAuthToken
   
   prepend SimpleCommand
   
@@ -8,7 +8,7 @@ class AuthenticateAdmin
   end
 
   def call
-    JsonWebToken.encode(user_id: user.id) if user
+    JsonWebToken.encode(user_id: user.id, user_type: "User") if user
   end
 
   private
@@ -16,7 +16,7 @@ class AuthenticateAdmin
   attr_accessor :username, :password
 
   def user
-    user = AdminAccount.find_by_username(username)
+    user = User.find_by_username(username)
     return user if user && user.try(:authenticate, password)
 
     errors.add :user_authentication, 'invalid credentials'

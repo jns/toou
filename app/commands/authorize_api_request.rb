@@ -1,33 +1,48 @@
 class AuthorizeApiRequest
   prepend SimpleCommand
 
-  def initialize(headers = {})
-    @headers = headers
+  def initialize(parameters)
+    @parameters = parameters
   end
 
   def call
-    user
-  end
-
-  private
-
-  attr_reader :headers
-
-  def user
-    @user ||= Account.find(decoded_auth_token[:user_id]) if decoded_auth_token
-    @user || errors.add(:token, 'Invalid token') && nil
-  end
-
-  def decoded_auth_token
-    @decoded_auth_token ||= JsonWebToken.decode(http_auth_header)
-  end
-
-  def http_auth_header
-    if headers['Authorization'].present?
-      return headers['Authorization'].split(' ').last
-    else
-      errors.add(:token, 'Missing token')
+    token = @parameters[:authorization]
+    if token === nil
+      errors.add(:authentication, "Missing auth token")
+      return
+    end  
+    
+    decoded_token = JsonWebToken.decode(token)
+    if decoded_token === nil
+      errors.add(:authentication, "Error decoding token")
+      return
     end
-    nil
+    
+    user_type = decoded_token[:user_type]
+    if user_type === nil
+      errors.add(:authenitcation, "Missing user type")
+      return
+    end
+    
+    user_id = decoded_token[:user_id]
+    if user_id === nil
+      errors.add(:authentication, "Missing user id")
+      return
+    end
+    
+    begin
+      if user_type === "Customer"
+        Account.find(user_id)
+      elsif user_type === "User"
+        User.find(user_id)
+      else
+        nil
+      end
+    rescue ActiveRecord::RecordNotFound
+      errors.add(:authentication, "User not found") 
+      return nil
+    end
+
   end
+
 end

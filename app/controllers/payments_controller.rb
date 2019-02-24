@@ -4,7 +4,7 @@ class PaymentsController  < ApiBaseController
     begin
       key = Stripe::EphemeralKey.create(
         {customer: @current_user.stripe_customer_id},
-        {stripe_version: params["api_version"]}
+        {stripe_version: params.require(:data).permit(:api_version)["api_version"]}
       )
     rescue Stripe::StripeError => e
       Log.create(log_type: Log::ERROR, context: "PaymentsController#ephemeral_keys", current_user: @current_user.id, message: e.message)

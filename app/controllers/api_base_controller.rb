@@ -1,5 +1,6 @@
 class ApiBaseController < ActionController::Base
 
+    include Pundit
     before_action :authorize_request
     
     private
@@ -7,8 +8,12 @@ class ApiBaseController < ActionController::Base
     attr_reader :current_user
 
     def authorize_request
-        @current_user = AuthorizeApiRequest.call(request.headers).result
-        render json: { error: 'Not Authorized' }, status: 401 unless @current_user
+        cmd = AuthorizeApiRequest.call(request.params)
+        if cmd.success?
+            @current_user = cmd.result
+        else
+            render json: { error: cmd.errors }, status: 401 
+        end
     end
     
 end

@@ -124,7 +124,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
     
     # Posting with no parameters will return only valid passes
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
+    post "/api/passes", params: {"authorization": token}
     passes = JSON.parse(@response.body)
     assert_equal 1, passes.size
     assert_equal "abc124", passes.first["serialNumber"]
@@ -136,7 +136,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
+    post "/api/passes", params: {authorization: token, "serialNumbers": ["abc123", "abc124"]}
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
@@ -151,7 +151,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
     
     # Posting with no parameters will return valid passes
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}
+    post "/api/passes", params: {"authorization": token}
     passes = JSON.parse(@response.body)
     assert_equal 1, passes.size
     assert_equal "This pass has an emoji \u{1F44D}", passes.first["message"]
@@ -165,7 +165,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
   
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["12345abc"]}
+    post "/api/passes", params: {authorization: token, "serialNumbers": ["12345abc"]}
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
@@ -178,7 +178,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
     token = "ThisIs.NotA.Token"
     
-    post "/api/passes", headers: {"Authorization": "Bearer #{token}"}, params: {"serialNumbers": ["abc123", "abc124"]}
+    post "/api/passes", params: {"authorization": token, "serialNumbers": ["abc123", "abc124"]}
     body = JSON.parse(@response.body)
     assert_response :unauthorized
     assert_not_nil(body["error"])
@@ -193,8 +193,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/place_order", headers: {"Authorization": "Bearer #{token}"}, 
-      params: {"recipients": [@acct1.phone_number.to_s],
+    post "/api/place_order",  
+      params: {authorization: token,
+               "recipients": [@acct1.phone_number.to_s],
                "message": "So Long and Thanks for all the Fish",
                "payment_source": "mock_payment_source_token",
                "product": {"id": products(:beer).id, "type": "Product"}}
@@ -208,8 +209,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   test "Place Order Unauthorized" do 
      
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/place_order", headers: {"Authorization": "Bearer Not.A.Token"}, 
-      params: {"recipients": ["310-909-7243","5043834228"],
+    post "/api/place_order", 
+      params: {"authorization": "Not.a.token",
+               "recipients": ["310-909-7243","5043834228"],
                "message": "So Long and Thanks for all the Fish", 
                "product": {"id": promotions(:generic).id, "type": "Promotion"}
       }
@@ -224,7 +226,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/history", headers: {"Authorization": "Bearer #{token}"}
+    post "/api/history", params: {"authorization": token}
     assert_response :success
     history = JSON.parse(@response.body)
     assert history.size == 3
@@ -234,7 +236,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Account History Unauthorized" do
     
-    post "/api/history", headers: {"Authorization": "Bearer Not.A.Token"}
+    post "/api/history", params: {"authorization": "Not.A.Token"}
     assert_response :unauthorized
     
   end
@@ -247,7 +249,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serialNumber}", headers: {"Authorization": token}
+    get "/api/pass/#{pass.serialNumber}", params: {"authorization": token}
     assert_response :ok
   end
   
@@ -260,7 +262,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serialNumber}", headers: {"Authorization": token}
+    get "/api/pass/#{pass.serialNumber}", params: {"authorization": token}
     assert_response :not_found
   end
   
@@ -273,10 +275,16 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   test "Merchant can redeem a pass" do
     pass = passes(:redeemable_pass)
     merchant = merchants(:quantum)
-    payload = {merchant_id: merchant.id}
-    token = JsonWebToken.encode(payload)
+    user = users(:quantum_user)
+    user.update(password: "password")
     
-    post "/api/redeem", params: {authorization: token, pass: {serial_number: pass.serialNumber}}
+    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
+    assert_response :ok
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+    assert_not_nil token
+    
+    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber, merchant_id: merchant.id}}
     assert_response :ok
     
     pass = Pass.find(pass.id)
@@ -286,20 +294,34 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   test "Redeem a used pass returns bad request and generates no charge" do
     pass = passes(:used_beer_pass)
     merchant = merchants(:quantum)
-    payload = {merchant_id: merchant.id}
-    token = JsonWebToken.encode(payload)
+    
+    user = users(:quantum_user)
+    user.update(password: "password")
+    
+    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
+    assert_response :ok
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+    assert_not_nil token
     
     assert_no_difference 'Charge.count' do
-      post "/api/redeem", params: {authorization: token, pass: {serial_number: pass.serialNumber}}
+      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber, merchant_id: merchant.id}}
       assert_response :bad_request
     end
   end
   
   test "Merchant credits endpoint returns charges credited to merchant" do
     merchant = merchants(:quantum)
-    payload = {merchant_id: merchant.id}
-    token = JsonWebToken.encode(payload)
-    post "/api/credits", params: {authorization: token}
+    user = users(:quantum_user)
+    user.update(password: "password")
+    
+    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
+    assert_response :ok
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+    assert_not_nil token
+    
+    post "/api/credits", params: {authorization: token, data: {merchant_id: merchant.id}}
     assert_response :ok
     credits = JSON.parse(response.body)
     assert_equal 1, credits.size

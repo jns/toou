@@ -28,6 +28,14 @@ class MerchantPolicy < ApplicationPolicy
 		end
 	end
 	
+	def credits?
+		user.merchant? and record.user === user
+	end
+	
+	def redeem?
+		user.merchant? and record.user === user	
+	end
+	
 	class Scope < Scope
 		def resolve
 			scope.where(user: user)

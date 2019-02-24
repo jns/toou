@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :redeem, :authenticate, :promotions, :products, :order, :credits]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :authenticate_merchant, :promotions, :products, :order]
     
     # Returns active promotions
     def promotions
@@ -19,23 +19,22 @@ class ApiController < ApiBaseController
     
     # Returns all credits for a merchant
     def credits
-        authorization = params[:authorization]
-        decoded_auth_token = JsonWebToken.decode(authorization)
-        merchant_id = decoded_auth_token["merchant_id"] if decoded_auth_token
-        @charges = Merchant.find(merchant_id).charges
+        merchant_data = params.require(:data).permit(:merchant_id)
+        merchant = Merchant.find(merchant_data[:merchant_id])
+        authorize merchant
+        @charges = merchant.charges
         render 'charges.json.jbuilder', status: :ok
     end
     
     # Redeems a specific product
     def redeem
-        authorization = params[:authorization]
-        pass_data = params.require(:pass).permit(:serial_number)
-        decoded_auth_token = JsonWebToken.decode(authorization)
-        merchant_id = decoded_auth_token["merchant_id"] if decoded_auth_token
+        data = params.require(:data).permit(:merchant_id, :serial_number)
         
         begin
-            merchant = Merchant.find(merchant_id)
-            pass = Pass.find_by(serialNumber: pass_data["serial_number"])
+            merchant = Merchant.find(data[:merchant_id])
+            authorize merchant
+            
+            pass = Pass.find_by(serialNumber: data[:serial_number])
         
             if pass 
                 cmd = CaptureOrder.call(merchant, pass)
@@ -94,6 +93,19 @@ class ApiController < ApiBaseController
             
     end
     
+    # Authenticate a merchant user
+    # @param [String] username The merchant's username
+    # @param [String] password The merchant's password
+    # @param {auth_token: WEBTOKEN}
+    def authenticate_merchant 
+       credentials = params.require(:data).permit([:username, :password])
+       command = CreateAuthToken.call(credentials[:username], credentials[:password])
+       if command.success?
+           render json: {auth_token: command.result}, status: :ok
+       else
+           render json: {error: command.errors}, status: :unauthorized
+       end
+    end
     
     
     # Authenticates the parameters and returns a json web token
@@ -218,12 +230,6 @@ class ApiController < ApiBaseController
     
     private
     
-    attr_reader :current_user
-
-    def authorize_request
-        @current_user = AuthorizeApiRequest.call(request.headers).result
-        render json: { error: 'Not Authorized' }, status: 401 unless @current_user
-    end
     
     def serialNumberParam
         value = params[:serial_number]

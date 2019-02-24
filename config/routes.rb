@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get 'api/products', to: 'api#products'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
+  post 'api/authenticate_merchant', to: 'api#authenticate_merchant'
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/order', to: 'api#order'
