@@ -284,7 +284,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
     assert_not_nil token
     
-    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber, merchant_id: merchant.id}}
+    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber}}
     assert_response :ok
     
     pass = Pass.find(pass.id)
@@ -305,7 +305,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil token
     
     assert_no_difference 'Charge.count' do
-      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber, merchant_id: merchant.id}}
+      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber}}
       assert_response :bad_request
     end
   end

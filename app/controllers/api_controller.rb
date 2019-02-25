@@ -28,10 +28,10 @@ class ApiController < ApiBaseController
     
     # Redeems a specific product
     def redeem
-        data = params.require(:data).permit(:merchant_id, :serial_number)
+        data = params.require(:data).permit(:serial_number)
         
         begin
-            merchant = Merchant.find(data[:merchant_id])
+            merchant = Merchant.where(user: @current_user).first
             authorize merchant
             
             pass = Pass.find_by(serialNumber: data[:serial_number])
