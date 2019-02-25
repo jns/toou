@@ -23,14 +23,14 @@ class RequestPasses
             return
         end
         
-        @account.passes.select{|p| p.not_expired? && p.not_used?}.concat( @passes.map { |p| 
-            found_pass = Pass.find_by(serialNumber: p, account_id: @account.id)
+        @account.passes.select{|p| p.not_expired? && p.not_used?}.concat( @passes.map { |sn| 
+            found_pass = Pass.find_by(serial_number: sn, account_id: @account.id)
             if found_pass then
                 found_pass
             else
-                InvalidPass.new(p)
+                InvalidPass.new(sn)
             end
-        }).uniq{|p| p.serialNumber}
+        }).uniq{|p| p.serial_number}
         
     end
     

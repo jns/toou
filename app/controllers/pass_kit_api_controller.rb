@@ -28,7 +28,7 @@ class PassKitApiController < ActionController::Base
     def fetch
         passTypeId, serialNumber = fetch_params
         # Verfiy auth token matches passed parameters
-        if @current_pass.serialNumber != serialNumber || @current_pass.passTypeIdentifier != passTypeId
+        if @current_pass.serial_number != serialNumber || @current_pass.passTypeIdentifier != passTypeId
             render json: {error: "mismatch"}, status: :unauthorized
             return
         end

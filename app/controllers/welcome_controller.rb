@@ -24,6 +24,6 @@ class WelcomeController < ApplicationController
     
     # View a specific pass
     def pass
-        @pass = Pass.find_by(serialNumber: params.require([:serial_number]))
+        @pass = Pass.find_by(serial_number: params.require([:serial_number]))
     end
 end

@@ -31,7 +31,7 @@ var PassesComponent = (function() {
     };
     
     var addPassCard = function(pass) { 
-        return m(".card.pass", {key: pass.serialNumber, onclick: showPass, "data-pass-serial-number": pass.serialNumber }, [
+        return m(".card.pass", {key: pass.serial_number, onclick: showPass, "data-pass-serial-number": pass.serialNumber }, [
                 m(".card-body.card-text",[
                     m(".pass-product", "Good for one " + pass.buyable.name),
                     m(".pass-from", "From " + pass.purchaser.name + "(" + pass.purchaser.phone_number + ")"),

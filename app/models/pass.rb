@@ -1,6 +1,6 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serialNumber, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable
+    attr_readonly :serial_number, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable
     
     USED = "USED"
     EXPIRED = "EXPIRED"
@@ -22,7 +22,7 @@ class Pass < ActiveRecord::Base
     
     # Assign a serial number and a credit card from the pool upon creation
     before_create do
-        self.serialNumber = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
+        self.serial_number = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
     end
     
     # Passes must be part of an order
@@ -60,6 +60,10 @@ class Pass < ActiveRecord::Base
     
     def not_used?
        return !used? 
+    end
+    
+    def barcode_payload
+       self.serial_number[0..10] 
     end
     
 end

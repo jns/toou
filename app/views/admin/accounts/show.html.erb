@@ -58,7 +58,7 @@
               <tr>
                 <td><%= pass.status %></td>
                 <td><%= link_to "#{pass.purchaser.phone_number} (#{pass.purchaser.id})", admin_account_path(pass.purchaser) %></td>
-                <td><%= pass.serialNumber %></td>
+                <td><%= pass.serial_number %></td>
               </tr>
           <% end %>
         </tbody>

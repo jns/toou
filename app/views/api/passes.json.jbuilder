@@ -1,5 +1,5 @@
 json.array! @passes do |pass|
-    json.serialNumber pass.serialNumber
+    json.serialNumber pass.serial_number
     json.expiration pass.expiration
     json.passTypeIdentifier pass.passTypeIdentifier
     json.message pass.message

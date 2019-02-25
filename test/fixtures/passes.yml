@@ -2,7 +2,7 @@
 
 abc123:
   id: 1
-  serialNumber: abc123
+  serial_number: abc123
   account_id: 1
   order_id: 1
   created_at: 2018-09-11 02:35:30
@@ -14,7 +14,7 @@ abc123:
 
 distant_future:
   id: 2
-  serialNumber: abc124
+  serial_number: abc124
   account_id: 1
   order_id: 2
   created_at: 2050-09-11 02:40:30
@@ -26,7 +26,7 @@ distant_future:
 
 expired:
   id: 3
-  serialNumber: abc125
+  serial_number: abc125
   account_id: 2
   order_id: 1
   created_at: 2018-09-11 02:35:30
@@ -38,7 +38,7 @@ expired:
   
 abc126:
   id: 4
-  serialNumber: abc126
+  serial_number: abc126
   account_id: 3
   order_id: 3
   created_at: 2024-12-25 00:00:00
@@ -49,7 +49,7 @@ abc126:
   buyable_type: Promotion
 
 redeemable_pass:
-  serialNumber: redeemable
+  serial_number: redeemable
   account: new_person_2
   order: redeemable_order
   created_at: 2019-01-01 00:00:00
@@ -59,7 +59,7 @@ redeemable_pass:
   buyable: beer (Product)
   
 redeemable_cupcake:
-  serialNumber: redeemablecupcake
+  serial_number: redeemablecupcake
   account: cupcake_lover
   order: order_for_cupcake_lover
   created_at: 2019-01-01 00:00:00
@@ -69,7 +69,7 @@ redeemable_cupcake:
   buyable: cupcake (Product)
   
 expired_beer:
-  serialNumber: expiredbeerpass
+  serial_number: expiredbeerpass
   account: beer_lover
   order: expired_order_for_beer_lover
   created_at: 2018-01-01 00:00:00
@@ -79,7 +79,7 @@ expired_beer:
   buyable: beer (Product)
 
 used_beer_pass:
-  serialNumber: usedbeerpass
+  serial_number: usedbeerpass
   account: beer_lover
   order: used_order_for_beer_lover
   created_at: 2019-01-01 00:00:00

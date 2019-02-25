@@ -34,7 +34,11 @@ class ApiController < ApiBaseController
             merchant = Merchant.where(user: @current_user).first
             authorize merchant
             
-            pass = Pass.find_by(serialNumber: data[:serial_number])
+            if not SerialNumber.isValid?(data[:serial_number])
+                render json: {error: "Invalid Serial Number"}, status: :bad_request and return
+            end
+            
+            pass = Pass.where("serial_number like ?", "#{data[:serial_number]}%").take
         
             if pass 
                 cmd = CaptureOrder.call(merchant, pass)
@@ -206,7 +210,7 @@ class ApiController < ApiBaseController
         
         serialNumber = serialNumberParam
         
-        pass = @current_user.passes.find{|p| p.serialNumber == serialNumber}
+        pass = @current_user.passes.find{|p| p.serial_number == serialNumber}
         
         unless pass
             render json: {}, status: :not_found

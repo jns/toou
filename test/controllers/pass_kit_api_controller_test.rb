@@ -21,7 +21,7 @@ class PassKitApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
     
     pass = passes(:abc123)
-    get "/v1/passes/#{pass.passTypeIdentifier}/#{pass.serialNumber}", headers: {"Authorization": "ApplePass #{token}"}
+    get "/v1/passes/#{pass.passTypeIdentifier}/#{pass.serial_number}", headers: {"Authorization": "ApplePass #{token}"}
     assert_response :unauthorized
     
   end
@@ -31,7 +31,7 @@ class PassKitApiControllerTest < ActionDispatch::IntegrationTest
   test "Fetch a pass - Auth headers match endpoint parameters" do
     pass = passes(:abc123)
     token = JsonWebToken.encode(pass_id: pass.id)
-    get "/v1/passes/#{pass.passTypeIdentifier}/#{pass.serialNumber}", headers: {"Authorization": "ApplePass #{token}"}
+    get "/v1/passes/#{pass.passTypeIdentifier}/#{pass.serial_number}", headers: {"Authorization": "ApplePass #{token}"}
     assert_response :ok
   end
   
@@ -41,7 +41,7 @@ class PassKitApiControllerTest < ActionDispatch::IntegrationTest
     passABC123 = passes(:abc123)
     passABC126 = passes(:abc126)
     token = JsonWebToken.encode(pass_id: passABC123.id)
-    get "/v1/passes/#{passABC126.passTypeIdentifier}/#{passABC126.serialNumber}", headers: {"Authorization": "ApplePass #{token}"}
+    get "/v1/passes/#{passABC126.passTypeIdentifier}/#{passABC126.serial_number}", headers: {"Authorization": "ApplePass #{token}"}
     assert_response :unauthorized
   end
   
@@ -51,7 +51,7 @@ class PassKitApiControllerTest < ActionDispatch::IntegrationTest
   test "Fetch a pass - UNAUTHORIZED if token is bad" do
     passABC126 = passes(:abc126)
     token = "Not.a.Token"
-    get "/v1/passes/#{passABC126.passTypeIdentifier}/#{passABC126.serialNumber}", headers: {"Authorization": "ApplePass #{token}"}
+    get "/v1/passes/#{passABC126.passTypeIdentifier}/#{passABC126.serial_number}", headers: {"Authorization": "ApplePass #{token}"}
     assert_response :unauthorized
   end
 end

@@ -48,7 +48,7 @@ class PassBuilderJob < ActiveJob::Base
   # Creates the pass.json file in the appropriate pass directory
   def createPassJson(p)
     
-    authToken = JsonWebToken.encode(pass_id: p.id) or throw "Error generating web token for pass #{p.serialNumber}"
+    authToken = JsonWebToken.encode(pass_id: p.id) or throw "Error generating web token for pass #{p.serial_number}"
     webServiceUrl = ENV["WEB_SERVICE_URL"] or throw "Environment variable for WEB_SERVICE_URL is missing"
     
     pkpass = {}
@@ -58,7 +58,7 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:passTypeIdentifier] = p.passTypeIdentifier
     pkpass[:authenticationToken] = authToken
     pkpass[:webServiceURL] = webServiceUrl
-    pkpass[:serialNumber] = p.serialNumber
+    pkpass[:serialNumber] = p.serial_number
     pkpass[:teamIdentifier] = "8Q9F954LPX"
     pkpass[:expirationDate] = p.expiration.iso8601
     pkpass[:voided] = p.expired?
@@ -68,8 +68,8 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:foregroundColor] = "rgb(250, 250, 250)"
     pkpass[:locations] = [{"latitude" => 32.8306228, "longitude" => -117.1414313}]
     pkpass[:barcodes]  =[{
-         "format" => "PKBarcodeFormatPDF417",
-         "message" => p.serialNumber,
+         "format" => "PKBarcodeFormatCode128",
+         "message" => p.barcode_payload,
          "messageEncoding" => "iso-8859-1"}]
     pkpass[:storeCard] = {
       :primaryFields => [

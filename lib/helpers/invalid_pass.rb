@@ -1,9 +1,9 @@
 class InvalidPass
 
-    attr_reader :serialNumber, :expiration, :message, :passTypeIdentifier, :status
+    attr_reader :serial_number, :expiration, :message, :passTypeIdentifier, :status
     
     def initialize(serialNumber, type = "pass.com.eloisaguanlao.testpass")
-        @serialNumber = serialNumber
+        @serial_number = serialNumber
         @passTypeIdentifier = type
         @message  = ""
         @expiration = ""

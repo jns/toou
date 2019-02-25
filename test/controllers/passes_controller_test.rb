@@ -18,7 +18,7 @@ class PassesControllerTest < ActionController::TestCase
 
   # test "should create pass" do
   #   assert_difference('Pass.count') do
-  #     post :create, pass: { expiration: @pass.expiration, passTypeIdentifier: @pass.passTypeIdentifier, serialNumber: @pass.serialNumber }
+  #     post :create, pass: { expiration: @pass.expiration, passTypeIdentifier: @pass.passTypeIdentifier, serialNumber: @pass.serial_number }
   #   end
 
   #   assert_redirected_to pass_path(assigns(:pass))
@@ -35,7 +35,7 @@ class PassesControllerTest < ActionController::TestCase
   # end
 
   # test "should update pass" do
-  #   patch :update, id: @pass, pass: { expiration: @pass.expiration, passTypeIdentifier: @pass.passTypeIdentifier, serialNumber: @pass.serialNumber }
+  #   patch :update, id: @pass, pass: { expiration: @pass.expiration, passTypeIdentifier: @pass.passTypeIdentifier, serialNumber: @pass.serial_number }
   #   assert_redirected_to pass_path(assigns(:pass))
   # end
 

@@ -126,6 +126,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     # Posting with no parameters will return only valid passes
     post "/api/passes", params: {"authorization": token}
     passes = JSON.parse(@response.body)
+    
     assert_equal 1, passes.size
     assert_equal "abc124", passes.first["serialNumber"]
     
@@ -249,7 +250,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serialNumber}", params: {"authorization": token}
+    get "/api/pass/#{pass.serial_number}", params: {"authorization": token}
     assert_response :ok
   end
   
@@ -262,13 +263,13 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serialNumber}", params: {"authorization": token}
+    get "/api/pass/#{pass.serial_number}", params: {"authorization": token}
     assert_response :not_found
   end
   
   test "Fetch an apple pkpass - Unuthorized" do
     pass = passes(:distant_future)
-    get "/api/pass/#{pass.serialNumber}"
+    get "/api/pass/#{pass.serial_number}"
     assert_response :unauthorized
   end
   
@@ -284,7 +285,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     token = json["auth_token"]
     assert_not_nil token
     
-    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber}}
+    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.barcode_payload}}
     assert_response :ok
     
     pass = Pass.find(pass.id)
@@ -305,7 +306,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil token
     
     assert_no_difference 'Charge.count' do
-      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.serialNumber}}
+      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.barcode_payload}}
       assert_response :bad_request
     end
   end

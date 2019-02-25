@@ -18,7 +18,7 @@
   <tbody>
     <% @passes.each do |pass| %>
       <tr>
-        <td><%= link_to pass.serialNumber, admin_pass_path(pass) %></td>
+        <td><%= link_to pass.serial_number, admin_pass_path(pass) %></td>
         <td><%= link_to pass.account.phone_number, admin_account_path(pass.account) %></td>
         <td><%= pass.expiration %></td>
         <td><%= pass.passTypeIdentifier %></td>

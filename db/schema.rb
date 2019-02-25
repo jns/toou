@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_17_052914) do
+ActiveRecord::Schema.define(version: 2019_02_25_042906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 2019_02_17_052914) do
   end
 
   create_table "passes", force: :cascade do |t|
-    t.string "serialNumber"
+    t.string "serial_number"
     t.datetime "expiration"
     t.string "passTypeIdentifier", default: "pass.com.eloisaguanlao.testpass", null: false
     t.datetime "created_at", null: false
