@@ -38,6 +38,7 @@ var Payment = (function() {
     
     var processPayment = function(buyable, event) {
        var  payload = {
+                authorization: Credentials.getToken(),
                 purchaser: {
                     name: event.payerName,
                     email: event.payerEmail,

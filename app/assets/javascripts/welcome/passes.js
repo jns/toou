@@ -10,8 +10,7 @@ var PassesComponent = (function() {
         return m.request({
             method: "POST",
             url: "api/passes",
-            data: {},
-            headers: Credentials.getAuthHeader(),
+            data: {authorization: Credentials.getToken()}
         }).then(function(data) {
             passList = data;
             if (passList.length === 0) {
