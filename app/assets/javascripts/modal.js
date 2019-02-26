@@ -41,7 +41,9 @@ var Modal = (function() {
         $('#modal').modal('show');
         $('#modal').on('hidden.bs.modal',function(e) { 
             $('#modal').off('hidden.bs.modal');
-            completion();
+            if (typeof completion === 'function') {
+                completion();
+            }
             $('modal-footer > .cancel-button').off('onclick');
             $('modal-footer > .ok-button').off('onclick');
         });
