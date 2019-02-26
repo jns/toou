@@ -11,7 +11,6 @@ var PaymentForm = {
             PaymentForm.stripe = Stripe(data["stripe_public_api_key"]);
            
             PaymentForm.card = PaymentForm.stripe.elements().create('card');
-            var button = $('<button>').text("Send");
             PaymentForm.card.mount('#card-input');
         
             PaymentForm.card.addEventListener('change', function(event) {
@@ -158,7 +157,7 @@ var Payment = (function() {
                         }
                   });
                 });
-                var button = $('<button>').text("Send").click(function() { 
+                var button = $('<button>').text("Send for $1").click(function() { 
                     Modal.show();
                 });
                 $('#payment-request-button').append(button);
