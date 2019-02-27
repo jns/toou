@@ -2,7 +2,7 @@ class UserController < ApplicationController
 
     skip_before_action :set_user, except: [:new_user]
 
-    def new_user
+    def new_merchant
         authorize User, :new?
         if request.get?
             @new_user = User.new

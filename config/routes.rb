@@ -33,6 +33,8 @@ Rails.application.routes.draw do
   get 'login', to: 'user#login'
   post 'login', to: 'user#login'
   get 'logout', to: 'user#logout'
+  get 'user/new_merchant', to: 'user#new_merchant'
+  post 'user/new_merchant', to: 'user#new_merchant'
   
   
   # Admin Routes
