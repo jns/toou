@@ -9,4 +9,12 @@ class User < ApplicationRecord
     def merchant?
        roles.member?(Role.merchant) 
     end
+    
+    def merchant
+       if merchant?
+           Merchant.find_by(user: self)
+       else
+           nil
+       end
+    end
 end

@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :authenticate_merchant, :promotions, :products, :order]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order]
     
     # Returns active promotions
     def promotions
@@ -15,44 +15,6 @@ class ApiController < ApiBaseController
     def products
         @products = Product.all
         render 'products.json.jbuilder', status: :ok
-    end
-    
-    # Returns all credits for a merchant
-    def credits
-        merchant_data = params.require(:data).permit(:merchant_id)
-        merchant = Merchant.find(merchant_data[:merchant_id])
-        authorize merchant
-        @charges = merchant.charges
-        render 'charges.json.jbuilder', status: :ok
-    end
-    
-    # Redeems a specific product
-    def redeem
-        data = params.require(:data).permit(:serial_number)
-        
-        begin
-            merchant = Merchant.where(user: @current_user).first
-            authorize merchant
-            
-            if not SerialNumber.isValid?(data[:serial_number])
-                render json: {error: "Invalid Serial Number"}, status: :bad_request and return
-            end
-            
-            pass = Pass.where("serial_number like ?", "#{data[:serial_number]}%").take
-        
-            if pass 
-                cmd = CaptureOrder.call(merchant, pass)
-                if cmd.success?
-                    render json: {}, status: :ok
-                else
-                    render json: {error: cmd.errors}, status: :bad_request
-                end
-            else
-                render json: {error: "Pass Not Found"}, status: :not_found
-            end
-        rescue ActiveRecord::RecordNotFound => e
-            render json: {error: "Not Authorized"}, status: :unauthorized
-        end
     end
     
     # Delivers a one time passcode to the users mobile device 
@@ -96,21 +58,7 @@ class ApiController < ApiBaseController
 
             
     end
-    
-    # Authenticate a merchant user
-    # @param [String] username The merchant's username
-    # @param [String] password The merchant's password
-    # @param {auth_token: WEBTOKEN}
-    def authenticate_merchant 
-       credentials = params.require(:data).permit([:username, :password])
-       command = CreateAuthToken.call(credentials[:username], credentials[:password])
-       if command.success?
-           render json: {auth_token: command.result}, status: :ok
-       else
-           render json: {error: command.errors}, status: :unauthorized
-       end
-    end
-    
+
     
     # Authenticates the parameters and returns a json web token
     # @param [String] phone_number The phone number of the device to authenticate

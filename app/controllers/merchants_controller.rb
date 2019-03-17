@@ -1,7 +1,9 @@
 class MerchantsController < ApplicationController
 
+    include MerchantsHelper
+    
     #skip_before_action :validate_auth_token
-    skip_before_action :set_user, only: [:enroll, :new_user]
+    skip_before_action :set_user, only: [:enroll, :new_user, :onboard1, :onboard2, :onboard3]
     
     # Info message for now
     def new_user
@@ -17,6 +19,19 @@ class MerchantsController < ApplicationController
             redirect_to controller: 'user', action: 'login'
         end
     end
+    
+    def onboard1
+        
+    end
+    
+    def onboard2
+        
+    end
+    
+    def onboard3
+        @merchant = Merchant.first
+    end
+    
     
     def new
         authorize Merchant
@@ -37,6 +52,7 @@ class MerchantsController < ApplicationController
        set_merchant
        authorize @merchant
     end
+
     
     # GET enrolls a new merchant with stripe
     def enroll

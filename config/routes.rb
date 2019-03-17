@@ -20,14 +20,18 @@ Rails.application.routes.draw do
   get 'api/products', to: 'api#products'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
-  post 'api/authenticate_merchant', to: 'api#authenticate_merchant'
   post 'api/passes', to: 'api#passes'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
   get  'api/pass/:serial_number', to: 'api#pass'
-  post 'api/redeem', to: 'api#redeem'
-  post 'api/credits', to: 'api#credits'
+  
+  post 'api/authenticate_merchant', to: 'merchant_api#authenticate_merchant'
+  post 'api/redeem', to: 'merchant_api#redeem'
+  post 'api/credits', to: 'merchant_api#credits'
+  post 'api/stripe_link', to: 'merchant_api#stripe_link'
+  post 'api/merchant', to: 'merchant_api#merchant'
+  put 'api/merchant', to: 'merchant_api#merchant'
   
   # User Routes
   get 'login', to: 'user#login'
@@ -45,6 +49,10 @@ Rails.application.routes.draw do
   get 'merchants/new_user', to: 'merchants#new_user'
   #post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
+  get 'merchants/onboard1', to: 'merchants#onboard1'
+  get 'merchants/onboard2', to: 'merchants#onboard2'
+  get 'merchants/onboard3', to: 'merchants#onboard3'
+  get 'merchants/enrollment_link', to: 'merchants#enrollment_link'
   
   get 'keys/stripe_key', to: 'public_keys#stripe_key'
   get 'keys/stripe_client_id', to: 'public_keys#stripe_client_id' 

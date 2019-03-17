@@ -44,6 +44,8 @@ class CaptureOrder
                               destination_amount_cents: dst_amount)
             @pass.charge = c
             @pass.save
+            Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
+        
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
             body = e.json_body
@@ -69,13 +71,16 @@ class CaptureOrder
         rescue => e
             # Something else happened, completely unrelated to Stripe
             errors.add(:unknown_error, e.message) 
+        finally
+            errors.each do |e|
+                Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: receiver.id, message: e)
+            end
         end
         
     end
    
    
     def charge(src_amount, dst_amount, sender, receiver, merchant, order)
-        Log.create(log_type: Log::INFO, context: "CaptureOrder#charge", current_user: receiver.id, message: "Capturing order for #{order.id}")
         @@charge_client.create(
             :amount => src_amount, # this number should be in cents
             :currency => "usd",
