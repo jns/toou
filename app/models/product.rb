@@ -21,6 +21,11 @@ class Product < ApplicationRecord
     end
     
     def merchant_price_cents(merchant)
-        merchant_products.find{ |mp| mp.merchant === merchant}.price_cents || 0
+        product = merchant_products.find{ |mp| mp.merchant === merchant}
+        if product
+            product.price_cents 
+        else
+            0
+        end
     end
 end

@@ -17,4 +17,15 @@ class User < ApplicationRecord
            nil
        end
     end
+    
+    def generate_otp_for_device(device)
+        otp = rand(100000...999999).to_s
+        self.one_time_password_hash = BCrypt::Password.create(otp)
+        self.one_time_password_validity = Time.new + 10.minutes
+        if self.save
+            otp
+        else
+            raise "Error generating password"
+        end 
+    end
 end

@@ -341,4 +341,12 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
     
   end
+  
+  test "Fetch merchants" do
+    post "/api/merchants", params: {query: {}}
+    assert_equal  Merchant.count, JSON.parse(response.body).count
+    
+    post "/api/merchants", params: {query: {name: merchants(:quantum).name[0..3]}}
+    assert_equal 1, JSON.parse(response.body).count
+  end
 end

@@ -5,6 +5,26 @@ class MerchantApiController < ApiBaseController
 
 	skip_before_action :authorize_request, only: [:authenticate_merchant]
 
+    def products
+        @merchant = @current_user.merchant
+        if request.put?
+            data = params.require(:data).permit(product: [:id, :can_redeem, :price_cents])
+            product = Product.find(data[:product][:id])
+            mp = MerchantProduct.find_by(product: product)
+            if mp
+                if data[:product][:can_redeem] === "false"
+                    mp.destroy
+                else
+                    mp.update(price_cents: data[:product][:price_cents])
+                end
+            else
+                MerchantProduct.create(merchant: @merchant, product: product, price_cents: data[:product][:price_cents])
+            end
+        end        
+       @products = Product.all
+       render 'products.json.jbuilder', status: :ok
+    end
+
     def merchant
         @merchant = @current_user.merchant
         if request.put?
@@ -38,6 +58,42 @@ class MerchantApiController < ApiBaseController
        end
     end
     
+    # Delivers a one time passcode to the merchant's email 
+    #
+    # @param [String] phone_number The phone number of the device to deliver a one time passcode
+    # @param [String] deviceId A unique id of the device 
+    # @return 200 For a valid phone number and deviceID
+    # @return 400 For an invalid phone number or a suspicious deviceId    
+    def requestOneTimePasscode
+        
+        email, device = params.require([:email, :device_id])
+        
+        user = User.find_by(email: email)
+        if user
+            
+            if device_id and !device_id.empty?
+                acct.device_id = device_id
+                acct.save
+            end
+            
+            # Todo check the device ID and get worried if it changed
+            otp = user.generate_otp_for_device(device) 
+            begin
+                MerchantNotificationsMailer.with(user: user).passcode_email.deliver_later
+            rescue Exception => err 
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
+                render status: :internal_server_error, json: {error: "Error sending SMS"}
+                return
+            end
+           render json: {}, status: :ok
+            
+        else
+            render status: :unauthorized, json: {error: "Email not found"}
+        end
+
+            
+    end
+
     def stripe_link
         @merchant = @current_user.merchant
         if @merchant 

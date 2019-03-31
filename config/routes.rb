@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
   get  'api/pass/:serial_number', to: 'api#pass'
+  post 'api/merchants', to: 'api#merchants'
   
   post 'api/authenticate_merchant', to: 'merchant_api#authenticate_merchant'
   post 'api/redeem', to: 'merchant_api#redeem'
@@ -32,6 +33,8 @@ Rails.application.routes.draw do
   post 'api/stripe_link', to: 'merchant_api#stripe_link'
   post 'api/merchant', to: 'merchant_api#merchant'
   put 'api/merchant', to: 'merchant_api#merchant'
+  post 'api/merchant/products', to: 'merchant_api#products'
+  put 'api/merchant/products', to: 'merchant_api#products'
   
   # User Routes
   get 'login', to: 'user#login'

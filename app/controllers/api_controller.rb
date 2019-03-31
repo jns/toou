@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :merchants]
     
     # Returns active promotions
     def promotions
@@ -15,6 +15,17 @@ class ApiController < ApiBaseController
     def products
         @products = Product.all
         render 'products.json.jbuilder', status: :ok
+    end
+    
+    def merchants
+        query = params.permit(query: [:name])
+        query = query[:query] if query
+        if query 
+            @merchants = Merchant.where("LOWER(name) like ?", "%#{query[:name].lower}%")
+        else
+            @merchants = Merchant.all
+        end
+        render 'merchants.json.jbuilder', status: :ok
     end
     
     # Delivers a one time passcode to the users mobile device 
