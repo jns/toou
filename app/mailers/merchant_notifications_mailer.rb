@@ -6,8 +6,9 @@ class MerchantNotificationsMailer < ApplicationMailer
   #   en.merchant_notifications_mailer.passcode.subject
   #
   def passcode_email
-    @greeting = "Hi"
     user = params[:user]
-    mail to: user.email
+    @greeting = "Hi #{user.email}"
+    @passcode = params[:passcode]
+    mail to: user.email, subject: "TooU Temporary Passcode"
   end
 end

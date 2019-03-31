@@ -1,13 +1,2 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  string: 
-  datetime: 
-  string: 
-  belongs_to: 
-
-two:
-  string: 
-  datetime: 
-  string: 
-  belongs_to: 
+ 

@@ -2,12 +2,15 @@
 
 quantum_user:
   username: quantum_user
+  email: proprieter@quantum.com
   roles: merchant_role
   
 admin_user:
   username: admin_user
+  email: admin@toou.gifts
   roles: admin_role
   
 cupcake_user:
   username: cupcake_user
+  email: frosty@cupcakes.com
   roles: merchant_role
