@@ -22,7 +22,7 @@ class User < ApplicationRecord
     def authenticate_device(device, passcode) 
         dev = device.is_a?(Device) ? device : Device.find_by(device_id: device)
         if devices.member?(dev)
-            dev.authenticate(passcode) and Time.now < dev.password_validity
+            dev.authenticate(passcode) and dev.password_is_valid?
         else
             false
         end

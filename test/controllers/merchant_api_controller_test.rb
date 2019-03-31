@@ -5,9 +5,9 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	def auth_merchant(merchant, password)
 	    
 	    user = merchant.user
-	    user.update(password: password)
+	    otp = user.generate_otp_for_device("test_device")
 	    
-	    post "/api/authenticate_merchant", params: {data: {username: user.username, password: password}}, as: :json  
+	    post "/api/authenticate_merchant_device", params: {data: {device: "test_device", password: otp}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]
@@ -15,7 +15,13 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	    token
 	end
 	
-  
+	test "request passcode" do
+		user = users(:quantum_user)
+		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "test_device"}}
+	    assert_response :ok
+
+	end
+	
 	test "Update merchant" do
 		token = auth_merchant(merchants(:quantum), "beer")
 		

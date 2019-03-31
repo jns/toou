@@ -27,7 +27,9 @@ Rails.application.routes.draw do
   get  'api/pass/:serial_number', to: 'api#pass'
   post 'api/merchants', to: 'api#merchants'
   
+  post 'api/merchant/request_passcode', to: 'merchant_api#request_passcode'
   post 'api/authenticate_merchant', to: 'merchant_api#authenticate_merchant'
+  post 'api/authenticate_merchant_device', to: 'merchant_api#authenticate_device'
   post 'api/redeem', to: 'merchant_api#redeem'
   post 'api/credits', to: 'merchant_api#credits'
   post 'api/stripe_link', to: 'merchant_api#stripe_link'

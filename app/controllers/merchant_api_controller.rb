@@ -3,7 +3,7 @@ class MerchantApiController < ApiBaseController
 	include MerchantsHelper
 	
 
-	skip_before_action :authorize_request, only: [:authenticate_merchant]
+	skip_before_action :authorize_request, only: [:request_passcode, :authenticate_merchant, :authenticate_device]
 
     def products
         @merchant = @current_user.merchant
@@ -47,7 +47,6 @@ class MerchantApiController < ApiBaseController
     # Authenticate a merchant user
     # @param [String] username The merchant's username
     # @param [String] password The merchant's password
-    # @param {auth_token: WEBTOKEN}
     def authenticate_merchant 
        credentials = params.require(:data).permit([:username, :password])
        command = CreateAuthToken.call(credentials[:username], credentials[:password])
@@ -58,40 +57,38 @@ class MerchantApiController < ApiBaseController
        end
     end
     
+    # Authenticate a merchant on a device using a passcode
+    # @param [String] device the merchant's device 
+    # @param [String] passcode the temporary passcode
+    # @return [json] an authentication token
+    def authenticate_device
+        credentials = params.require(:data).permit([:device, :password])
+        dev = Device.find_by(device_id: credentials[:device])
+        command = CreateDeviceAuthToken.call(dev, credentials[:password])
+        if command.success?
+            render json: {auth_token: command.result}, status: :ok
+        else
+            render json: {error: command.errors}, status: :unauthorized
+        end
+    end
+        
     # Delivers a one time passcode to the merchant's email 
     #
-    # @param [String] phone_number The phone number of the device to deliver a one time passcode
+    # @param [String] email The email of the user to deliver a one time passcode
     # @param [String] deviceId A unique id of the device 
     # @return 200 For a valid phone number and deviceID
-    # @return 400 For an invalid phone number or a suspicious deviceId    
-    def requestOneTimePasscode
+    # @return 400 For an invalid email or a suspicious deviceId    
+    def request_passcode
+        data = params.require(:data).permit([:email, :device_id])
         
-        email, device = params.require([:email, :device_id])
-        
-        user = User.find_by(email: email)
+        user = User.find_by(email: data[:email])
         if user
-            
-            if device_id and !device_id.empty?
-                acct.device_id = device_id
-                acct.save
-            end
-            
-            # Todo check the device ID and get worried if it changed
-            otp = user.generate_otp_for_device(device) 
-            begin
-                MerchantNotificationsMailer.with(user: user).passcode_email.deliver_later
-            rescue Exception => err 
-                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
-                render status: :internal_server_error, json: {error: "Error sending SMS"}
-                return
-            end
+            otp = user.generate_otp_for_device(data[:device_id]) 
+            MerchantNotificationsMailer.with(user: user, passcode: otp).passcode_email.deliver_later
            render json: {}, status: :ok
-            
         else
-            render status: :unauthorized, json: {error: "Email not found"}
+            render status: :unauthorized, json: {error: "Email Address not found"}
         end
-
-            
     end
 
     def stripe_link
