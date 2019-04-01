@@ -17,7 +17,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	
 	test "request passcode" do
 		user = users(:quantum_user)
-		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "test_device"}}
+		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "test_device2"}}
 	    assert_response :ok
 
 	end
