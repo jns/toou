@@ -27,7 +27,16 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     get "/api/products"
     assert_response :success
     
-    assert_equal Product.count, JSON.parse(response.body).size 
+    products = JSON.parse(response.body)
+    assert_equal Product.count, products.size
+    products.each{|p|
+      assert p.key? "id"
+      assert p.key? "name"
+      assert p.key? :max_price_cents
+      assert p.key? :icon
+      assert p.key? :icon_url
+      assert p.key? :type
+    }
   end
 
   # test "the truth" do
