@@ -35,7 +35,7 @@ class PlaceOrder
                   create_pass(PhoneNumber.new(r).to_s)
                 }
                 # Charge and notify if order and passes are successfully created
-                charge(@recipients.size,  @buyable.price(:cents))
+                # charge(@recipients.size,  @buyable.price(:cents))
             end
             
             @order.passes.each do |pass|

@@ -5,7 +5,7 @@ class CaptureOrder
     cattr_accessor :charge_client
     self.charge_client = Stripe::Charge
     
-    FEE_CENTS = 50
+    FEE_CENTS = 100
     
     def initialize(merchant, pass)
        @merchant = merchant
@@ -71,7 +71,7 @@ class CaptureOrder
         rescue => e
             # Something else happened, completely unrelated to Stripe
             errors.add(:unknown_error, e.message) 
-        finally
+        ensure
             errors.each do |e|
                 Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: receiver.id, message: e)
             end
@@ -83,6 +83,7 @@ class CaptureOrder
     def charge(src_amount, dst_amount, sender, receiver, merchant, order)
         @@charge_client.create(
             :amount => src_amount, # this number should be in cents
+            :application_fee_amount => FEE_CENTS,
             :currency => "usd",
             :customer => sender.stripe_customer_id,
             :description => "TooU redeemed by #{receiver.phone_number}",

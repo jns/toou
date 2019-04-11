@@ -30,12 +30,13 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     products = JSON.parse(response.body)
     assert_equal Product.count, products.size
     products.each{|p|
+      puts p
       assert p.key? "id"
       assert p.key? "name"
-      assert p.key? :max_price_cents
-      assert p.key? :icon
-      assert p.key? :icon_url
-      assert p.key? :type
+      assert p.key? "max_price_cents"
+      assert p.key? "icon"
+      assert p.key? "icon_url"
+      assert p.key? "type"
     }
   end
 
