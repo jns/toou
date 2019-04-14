@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
-  get  'api/pass/:serial_number', to: 'api#pass'
+  post  'api/pass/:serial_number', to: 'api#pass'
   post 'api/merchants', to: 'api#merchants'
   
   post 'api/merchant/request_passcode', to: 'merchant_api#request_passcode'

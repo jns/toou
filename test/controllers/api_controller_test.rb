@@ -30,7 +30,6 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     products = JSON.parse(response.body)
     assert_equal Product.count, products.size
     products.each{|p|
-      puts p
       assert p.key? "id"
       assert p.key? "name"
       assert p.key? "max_price_cents"
@@ -260,7 +259,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serial_number}", params: {"authorization": token}
+    post "/api/pass/#{pass.serial_number}", params: {"authorization": token}
     assert_response :ok
   end
   
@@ -273,13 +272,13 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
     pass = passes(:distant_future)
   
-    get "/api/pass/#{pass.serial_number}", params: {"authorization": token}
+    post "/api/pass/#{pass.serial_number}", params: {"authorization": token}
     assert_response :not_found
   end
   
   test "Fetch an apple pkpass - Unuthorized" do
     pass = passes(:distant_future)
-    get "/api/pass/#{pass.serial_number}"
+    post "/api/pass/#{pass.serial_number}"
     assert_response :unauthorized
   end
   
