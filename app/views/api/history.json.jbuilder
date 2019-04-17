@@ -1,1 +1,1 @@
-json.array! @history, :date, :activity_type, :message
+json.array! @history, :id, :date, :activity_type, :message

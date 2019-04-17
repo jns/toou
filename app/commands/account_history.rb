@@ -17,6 +17,7 @@ class AccountHistory
         history = []
         @account.orders.each { |order|
             item = HistoryItem.new()
+            item.id = "#{order.id}R"
             item.date = order.created_at
             item.activity_type = HistoryItem::SEND_ACTIVITY_TYPE
             if order.passes.count == 1 then
@@ -29,6 +30,7 @@ class AccountHistory
         
         @account.passes.each {|pass|
             item = HistoryItem.new()
+            item.id = "#{pass.id}S"
             item.date = pass.created_at
             item.activity_type = HistoryItem::RECEIVE_ACTIVITY_TYPE
             item.message = "You received a drink from #{pass.purchaser.phone_number}"
