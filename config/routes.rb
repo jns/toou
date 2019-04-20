@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'send_gifts', to: 'welcome#send_gifts'
   get 'passes', to: 'welcome#passes'
   get 'pass/:serial_number', to: 'welcome#pass'
+  get 'support', to: 'welcome#support'
   
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
