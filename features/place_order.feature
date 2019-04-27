@@ -24,3 +24,11 @@ Feature: Place Order
     And The person named "Elo" has received a complimentary Toou
     When The user named "Elo" sends a drink to "(310) 909-7243" using a valid payment
     Then The account for "Elo" contains a name and email
+    
+
+  Scenario: The test user does not receive notifications
+    Given The person named "Josh" is a current user
+    And The user named "Josh" is authenticated
+    When The user named "Josh" sends a drink to "(000) 000-0000" using a valid payment
+    Then A text message is not sent to "+10000000000" with a redemption code
+    

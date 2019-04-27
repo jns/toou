@@ -55,7 +55,7 @@ class ApiController < ApiBaseController
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
             begin
-                MessageSender.new.send_code(phone.to_s, otp)
+                MessageSender.new.send_code(phone.to_s, otp) unless acct.test_user?
             rescue Exception => err 
                 Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
                 render status: :internal_server_error, json: {error: "Error sending SMS"}

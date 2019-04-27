@@ -15,6 +15,13 @@ Then("A text message is sent to {string} with a redemption code") do |phone_numb
   assert_equal phone_number, last_message.to
 end
 
+Then("A text message is not sent to {string} with a redemption code") do |phone_number|
+  last_message = FakeSMS.messages.last
+  if last_message
+    assert_difference phone_number, last_message.to
+  end
+end
+
 Then("A notification is sent to the device {string}") do |device_id|
   notification = MockApnoticConnector.notifications.last
   assert_not_nil notification

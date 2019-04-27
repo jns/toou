@@ -6,9 +6,9 @@ class PassNotificationJob < ApplicationJob
       pass = Pass.find(pass_id)
       acct = pass.account
         if acct.can_receive_notifications?
-            SendDeviceNotification.call(acct)
+            SendDeviceNotification.call(acct) unless acct.test_user?
         else
-          SendSmsNotification.call(pass)
+          SendSmsNotification.call(pass) unless acct.test_user?
         end
       end
   end
