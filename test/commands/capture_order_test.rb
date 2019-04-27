@@ -6,6 +6,10 @@ class CaptureOrderTest < ActiveSupport::TestCase
     	MockStripeCharge.charges.clear
     end
 	
+	test "capture an order placed by a test user fails" do
+		
+	end
+	
 	test "capture an order" do
 		merchant = merchants(:quantum)
 		pass = passes(:redeemable_pass)

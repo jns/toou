@@ -338,7 +338,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Unknown user places an order" do
-    purchaser = {name: "New User", phone: "000-000-0000", email: "test@toou.gifts"}
+    purchaser = {name: "New User", phone: "000-000-1000", email: "test@toou.gifts"}
     product = {type: "Product", id: products(:beer).id}
     recipients = [accounts(:josh).phone_number]
     payment_source = "visa_tok"

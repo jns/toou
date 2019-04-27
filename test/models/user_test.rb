@@ -13,6 +13,7 @@ class UserTest < ActiveSupport::TestCase
     assert u.admin?
   end
   
+  
   test "merchant user has merchant role" do
     u = User.create(username: "Merchant")
     refute u.merchant?

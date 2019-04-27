@@ -30,4 +30,14 @@ class AuthenticateUserTest < ActiveSupport::TestCase
       assert !cmd.success?
       assert_not_nil cmd.errors[:unauthorized]
    end
+   
+   test "authenticate test user" do
+        testnumber = "(000) 000-0000"
+        testotp = "000000"
+        cmd = AuthenticateUser.call(testnumber, testotp)
+        assert cmd.success?
+        assert_not_nil cmd.result
+   end
+   
+   
 end

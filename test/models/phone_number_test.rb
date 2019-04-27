@@ -38,6 +38,13 @@ class PhoneNumberTest  < ActiveSupport::TestCase
     assert_equal "9097243", number
   end
   
+  test "correctly identifies the test number" do 
+    p = PhoneNumber.new("000-000-0000")
+    assert_equal "1", p.country_code
+    assert_equal "000", p.area_code
+    assert_equal "0000000", p.phone_number
+  end
+  
   test "correctly parses area code and phone number without country code" do
     
     p = PhoneNumber.new("(310) 909-7243")

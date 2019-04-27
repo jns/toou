@@ -31,8 +31,17 @@ class PlaceOrder
                 @order = Order.create(account: @account)
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
-                  # This will format the phone number
-                  create_pass(PhoneNumber.new(r).to_s)
+                  
+                  # This will format the phone number 
+                  pn = PhoneNumber.new(r).to_s
+                  
+                  # Only permit test users to place an order to themselve
+                  if @account.test_user? and pn != @account.phone_number.to_s
+                    throw "Test user can only place order for self"
+                  end
+                  
+                  # generate the pass
+                  create_pass(pn)
                 }
                 # Charge and notify if order and passes are successfully created
                 # charge(@recipients.size,  @buyable.price(:cents))

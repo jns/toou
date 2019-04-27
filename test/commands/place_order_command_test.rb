@@ -18,7 +18,6 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
        assert_equal products(:beer), cmd.result.passes.first.buyable
     end
    
-   
     test "Order a Promotion" do
        from = accounts(:pete)
        to = [accounts(:josh).phone_number]
@@ -82,5 +81,16 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         assert_nil cmd.result
         assert_equal 0, accounts(:josh).orders.size
         assert MockStripeCharge.charges.empty?
+    end
+    
+    test "Test account cannot place orders to others" do
+        cmd = PlaceOrder.call accounts(:test), "test_visa", [accounts(:josh).phone_number], "message", products(:beer)
+        refute cmd.success?
+    end
+    
+    test "Test account can place order to self" do
+        cmd = PlaceOrder.call accounts(:test), "test_visa", [accounts(:test).phone_number], "message", products(:beer)
+        assert cmd.success?
+        assert_equal products(:beer), cmd.result.passes.first.buyable
     end
 end

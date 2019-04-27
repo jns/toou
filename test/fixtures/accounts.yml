@@ -1,5 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+test:
+  id: 100
+  phone_number: '+10000000000'
+
 josh:
   id: 1
   phone_number: '+13109097243'

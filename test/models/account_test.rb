@@ -38,5 +38,11 @@ class AccountTest < ActiveSupport::TestCase
     refute accounts(:not_notifiable).can_receive_notifications?
   end
   
+  test "test authenticate test user" do
+    acct = Account.search_by_phone_number("000-000-0000")
+    assert acct.test_user?
+    assert acct.authenticate("000000")
+  end
+  
   
 end
