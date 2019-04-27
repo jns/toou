@@ -13,7 +13,7 @@ Before do
     Order.destroy_all
     Pass.destroy_all
     
-    @admin_account = Account.find_or_create_by(phone_number: "+10000000000")
+    @admin_account = Account.find_or_create_by(phone_number: "+11111111111")
     
     FakeSMS.messages.clear
     MessageSender.client = FakeSMS
