@@ -70,8 +70,7 @@ class PassBuilderJob < ActiveJob::Base
     pkpass[:barcodes]  =[{
          "format" => "PKBarcodeFormatCode128",
          "message" => p.barcode_payload,
-         "messageEncoding" => "iso-8859-1",
-         "altText" => p.barcode_payload}]
+         "messageEncoding" => "iso-8859-1"}]
     pkpass[:storeCard] = {
       :primaryFields => [
         {:key => "message", :label => "", :value => ""}
