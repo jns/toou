@@ -63,7 +63,7 @@ class Pass < ActiveRecord::Base
     end
     
     def barcode_payload
-       self.serial_number[0..10] 
+       self.serial_number[0..5] 
     end
     
 end

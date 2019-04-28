@@ -93,4 +93,9 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         assert cmd.success?
         assert_equal products(:beer), cmd.result.passes.first.buyable
     end
+    
+    test "Cannot place order without a product" do
+       cmd = PlaceOrder.call accounts(:josh), "payment source", [accounts(:josh).phone_number], "message", nil
+       refute cmd.success?
+    end
 end

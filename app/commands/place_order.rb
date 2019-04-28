@@ -27,7 +27,11 @@ class PlaceOrder
     def call
         begin
             ActiveRecord::Base.transaction do 
+                
+                throw "No Product Specified" unless @buyable
+                
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
+                
                 @order = Order.create(account: @account)
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
