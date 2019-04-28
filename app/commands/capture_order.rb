@@ -88,7 +88,6 @@ class CaptureOrder
             :customer => sender.stripe_customer_id,
             :description => "TooU redeemed by #{receiver.phone_number}",
             :destination => {
-                :amount => dst_amount,
                 :account => merchant.stripe_id  
             },
             :metadata => {
