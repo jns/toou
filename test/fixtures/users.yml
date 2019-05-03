@@ -14,3 +14,8 @@ cupcake_user:
   username: cupcake_user
   email: frosty@cupcakes.com
   roles: merchant_role
+  
+tester:
+  username: tester
+  email: tester
+  roles: merchant_role, tester_role

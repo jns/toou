@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+    
+    TEST_USERNAME = "tester"
+    TEST_PASSCODE = "000000"
+    
     has_secure_password
     has_and_belongs_to_many :roles
     has_many :devices
@@ -11,6 +15,10 @@ class User < ApplicationRecord
        roles.member?(Role.merchant) 
     end
     
+    def tester?
+        self.username == TEST_USERNAME and roles.member?(Role.tester)
+    end
+    
     def merchant
        if merchant?
            Merchant.find_by(user: self)
@@ -20,6 +28,7 @@ class User < ApplicationRecord
     end
     
     def authenticate_device(device, passcode) 
+        
         dev = device.is_a?(Device) ? device : Device.find_by(device_id: device)
         if devices.member?(dev)
             dev.authenticate(passcode) and dev.password_is_valid?
@@ -38,7 +47,11 @@ class User < ApplicationRecord
             devices << dev
         end
         
-        otp = rand(100000...999999).to_s
+        otp = if tester? 
+           TEST_PASSCODE 
+        else
+            rand(100000...999999).to_s
+        end
         
         dev.password = otp
         dev.password_validity = Time.new + 10.minutes

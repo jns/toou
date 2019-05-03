@@ -7,6 +7,7 @@ class Merchant < ApplicationRecord
     has_many :charges
     
     def can_redeem?(pass)
-       products.member?(pass.buyable) 
+       products.member?(pass.buyable) and !user.tester?
     end
+    
 end

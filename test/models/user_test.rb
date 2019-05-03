@@ -39,4 +39,14 @@ class UserTest < ActiveSupport::TestCase
     refute u.authenticate_device("test_device", otp)
   end
   
+  test "Test user can authenticate" do
+    
+    u = users(:tester)
+    assert_equal User::TEST_USERNAME, u.username
+    otp = u.generate_otp_for_device("a_device")
+    assert_equal User::TEST_PASSCODE, otp
+    assert u.authenticate_device("a_device", User::TEST_PASSCODE)
+    
+  end
+  
 end

@@ -3,3 +3,6 @@ admin_role:
     
 merchant_role:
     name: Merchant
+    
+tester_role:
+    name: Tester

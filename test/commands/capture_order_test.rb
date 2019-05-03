@@ -49,4 +49,15 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		assert_not_nil cmd.errors[:unredeemable]
     end
     
+    test "tester cannot redeem a pass" do
+    	merchant = merchants(:test_store)
+    	pass = passes(:redeemable_pass)
+    	refute pass.used?
+    	
+    	assert merchant.products.member? pass.buyable
+    	
+    	cmd = CaptureOrder.call(merchant, pass)
+    	refute cmd.success?
+    end
+    
 end

@@ -10,3 +10,6 @@ cupcake_store:
   stripe_id: stripeid54321
   user: cupcake_user
   
+test_store:
+  name: Test Store
+  user: tester
