@@ -49,4 +49,20 @@ class UserTest < ActiveSupport::TestCase
     
   end
   
+  test "User can Deauthorize device" do
+    u = users(:quantum_user)
+    u.generate_otp_for_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+    assert u.deauthorize_device("test_device")
+    assert_nil Device.find_by(device_id: "test_device")
+  end
+  
+  test "User cannot deauthorize another users device" do
+    u = users(:quantum_user)
+    u.generate_otp_for_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+    refute users(:cupcake_user).deauthorize_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+  end 
+  
 end

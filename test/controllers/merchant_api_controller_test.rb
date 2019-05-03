@@ -22,6 +22,18 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 
 	end
 	
+	test "Tester Request Passcode" do
+		user = users(:tester)
+		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "testers_device"}}
+		assert_response :ok
+	end
+	
+	test "Deauthorize a device" do
+		token = auth_merchant(merchants(:quantum), "beer")
+		post "/api/merchant/deauthorize", params: {authorization: token, data: {device: "test_device"}}
+		assert_response :ok
+	end
+	
 	test "Update merchant" do
 		token = auth_merchant(merchants(:quantum), "beer")
 		

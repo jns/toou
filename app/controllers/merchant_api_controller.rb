@@ -71,7 +71,14 @@ class MerchantApiController < ApiBaseController
             render json: {error: command.errors}, status: :unauthorized
         end
     end
-        
+    
+    # Deauthorizes a device belonging to a merchant    
+    def deauthorize_device
+        data = params.require(:data).permit(:device)
+        @current_user.deauthorize_device(data[:device])
+        render json: {}, status: :ok
+    end 
+    
     # Delivers a one time passcode to the merchant's email 
     #
     # @param [String] email The email of the user to deliver a one time passcode
@@ -84,7 +91,7 @@ class MerchantApiController < ApiBaseController
         user = User.find_by(email: data[:email])
         if user
             otp = user.generate_otp_for_device(data[:device_id]) 
-            MerchantNotificationsMailer.with(user: user, passcode: otp).passcode_email.deliver_later
+            MerchantNotificationsMailer.with(user: user, passcode: otp).passcode_email.deliver_later unless user.tester?
            render json: {}, status: :ok
         else
             render status: :unauthorized, json: {error: "Email Address not found"}
