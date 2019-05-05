@@ -17,6 +17,8 @@ class CaptureOrder
         amount = product.price(:cents, @merchant)
         sender = @pass.purchaser
         receiver = @pass.account
+        order = @pass.order
+        payment_source = @pass.payment_source
         
         unless @merchant.can_redeem?(@pass)
             errors.add(:unredeemable, "#{@merchant.name} cannot redeem #{product.name}")
@@ -50,7 +52,7 @@ class CaptureOrder
             # Since it's a decline, Stripe::CardError will be caught
             body = e.json_body
             err  = body[:error]
-            errors.add(:stripe_card_error, err)
+            errors.add(:stripe_card_error, err[:message])
         rescue Stripe::RateLimitError => e
             # Too many requests made to the API too quickly
             errors.add(:stripe_rate_limit_error, e.message)
@@ -85,7 +87,7 @@ class CaptureOrder
             :amount => src_amount, # this number should be in cents
             :application_fee_amount => FEE_CENTS,
             :currency => "usd",
-            :customer => sender.stripe_customer_id,
+            :source => @pass.payment_source,
             :description => "TooU redeemed by #{receiver.phone_number}",
             :destination => {
                 :account => merchant.stripe_id  

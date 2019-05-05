@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_31_042304) do
+ActiveRecord::Schema.define(version: 2019_05_05_030156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,6 +131,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_042304) do
     t.integer "buyable_id"
     t.string "buyable_type"
     t.bigint "charge_id"
+    t.string "payment_source"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["charge_id"], name: "index_passes_on_charge_id"
     t.index ["order_id"], name: "index_passes_on_order_id"

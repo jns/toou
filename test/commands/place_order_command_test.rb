@@ -13,9 +13,12 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     test "Order a Product" do
        from = accounts(:pete)
        to = [accounts(:josh).phone_number]
-       cmd = PlaceOrder.call(from, "payment source", to, "message", products(:beer))
-       assert cmd.success?
-       assert_equal products(:beer), cmd.result.passes.first.buyable
+       assert_difference "MockStripeSource.sources.count" do
+            cmd = PlaceOrder.call(from, "payment source", to, "message", products(:beer))
+           assert cmd.success?
+           assert_equal products(:beer), cmd.result.passes.first.buyable
+        end
+       
     end
    
     test "Order a Promotion" do

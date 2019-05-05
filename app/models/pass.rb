@@ -1,6 +1,6 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serial_number, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable
+    attr_readonly :serial_number, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable, :payment_source
     
     USED = "USED"
     EXPIRED = "EXPIRED"

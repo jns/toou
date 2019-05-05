@@ -6,9 +6,10 @@ class PlaceOrder
 
     prepend SimpleCommand
     
-    cattr_accessor :charge_client, :customer_client
+    cattr_accessor :charge_client, :customer_client, :source_client
     self.charge_client = Stripe::Charge
     self.customer_client = Stripe::Customer
+    self.source_client = Stripe::Source
     
     # Account is the account placing the order
     # payment_source is a stripe payment source token
@@ -32,7 +33,9 @@ class PlaceOrder
                 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
                 
+                
                 @order = Order.create(account: @account)
+                
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
                   
@@ -44,11 +47,13 @@ class PlaceOrder
                     throw "Test user can only place order for self"
                   end
                   
+                  # Create a payment source for this order
+                  token = create_source(@buyable.price(:cents))
+                
                   # generate the pass
-                  create_pass(pn)
+                  create_pass(pn, token)
                 }
-                # Charge and notify if order and passes are successfully created
-                # charge(@recipients.size,  @buyable.price(:cents))
+                
             end
             
             @order.passes.each do |pass|
@@ -96,32 +101,22 @@ class PlaceOrder
         end
     end
     
-    def charge(qty, unit_price)
-        
-        customer = @@customer_client.retrieve @account.stripe_customer_id
-        unless customer.sources.member? @payment_source
-            @payment_source = customer.sources.create(source: @payment_source)
-        end
-        
-        Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charging fee for order #{@order.id}")
-        # Create the charge on Stripe's servers - this will charge the user's card
-        @@charge_client.create(
-            :amount => qty*100, # this number should be in cents
-            :currency => "usd",
-            :customer => @account.stripe_customer_id,
-            :source => @payment_source,
-            :description => "TooU Fee",
-            :capture => true, 
-            :metadata => {
-                :order_id => @order.id
-        })  
+    
+    def create_source(amount)
+       token = @@source_client.create({
+          customer: @account.stripe_customer_id,
+          original_source: @payment_source,
+          usage: "single_use",
+          amount: amount 
+        })
+        return token
     end
     
-    def create_pass(recipient_phone) 
-        expiry = Date.today + 6.days
+    def create_pass(recipient_phone, pass_payment_source) 
+        expiry = Date.today + 30.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "PlaceOrder#create_pass", current_user: acct.id, message: "Creating pass for order #{@order.id}")
-        Pass.create(message: @message, expiration: expiry, account: acct, order: @order, buyable: @buyable)
+        Pass.create(message: @message, expiration: expiry, account: acct, order: @order, payment_source: pass_payment_source, buyable: @buyable)
     end
     
 end

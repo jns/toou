@@ -34,6 +34,12 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		assert_response :ok
 	end
 	
+	test "Deauthorize a non-existent device" do 
+		token = auth_merchant(merchants(:quantum), "beer")
+		post "/api/merchant/deauthorize", params: {authorization: token, data: {device: "nonexistent_device"}}
+		assert_response :ok
+	end
+	
 	test "Update merchant" do
 		token = auth_merchant(merchants(:quantum), "beer")
 		
