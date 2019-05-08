@@ -103,11 +103,13 @@ class PlaceOrder
     
     
     def create_source(amount)
-       token = @@source_client.create({
-          customer: @account.stripe_customer_id,
-          original_source: @payment_source,
+       source = @@source_client.create({
+          token: @payment_source,
           usage: "single_use",
           amount: amount 
+        })
+        @@customer_client.create_source(@account.stripe_customer_id, {
+            source: source[:id]
         })
         return token
     end
