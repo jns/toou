@@ -48,5 +48,5 @@ class ActiveSupport::TestCase
   PlaceOrder.charge_client = MockStripeCharge
   PlaceOrder.customer_client = MockStripeCustomer
   PlaceOrder.source_client = MockStripeSource
-  CaptureOrder.charge_client = MockStripeCharge
+  CaptureOrder.transfer_client = MockStripeTransfer
 end

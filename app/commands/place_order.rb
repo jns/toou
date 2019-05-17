@@ -30,10 +30,11 @@ class PlaceOrder
             ActiveRecord::Base.transaction do 
                 
                 throw "No Product Specified" unless @buyable
+                throw "No Recipients" unless @recipients.count > 0
                 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
                 
-                
+                # Create an order 
                 @order = Order.create(account: @account)
                 
                 @recipients.each{ |r| 
@@ -47,14 +48,15 @@ class PlaceOrder
                     throw "Test user can only place order for self"
                   end
                   
-                  # Create a payment source for this order
-                  token = create_source(@buyable.price(:cents))
-                
                   # generate the pass
-                  create_pass(pn, token)
+                  create_pass(pn, @payment_source)
                 }
                 
             end
+            
+            # Charge the customer for each pass
+            charge(@buyable.price(:cents) * @order.passes.count)
+                
             
             @order.passes.each do |pass|
                 PassNotificationJob.perform_later(pass.id)
@@ -98,20 +100,32 @@ class PlaceOrder
             message = "Error creating order: #{e.message}"
             Log.create(log_type: Log::ERROR, context: PlaceOrder.name, current_user: @account.id, message: message)
             errors.add(:internal_server_error, message)
+        ensure
+            if errors.count > 0 and @order
+               @order.update(status: Order::FAILED_STATUS) 
+               @order.passes.each{|p| p.destroy}
+            end
         end
     end
     
-    
-    def create_source(amount)
-       source = @@source_client.create({
-          token: @payment_source,
-          usage: "single_use",
-          amount: amount 
-        })
-        @@customer_client.create_source(@account.stripe_customer_id, {
-            source: source[:id]
-        })
-        return token
+    def charge(amount_cents)
+        
+        #customer = @@customer_client.retrieve @account.stripe_customer_id
+        
+        Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charging fee for order #{@order.id}")
+        # Create the charge on Stripe's servers - this will charge the user's card
+        @@charge_client.create(
+            :amount => amount_cents, # this number should be in cents
+            :currency => "usd",
+            :customer => @account.stripe_customer_id,
+            :source => @payment_source,
+            :transfer_group => @order.id,
+            :description => "TooU Purchase",
+            :capture => true, 
+            :metadata => {
+                :order_id => @order.id
+            }
+        )  
     end
     
     def create_pass(recipient_phone, pass_payment_source) 

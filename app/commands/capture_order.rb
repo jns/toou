@@ -2,8 +2,8 @@ class CaptureOrder
     
     prepend SimpleCommand
     
-    cattr_accessor :charge_client
-    self.charge_client = Stripe::Charge
+    cattr_accessor :transfer_client
+    self.transfer_client = Stripe::Transfer
     
     FEE_CENTS = 100
     
@@ -37,12 +37,11 @@ class CaptureOrder
         
         begin
             dst_amount = amount
-            src_amount = amount + FEE_CENTS
-            response = charge(src_amount, dst_amount, sender, receiver, @merchant, @pass.order)
+            response = transfer(amount, @merchant, order)
             c = Charge.create(account: @pass.account, 
                               merchant: @merchant, 
                               stripe_id: response.id, 
-                              source_amount_cents: src_amount, 
+                              source_amount_cents: dst_amount, 
                               destination_amount_cents: dst_amount)
             @pass.charge = c
             @pass.save
@@ -82,16 +81,12 @@ class CaptureOrder
     end
    
    
-    def charge(src_amount, dst_amount, sender, receiver, merchant, order)
-        @@charge_client.create(
-            :amount => src_amount, # this number should be in cents
-            :application_fee_amount => FEE_CENTS,
+    def transfer(amount, merchant, order)
+        @@transfer_client.create(
+            :amount => amount, # this number should be in cents
             :currency => "usd",
-            :source => @pass.payment_source,
-            :description => "TooU redeemed by #{receiver.phone_number}",
-            :destination => {
-                :account => merchant.stripe_id  
-            },
+            :destination => merchant.stripe_id,
+            :transfer_group => order.id,
             :metadata => {
                 :order_id => order.id
             }
