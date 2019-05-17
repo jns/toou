@@ -132,7 +132,6 @@ ActiveRecord::Schema.define(version: 2019_05_05_170918) do
     t.integer "buyable_id"
     t.string "buyable_type"
     t.bigint "charge_id"
-    t.string "payment_source"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["charge_id"], name: "index_passes_on_charge_id"
     t.index ["order_id"], name: "index_passes_on_order_id"

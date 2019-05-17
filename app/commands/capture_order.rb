@@ -18,7 +18,6 @@ class CaptureOrder
         sender = @pass.purchaser
         receiver = @pass.account
         order = @pass.order
-        payment_source = @pass.payment_source
         
         unless @merchant.can_redeem?(@pass)
             errors.add(:unredeemable, "#{@merchant.name} cannot redeem #{product.name}")
