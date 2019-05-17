@@ -117,13 +117,13 @@ class PlaceOrder
         @@charge_client.create(
             :amount => amount_cents, # this number should be in cents
             :currency => "usd",
-            :customer => @account.stripe_customer_id,
             :source => @payment_source,
             :transfer_group => @order.id,
             :description => "TooU Purchase",
             :capture => true, 
             :metadata => {
-                :order_id => @order.id
+                :order_id => @order.id,
+                :customer_id => @account.id
             }
         )  
     end
