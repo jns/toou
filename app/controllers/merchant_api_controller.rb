@@ -137,7 +137,7 @@ class MerchantApiController < ApiBaseController
                 if cmd.success?
                     render json: {}, status: :ok
                 else
-                    render json: {error: cmd.errors.to_s}, status: :bad_request
+                    render json: {error: cmd.errors.to_json}, status: :bad_request
                 end
             else
                 render json: {error: "Pass Not Found"}, status: :not_found
