@@ -2,6 +2,7 @@
 var OneTimePasscode = (function() {
     
     var passcode = null;
+    var feedback = null;
     
     var authenticate = function() {
         var phone_number = Credentials.getPhoneNumber();
@@ -13,14 +14,16 @@ var OneTimePasscode = (function() {
             Credentials.setToken(data["auth_token"]);
             Modal.dismiss();
         }).catch(function(e) {
-            console.log(e.message);
+            feedback =  JSON.parse(e.message).error;
+            $(".feedback").addClass("invalid-feedback");
+            $(".feedback").show();
         });
     }
     
     var view = function() {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col", "We just texted you a passocde")
+                    m(".col", "We emailed you a passcode")
                     ]),
                 m(".row", [
                     m(".col.input-group", [
@@ -30,6 +33,9 @@ var OneTimePasscode = (function() {
                             }),
                         m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),
+                    ]),
+                m(".row.col.text-center", [
+                    m(".feedback", feedback)
                     ]),
             ]);
     };

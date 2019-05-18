@@ -38,9 +38,9 @@ class ApiController < ApiBaseController
         
         acct_phone_number = params.require(:phone_number)
         device_id = params.permit(:device_id)[:device_id]
-            
-        phone = PhoneNumber.new(acct_phone_number).to_s
-        if (phone) 
+        
+        begin
+            phone = PhoneNumber.new(acct_phone_number).to_s
             acct = Account.find_or_create_by(phone_number: phone)
             if (! acct)
                 Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: "Error Creating Account with phone number #{phone}")
@@ -63,7 +63,7 @@ class ApiController < ApiBaseController
             end
            render json: {}, status: :ok
             
-        else
+        rescue Exception => e
             render status: :bad_request, json: {error: "Invalid phone number."}
         end
 
@@ -77,12 +77,17 @@ class ApiController < ApiBaseController
     # @return 200 {"auth_token", jwt} a json web token or 401 for an invalid set of credentials
     def authenticate
         otp, phoneNumber = params.require([:pass_code, :phone_number])
-        command = AuthenticateUser.call(phoneNumber, otp)
-    
-       if command.success?
-         render json: { auth_token: command.result }, status: :ok
-       else
-         render json: { error: command.errors }, status: :unauthorized
+        
+        begin 
+            command = AuthenticateUser.call(phoneNumber, otp)
+        
+           if command.success?
+             render json: { auth_token: command.result }, status: :ok
+           else
+             render json: { error: command.errors }, status: :unauthorized
+           end
+        rescue Exception => e
+            render json: {error: e.message}, status: :internal_server_error
        end
     end
     
