@@ -18,10 +18,13 @@ class ApiController < ApiBaseController
     end
     
     def merchants
-        query = params.permit(query: [:name])
+        query = params.permit(query: [:name, :product_id])
         query = query[:query] if query
-        if query 
+        if query and query[:name]
             @merchants = Merchant.where("LOWER(name) like ?", "%#{query[:name].downcase}%")
+        elsif query and query[:product_id]
+            p = Product.find(query[:product_id])
+            @merchants = p.merchants
         else
             @merchants = Merchant.all
         end

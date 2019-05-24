@@ -51,7 +51,6 @@ var PaymentForm = {
 var Payment = (function() {
     
     var stripe
-    var toou_fee = 100; // $1 to send
     
     $.get("/keys/stripe_key", function(data) { 
         stripe = Stripe(data["stripe_public_api_key"]);
@@ -61,10 +60,9 @@ var Payment = (function() {
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
-          total: {label: "Total", amount: buyable.max_price_cents+toou_fee, pending: false},
+          total: {label: "Total", amount: buyable.max_price_cents, pending: false},
           displayItems: [
-              {label: "Sending Fee (Charged Now)", amount: toou_fee, pending: false},
-              {label: buyable.name + "(Max we will charge later)", amount: buyable.max_price_cents,pending: true}
+              {label: buyable.name, amount: buyable.max_price_cents,pending: true}
           ],
           requestPayerName: true,
           requestPayerEmail: true,
@@ -157,7 +155,7 @@ var Payment = (function() {
                         }
                   });
                 });
-                var button = $('<button>').text("Send for $1").click(function() { 
+                var button = $('<button>').text("Send Now").click(function() { 
                     Modal.show();
                 });
                 $('#payment-request-button').append(button);

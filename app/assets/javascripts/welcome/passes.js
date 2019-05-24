@@ -1,4 +1,4 @@
-/* global m, $, Credentials */
+/* global m, $, Credentials, Modal */
 var PassesComponent = (function() { 
     
     var passList = []

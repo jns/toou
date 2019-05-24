@@ -60,6 +60,7 @@ $(document).on("turbolinks:load", function() {
         Breadcrumb.show("Back", "/merchants");
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
+        Pass.mount();
     } else {
         Breadcrumb.home();
     }
