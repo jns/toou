@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   
   post 'api/merchant/request_passcode', to: 'merchant_api#request_passcode'
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
+  post 'api/verify_device', to: 'merchant_api#verify_device'
   post 'api/authenticate_merchant', to: 'merchant_api#authenticate_merchant'
   post 'api/authenticate_merchant_device', to: 'merchant_api#authenticate_device'
   post 'api/redeem', to: 'merchant_api#redeem'

@@ -79,6 +79,16 @@ class MerchantApiController < ApiBaseController
         render json: {}, status: :ok
     end 
     
+    # Verify a device
+    def verify_device
+       data = params.require(:data).permit(:device)
+       if @current_user.devices.member(data[:device])
+           render json: {}, status: :ok
+       else
+           render json: {}, status: :unauthorized
+       end
+    end
+    
     # Delivers a one time passcode to the merchant's email 
     #
     # @param [String] email The email of the user to deliver a one time passcode
