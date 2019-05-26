@@ -2,12 +2,12 @@ require 'test_helper'
 
 class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 
-	def auth_merchant(merchant, password)
+	def auth_merchant(merchant, device = "test_device")
 	    
 	    user = merchant.user
-	    otp = user.generate_otp_for_device("test_device")
+	    otp = user.generate_otp_for_device(device)
 	    
-	    post "/api/authenticate_merchant_device", params: {data: {device: "test_device", password: otp}}, as: :json  
+	    post "/api/authenticate_merchant_device", params: {data: {device: device, password: otp}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]
@@ -35,13 +35,13 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	end
 	
 	test "Deauthorize a non-existent device" do 
-		token = auth_merchant(merchants(:quantum), "beer")
+		token = auth_merchant(merchants(:quantum))
 		post "/api/merchant/deauthorize", params: {authorization: token, data: {device: "nonexistent_device"}}
 		assert_response :ok
 	end
 	
 	test "Update merchant" do
-		token = auth_merchant(merchants(:quantum), "beer")
+		token = auth_merchant(merchants(:quantum))
 		
 		put "/api/merchant", params: {authorization: token, data: {name: "name", website: "website", phone_number:"phone_number"}}
 		assert_response :ok
@@ -52,7 +52,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	
 	test "products" do
 		merchant = merchants(:quantum)
-		token = auth_merchant(merchant, "beer")
+		token = auth_merchant(merchant)
 		post "/api/merchant/products", params: {authorization: token}
 		assert_response :ok
 		JSON.parse(response.body).each do |p|
@@ -63,7 +63,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	
 	test "update merchant product price" do
 		merchant = merchants(:quantum)
-		token = auth_merchant(merchant, "beer")
+		token = auth_merchant(merchant)
 		beer = products(:beer)
 		qbeer = merchant_products(:quantum_beer)
 		cupcake = products(:cupcake)
@@ -80,7 +80,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		
 	test "update merchant product can redeem" do
 		merchant = merchants(:quantum)
-		token = auth_merchant(merchant, "beer")
+		token = auth_merchant(merchant)
 		beer = products(:beer)
 		cupcake = products(:cupcake)
 		put "/api/merchant/products", params: {authorization: token, data: {product: {id: beer.id, can_redeem: false}}}
@@ -91,5 +91,18 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 				assert_equal "false", p["can_redeem"] 	
 			end
 		end
+	end
+	
+	test "verify tester device" do
+		token = auth_merchant(merchants(:test_store), "device-123")
+		post "/api/verify_device", params: {authorization: token, data: {device: "device-123"}}
+		assert_response :ok
+	end
+	
+	
+	test "fail tester device" do
+		token = auth_merchant(merchants(:test_store), "device-123")
+		post "/api/verify_device", params: {authorization: token, data: {device: "device-1234"}}
+		assert_response :unauthorized
 	end
 end
