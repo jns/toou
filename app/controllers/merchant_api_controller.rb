@@ -150,7 +150,8 @@ class MerchantApiController < ApiBaseController
                                   amount_cents: pass.charge.destination_amount_cents}, 
                             status: :ok
                 else
-                    render json: {error: cmd.errors.to_json}, status: :bad_request
+                    errorStr = cmd.errors.values.join(",") 
+                    render json: {error: errorStr}, status: :bad_request
                 end
             else
                 render json: {error: "Pass Not Found"}, status: :not_found
