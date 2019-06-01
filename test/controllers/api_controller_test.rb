@@ -353,7 +353,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch merchants" do
     post "/api/merchants", params: {query: {}}
-    assert_equal  Merchant.count, JSON.parse(response.body).count
+    assert_equal  Merchant.where("stripe_id is not null").count, JSON.parse(response.body).count
     
     post "/api/merchants", params: {query: {name: merchants(:quantum).name[0..3]}}
     assert_equal 1, JSON.parse(response.body).count
@@ -362,6 +362,6 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   test "Fetch merchants by product" do
     post "/api/merchants", params: {query: {product_id: products(:beer).id}}
     assert_response :ok
-    assert_equal 2, JSON.parse(response.body).count
+    assert_equal 1, JSON.parse(response.body).count
   end
 end

@@ -10,4 +10,8 @@ class Merchant < ApplicationRecord
        products.member?(pass.buyable) and !user.tester?
     end
     
+    def enrolled
+       stripe_id != nil
+    end
+    
 end

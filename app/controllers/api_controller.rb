@@ -28,6 +28,7 @@ class ApiController < ApiBaseController
         else
             @merchants = Merchant.all
         end
+        @merchants = @merchants.select {|m| m.enrolled}
         render 'merchants.json.jbuilder', status: :ok
     end
     
