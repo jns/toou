@@ -145,7 +145,10 @@ class MerchantApiController < ApiBaseController
             if pass 
                 cmd = CaptureOrder.call(merchant, pass)
                 if cmd.success?
-                    render json: {}, status: :ok
+                    render json: {message: "Pass Redeemed", 
+                                  product: {id: pass.buyable.id, name: pass.buyable.name},
+                                  amount_cents: pass.charge.destination_amount_cents}, 
+                            status: :ok
                 else
                     render json: {error: cmd.errors.to_json}, status: :bad_request
                 end

@@ -45,7 +45,8 @@ class CaptureOrder
             @pass.charge = c
             @pass.save
             Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
-        
+            return c
+            
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
             body = e.json_body
