@@ -12,6 +12,7 @@ class ApiBaseController < ActionController::Base
         if cmd.success?
             @current_user = cmd.result
         else
+            Log.create(log_type: Log::ERROR, context: "#authorize_request", message: cmd.errors.to_s)
             render json: { error: cmd.errors }, status: 401 
         end
     end

@@ -32,11 +32,12 @@ class AuthorizeApiRequest
     
     begin
       if user_type === "Customer"
-        Account.find(user_id)
+        return Account.find(user_id)
       elsif user_type === "User"
-        User.find(user_id)
+        return User.find(user_id)
       else
-        nil
+        errors.add(:authentication, "Unknown User Type")
+        return nil
       end
     rescue ActiveRecord::RecordNotFound
       errors.add(:authentication, "User not found") 
