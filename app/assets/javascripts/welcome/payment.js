@@ -92,7 +92,7 @@ var Payment = (function() {
                     phone: event.payerPhone,
                 },
                 recipients: [document.getElementById('recipient_phone').value],
-                message: "Test Message",
+                message: document.getElementById('message_input').value,
                 payment_source: event.token.id,
                 product: {
                     id: buyable.id,
@@ -155,7 +155,7 @@ var Payment = (function() {
                         }
                   });
                 });
-                var button = $('<button>').text("Send Now").click(function() { 
+                var button = $('<button class="btn btn-primary">').text("Send Now").click(function() { 
                     Modal.show();
                 });
                 $('#payment-request-button').append(button);
