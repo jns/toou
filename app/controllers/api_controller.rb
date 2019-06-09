@@ -51,7 +51,7 @@ class ApiController < ApiBaseController
                 render status: :internal_server_error, json: {error: "Error creating account"}
             end
             
-            if device_id and device_id.empty?
+            if device_id and !device_id.empty?
                 acct.device_id = device_id
                 acct.save
             end
