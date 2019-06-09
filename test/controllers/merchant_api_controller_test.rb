@@ -99,6 +99,17 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		assert_response :ok
 	end
 	
+	test "verify two devices simultaneously" do
+		token1 = auth_merchant(merchants(:quantum), "device1")
+		token2 = auth_merchant(merchants(:quantum), "device2")
+		
+		post "/api/verify_device", params: {authorization: token1, data: {device: "device1"}}
+		assert_response :ok
+		post "/api/verify_device", params: {authorization: token2, data: {device: "device2"}}
+		assert_response :ok
+		
+	end
+	
 	
 	test "fail tester device" do
 		token = auth_merchant(merchants(:test_store), "device-123")
