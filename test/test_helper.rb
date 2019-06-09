@@ -44,9 +44,11 @@ class ActiveSupport::TestCase
   
   MessageSender.client = FakeSMS
   SendDeviceNotification.connector = MockApnoticConnector
+  SendDeviceNotification.dataStore = MockPersistentStore
   CreateStripeCustomerJob.client = MockStripeCustomer
   PlaceOrder.charge_client = MockStripeCharge
   PlaceOrder.customer_client = MockStripeCustomer
   PlaceOrder.source_client = MockStripeSource
   CaptureOrder.transfer_client = MockStripeTransfer
+  
 end

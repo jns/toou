@@ -2,8 +2,9 @@
 class SendDeviceNotification
     
     prepend SimpleCommand
-    cattr_accessor :connector
+    cattr_accessor :connector, :dataStore
     @@connector = Apnotic::Connection
+    @@dataStore = PersistentStore
     
     def initialize(account)
         @account = account
@@ -19,7 +20,7 @@ class SendDeviceNotification
         # create a persistent connection
         connection = @@connector.new(url: ENV["APN_SERVER"],
             auth_method: :token,
-            cert_path: S3_BUCKET.object(Rails.application.secrets.apn_key_file).get.body,
+            cert_path: @@dataStore.apn_certificate,
             key_id: "WDP9STG6UT",
             team_id: "8Q9F954LPX")
         
