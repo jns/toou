@@ -30,7 +30,7 @@ class SendDeviceNotification
         notification.alert = "You've receive a drink from TooU!"
         notification.expiration = (Time.now + 1.day).to_i.to_s
         notification.priority = 10
-        notification.topic = "sip.beerme"
+        notification.topic = "gifts.toou.TooU"
         # notification.authorization = generate_token
         
         # send (this is a blocking call)
