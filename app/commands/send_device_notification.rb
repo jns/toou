@@ -19,7 +19,7 @@ class SendDeviceNotification
         # create a persistent connection
         connection = @@connector.new(url: ENV["APN_SERVER"],
             auth_method: :token,
-            cert_path: Rails.application.secrets.apn_key_file,
+            cert_path: S3_BUCKET.object(Rails.application.secrets.apn_key_file).get.body,
             key_id: "WDP9STG6UT",
             team_id: "8Q9F954LPX")
         

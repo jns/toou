@@ -77,7 +77,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_nil acct.device_id
   end
   
-  test "Creates an account without an empty device id" do
+  test "Creates an account with an empty device id" do
     number = "(555) 555-5556"
     assert_nil Account.search_by_phone_number(number)
     
