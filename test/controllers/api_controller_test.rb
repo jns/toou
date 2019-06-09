@@ -353,7 +353,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch merchants" do
     post "/api/merchants", params: {query: {}}
-    assert_equal  Merchant.where("stripe_id is not null").count, JSON.parse(response.body).count
+    
+    validMerchants = Merchant.joins(:merchant_products).distinct.select{|m| m.stripe_id != nil}
+    assert_equal  validMerchants.count, JSON.parse(response.body).count
     
     post "/api/merchants", params: {query: {name: merchants(:quantum).name[0..3]}}
     assert_equal 1, JSON.parse(response.body).count

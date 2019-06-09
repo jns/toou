@@ -26,7 +26,8 @@ class ApiController < ApiBaseController
             p = Product.find(query[:product_id])
             @merchants = p.merchants
         else
-            @merchants = Merchant.all
+            # Select all merchants with products
+            @merchants = Merchant.joins(:merchant_products).distinct
         end
         @merchants = @merchants.select {|m| m.enrolled}
         render 'merchants.json.jbuilder', status: :ok
