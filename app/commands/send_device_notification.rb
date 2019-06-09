@@ -39,7 +39,9 @@ class SendDeviceNotification
         # close the connection
         connection.close
 
-        if response.status == 200
+        if response.ok?
+            message = "APN Notification Sent"
+            Log.create(log_type: Log::INFO, context: SendDeviceNotification.name, current_user: @account.id, message: message)
             return true
         else
             # problem with token

@@ -2,11 +2,16 @@ class MockApnoticConnector
    
    class Response
       def status
-         200
+         "200"
       end
       
       def body
          ""
+      end
+      
+      
+      def ok?
+         true
       end
    end
    
@@ -24,5 +29,6 @@ class MockApnoticConnector
    
    def close
    end
+   
     
 end
