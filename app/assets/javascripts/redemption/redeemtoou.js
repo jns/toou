@@ -40,10 +40,8 @@ var RedeemToou = (function() {
         code += $("#code-2").val();
         code += $("#code-3").val();
         code += $("#code-4").val();
-        console.log(code);
         
         $("#code-4").blur();
-        clear();
         
         showPending();
         setTimeout(function() {
@@ -89,6 +87,8 @@ var RedeemToou = (function() {
         $("#code-2").keyup(function() {next(2)});
         $("#code-3").keyup(function() {next(3)});
         $("#code-4").keyup(function() {next(4)});
+        
+        $("#code-4").focus();
     };
     return {mount: mount, shake: shake};
 })();
