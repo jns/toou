@@ -25,7 +25,7 @@ class EnrollStripeConnectedAccount
             @merchant.stripe_id = data["stripe_user_id"]
             @merchant.save
         else
-            errors.add(:enrollment_error, "Error enrolling user " + res.value)
+            errors.add(:enrollment_error, "Error enrolling user")
         end
     end
 end

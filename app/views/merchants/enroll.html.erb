@@ -1,0 +1,7 @@
+<h2 class="text-center">
+    <% if @cmd.success? %>
+        Congratulations <%= @merchant.name %>. You are enrolled.
+    <% else %>
+        <%= @cmd.errors[:enrollment_error] %>
+    <% end %>
+</h2>

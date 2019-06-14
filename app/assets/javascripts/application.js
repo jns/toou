@@ -61,6 +61,9 @@ $(document).on("turbolinks:load", function() {
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
+    } else if (path === "/mredeem/toou") {
+        RedeemToou.mount();
+        Breadcrumb.hide();
     } else {
         Breadcrumb.home();
     }

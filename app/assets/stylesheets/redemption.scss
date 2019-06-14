@@ -1,0 +1,39 @@
+// Place all the styles related to the redemption controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.digit-lg {
+    display: inline-block;
+    width: 1.3em;
+    height: 80px;
+    font-size: 50px;
+    text-align: center;
+}
+
+.overlay {
+    position: absolute;
+    width: 90%;
+    height: 80%;
+    margin: auto;
+    border-radius: 30px 30px 30px 30px;
+    font-size: 50px;
+    line-height: 75px;
+    text-align: center;
+    padding-top: 40px;
+    z-index: 100;
+}
+
+.pending {
+    background-color: white;
+    color: black;
+}
+
+.approved {
+    color: white;
+    background-color: green;
+}
+
+.denied {
+    color: white;
+    background-color: red;
+}

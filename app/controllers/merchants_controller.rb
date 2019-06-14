@@ -60,21 +60,16 @@ class MerchantsController < ApplicationController
         state, code = params.require([:state, :code])
         
         if code === "TEST_OK"
+            @merchant = {name: "test"}
             return head :ok
         end
         
-        merchant = Merchant.find(state)
-        unless merchant
+        @merchant = Merchant.find(state)
+        unless @merchant
             render status: :bad_request
         end
         
-        cmd = EnrollStripeConnectedAccount.call(merchant, code)
-        if cmd.success?
-            redirect_to action: 'index'
-        else
-            flash[:notice] = cmd.errors(:enrollment_error)
-            redirect_to merchants_url
-        end
+        @cmd = EnrollStripeConnectedAccount.call(@merchant, code)
     
     end
     

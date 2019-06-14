@@ -16,6 +16,10 @@ Rails.application.routes.draw do
   get 'pass/:serial_number', to: 'welcome#pass'
   get 'support', to: 'welcome#support'
   
+  # Redemption 
+  get 'mredeem', to: 'redemption#index'
+  get 'mredeem/toou', to: 'redemption#toou'
+  
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
   get 'api/products', to: 'api#products'
