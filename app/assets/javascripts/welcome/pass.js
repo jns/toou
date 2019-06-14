@@ -9,7 +9,7 @@ var MerchantList = (function() {
         return m.request({
             method: "POST",
             url: "/api/merchants", 
-            data: {query: {product_id: product_id}}
+            body: {query: {product_id: product_id}}
         }).then(function(data) {
             merchants = data;
             if (merchants.length === 0) {

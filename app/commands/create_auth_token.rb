@@ -1,5 +1,5 @@
 class CreateAuthToken
-  
+   
   prepend SimpleCommand
   
   def initialize(username, password)
@@ -22,4 +22,5 @@ class CreateAuthToken
     errors.add :user_authentication, 'invalid credentials'
     nil
   end
+  
 end

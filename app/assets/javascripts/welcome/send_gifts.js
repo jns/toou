@@ -17,9 +17,7 @@ var ProductList = (function() {
             url: "/api/products",
         }).then(function(data) {
             products = data;
-            console.log(products);
         }).catch(function(e) {
-            console.log(e.message);
         });
         return null;
     };

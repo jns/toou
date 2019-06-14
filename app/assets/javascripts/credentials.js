@@ -18,7 +18,11 @@ var Credentials = (function() {
     };
     
     var setToken = function(token) {
-        return localStorage.setItem(TOKEN, token);
+        if (typeof token === "undefined" || token === null) {
+            return localStorage.removeItem(TOKEN);
+        } else {
+            return localStorage.setItem(TOKEN, token);
+        }
     };
     
     var getToken = function() {

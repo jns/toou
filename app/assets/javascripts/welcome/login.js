@@ -9,7 +9,7 @@ var Login = (function() {
         return m.request({
             method: "POST",
             url: "api/requestOneTimePasscode",
-            data: {phone_number: phone_number},
+            body: {phone_number: phone_number},
         }).then(function(data) {
             Credentials.setPhoneNumber(phone_number);
             Modal.setBody(OneTimePasscode);

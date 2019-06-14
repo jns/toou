@@ -10,6 +10,12 @@
     text-align: center;
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
 .overlay {
     position: absolute;
     width: 90%;
@@ -36,4 +42,14 @@
 .denied {
     color: white;
     background-color: red;
+}
+
+.merchant-autocomplete .list-group-item:hover {
+    background-color: #83D6DE3D;
+    color: #8E8E93;
+}
+
+.merchant-autocomplete .list-group-item:first-child {
+  border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px !important;
 }

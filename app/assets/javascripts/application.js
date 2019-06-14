@@ -18,12 +18,21 @@
 //= require breadcrumb
 //= require modal
 //= require splash
+//= require credentials
 
-/* global $ */
+/* global $, Breadcrumb */
 
 var Routes = {
     goHome: function() { 
         window.location.pathname = "/";
+    },
+    
+    goRedeemLogin: function() {
+        window.location.pathname = "/mredeem";
+    },
+    
+    goRedeem: function() {
+        window.location.pathname = "/mredeem/toou";
     }
 }
 
@@ -40,9 +49,9 @@ $(document).on("turbolinks:load", function() {
     
     var path = window.location.pathname;
     
-    routes = [];
+    var routes = [];
     
-    routes.push({location: "Home"})
+    routes.push({location: "Home"});
     
     if (path === "/send_gifts") {
         SendGifts.mount();
@@ -61,6 +70,9 @@ $(document).on("turbolinks:load", function() {
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
+    }else if (path === "/mredeem") {
+        RedeemLogin.mount();
+        Breadcrumb.hide();
     } else if (path === "/mredeem/toou") {
         RedeemToou.mount();
         Breadcrumb.hide();

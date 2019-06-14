@@ -1,4 +1,4 @@
-/* global m, $, Credentials, Modal */
+/* global m, $, Credentials, Modal, Routes, Login */
 var PassesComponent = (function() { 
     
     var passList = []
@@ -10,7 +10,7 @@ var PassesComponent = (function() {
         return m.request({
             method: "POST",
             url: "api/passes",
-            data: {authorization: Credentials.getToken()}
+            body: {authorization: Credentials.getToken()}
         }).then(function(data) {
             passList = data;
             if (passList.length === 0) {

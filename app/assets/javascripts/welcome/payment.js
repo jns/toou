@@ -1,4 +1,4 @@
-/* global $, m, Stripe, Credentials, Modal */
+/* global $, m, Stripe, Credentials, Modal, Routes */
 
 var PaymentForm = { 
     
@@ -50,7 +50,7 @@ var PaymentForm = {
 
 var Payment = (function() {
     
-    var stripe
+    var stripe;
     
     $.get("/keys/stripe_key", function(data) { 
         stripe = Stripe(data["stripe_public_api_key"]);
@@ -102,7 +102,7 @@ var Payment = (function() {
         return m.request({
             method: "POST",
             url: "/api/order",
-            data: payload
+            body: payload
         });
     };
     

@@ -1,4 +1,24 @@
-/* global $ */
+/* global $, Credentials , m, Routes */
+var MerchantInfo = (function() {
+    var merchantName = "";
+    
+    var oninit = function() {
+        m.request({
+            method: "POST",
+            body: {auth_token: Credentials.getToken()},
+            url: "/api/redemption/merchant_info"
+        }).then(function(merchantData) {
+           merchantName = merchantData.name;
+        });
+    };
+    
+    var view = function() {
+        return m(".span.h3", merchantName);    
+    };
+    
+    return {view: view, oninit: oninit};    
+})();
+
 var RedeemToou = (function() {
     
     var shake = function(element) {
@@ -24,6 +44,7 @@ var RedeemToou = (function() {
     }
     
     var showOverlay = function(text, state) {
+        $(".pending").detach();
         var overlay = $('<div></div>').addClass("overlay").addClass(state).html(text);
         overlay.click(hideOverlay);
         $("#redemption").prepend(overlay);
@@ -44,15 +65,21 @@ var RedeemToou = (function() {
         $("#code-4").blur();
         
         showPending();
-        setTimeout(function() {
-            $(".pending").detach();
-            if (code == "0000") {
-                showOverlay("<div>Approved</div><div>$10</div>", "approved");
+        
+        return m.request({
+            method: "POST",
+            url: "/api/redemption/redeem",
+            body: {auth_token: Credentials.getToken(), code: code}
+        }).then(function(data) {
+            showOverlay("<div>Approved</div><div>"+data.amount+"</div>", "approved");
+        }).catch(function(error) {
+            if (error.code === 401) {
+                Routes.goRedeemLogin();
             } else {
                 showOverlay("Denied", "denied");
                 shake($(".overlay"))
-            }            
-        }, 1000);
+            }
+        });
         
 
     };
@@ -72,16 +99,38 @@ var RedeemToou = (function() {
         }
     };
     
+    var prev = function(ev, index) {
+        if (ev.keyCode === 8) {
+            var decr = index-1;
+            var box = $("#code-"+decr);
+            box.val("");
+            box.focus();
+        }
+    };
+    
     var clearInput = function(index) {
         var input = $("#code-"+index);
         input.val("");
-    }
+    };
     
     var mount = function() {
+        if (!Credentials.hasToken()) {
+            Routes.goRedeemLogin();
+            return;
+        }
+        
+        $(".signout").click(signout);
+        
+        m.mount($(".merchant-info")[0], MerchantInfo);
+        
         $("#code-1").focus(function() {clearInput(1)});
         $("#code-2").focus(function() {clearInput(2)});
         $("#code-3").focus(function() {clearInput(3)});
         $("#code-4").focus(function() {clearInput(4)});
+        
+        $("#code-2").keydown(function(ev) {prev(ev, 2)});
+        $("#code-3").keydown(function(ev) {prev(ev, 3)});
+        $("#code-4").keydown(function(ev) {prev(ev, 4)});
         
         $("#code-1").keyup(function() {next(1)});
         $("#code-2").keyup(function() {next(2)});
@@ -90,5 +139,11 @@ var RedeemToou = (function() {
         
         $("#code-1").focus();
     };
-    return {mount: mount, shake: shake};
+    
+    var signout = function() {
+        Credentials.setToken();
+        Routes.goRedeemLogin();
+    };
+    
+    return {mount: mount, signout: signout};
 })();

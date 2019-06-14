@@ -9,7 +9,7 @@ var OneTimePasscode = (function() {
         return m.request({
             method: "POST",
             url: "api/authenticate",
-            data: {phone_number: phone_number, pass_code: passcode},
+            body: {phone_number: phone_number, pass_code: passcode},
         }).then(function(data) {
             Credentials.setToken(data["auth_token"]);
             Modal.dismiss();

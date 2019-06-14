@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get 'send_gifts', to: 'welcome#send_gifts'
   get 'passes', to: 'welcome#passes'
   get 'pass/:serial_number', to: 'welcome#pass'
+  get 'pass', to: 'welcome#pass_not_found'
   get 'support', to: 'welcome#support'
   
   # Redemption 
@@ -45,6 +46,12 @@ Rails.application.routes.draw do
   post 'api/merchant/products', to: 'merchant_api#products'
   put 'api/merchant/products', to: 'merchant_api#products'
   
+  
+  # Redemption api endpoints
+  post '/api/redemption/authorize_device', to: 'redemption_api#authorize_device'
+  post '/api/redemption/redeem', to: 'redemption_api#redeem'
+  post '/api/redemption/merchant_info', to: 'redemption_api#merchant_info'
+
   # User Routes
   get 'login', to: 'user#login'
   post 'login', to: 'user#login'

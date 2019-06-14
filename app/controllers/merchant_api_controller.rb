@@ -72,6 +72,8 @@ class MerchantApiController < ApiBaseController
         end
     end
     
+ 
+    
     # Deauthorizes a device belonging to a merchant    
     def deauthorize_device
         data = params.require(:data).permit(:device)
@@ -156,7 +158,7 @@ class MerchantApiController < ApiBaseController
             else
                 render json: {error: "Pass Not Found"}, status: :not_found
             end
-        rescue ActiveRecord::RecordNotFound => e
+        rescue ActiveRecord::RecordNotFound
             render json: {error: "Not Authorized"}, status: :unauthorized
         end
     end
