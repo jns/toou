@@ -88,7 +88,7 @@ var RedeemToou = (function() {
         $("#code-3").keyup(function() {next(3)});
         $("#code-4").keyup(function() {next(4)});
         
-        $("#code-4").focus();
+        $("#code-1").focus();
     };
     return {mount: mount, shake: shake};
 })();
