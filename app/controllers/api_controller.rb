@@ -175,6 +175,11 @@ class ApiController < ApiBaseController
     # Returns pass data for the user
     def pass 
         serialNumber = serialNumberParam
+        unless @current_user.is_a? Account 
+            render json: {}, status: :unauthorized
+            return
+        end
+        
         @pass = @current_user.passes.find{|p| p.serial_number == serialNumber}
         unless @pass
             render json: {}, status: :not_found

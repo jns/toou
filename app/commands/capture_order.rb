@@ -16,6 +16,7 @@ class CaptureOrder
             @mpq = MerchantPassQueue.find_by(merchant: @merchant, code: @code.to_i) 
             @pass = @mpq.pass
         rescue
+            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Rejected Code #{@code} at Merchant #{@merchant.id}")
             errors.add(:unredeemable, "Invalid Code")
             return
         end
@@ -27,18 +28,21 @@ class CaptureOrder
         order = @pass.order
         
         unless @merchant.can_redeem?(@pass)
+            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Pass #{@pass.id} not redeemable by Merchant #{@merchant.id}")
             errors.add(:unredeemable, "#{@merchant.name} cannot redeem #{product.name}")
             @mpq.destroy
             return
         end
         
         if @pass.expired?
+            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Pass #{@pass.id} not redeemable due to expiration")
             errors.add(:unredeemable, "Pass is expired")
             @mpq.destroy
             return
         end
         
         if @pass.used?
+            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Pass #{@pass.id} not redeemable due prior use")
             errors.add(:unredeemable, "Pass was already used")
             @mpq.destroy
             return

@@ -48,7 +48,7 @@ class RedemptionApiController < ApiBaseController
     # @param a toou voucher code
     # @return 200 if successful
     def redeem
-        code = params.require([:code])
+        code = params.require(:code)
         if @current_user.is_a? Merchant    
             charge = CaptureOrder.call(@current_user, code)
             if charge.success?
