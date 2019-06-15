@@ -5,14 +5,21 @@ class CaptureOrder
     cattr_accessor :transfer_client
     self.transfer_client = Stripe::Transfer
     
-    FEE_CENTS = 100
-    
-    def initialize(merchant, pass)
+    def initialize(merchant, code)
        @merchant = merchant
-       @pass = pass
+       @code = code
     end
     
     def call
+        begin
+            throw "Invalid Code" unless (@code =~ /\d{4}/)
+            @mpq = MerchantPassQueue.find_by(merchant: @merchant, code: @code.to_i) 
+            @pass = @mpq.pass
+        rescue
+            errors.add(:unredeemable, "Invalid Code")
+            return
+        end
+        
         product = @pass.buyable
         amount = product.price(:cents, @merchant)
         sender = @pass.purchaser
@@ -21,16 +28,19 @@ class CaptureOrder
         
         unless @merchant.can_redeem?(@pass)
             errors.add(:unredeemable, "#{@merchant.name} cannot redeem #{product.name}")
+            @mpq.destroy
             return
         end
         
         if @pass.expired?
             errors.add(:unredeemable, "Pass is expired")
+            @mpq.destroy
             return
         end
         
         if @pass.used?
             errors.add(:unredeemable, "Pass was already used")
+            @mpq.destroy
             return
         end
         
@@ -44,6 +54,8 @@ class CaptureOrder
                               destination_amount_cents: dst_amount)
             @pass.charge = c
             @pass.save
+            @mpq.destroy
+            
             Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
             return c
             

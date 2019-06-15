@@ -60,4 +60,8 @@ class CaptureOrderTest < ActiveSupport::TestCase
     	refute cmd.success?
     end
     
+    test "MPQ is deleted" do
+    	assert false
+    end
+    
 end

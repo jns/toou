@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_05_170918) do
+ActiveRecord::Schema.define(version: 2019_06_14_201019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,17 @@ ActiveRecord::Schema.define(version: 2019_05_05_170918) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "merchant_pass_queues", force: :cascade do |t|
+    t.bigint "merchant_id", null: false
+    t.bigint "pass_id", null: false
+    t.integer "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["merchant_id", "code"], name: "index_merchant_pass_queues_on_merchant_id_and_code"
+    t.index ["merchant_id"], name: "index_merchant_pass_queues_on_merchant_id"
+    t.index ["pass_id"], name: "index_merchant_pass_queues_on_pass_id"
+  end
+
   create_table "merchant_products", force: :cascade do |t|
     t.bigint "merchant_id"
     t.bigint "product_id"
@@ -132,6 +143,7 @@ ActiveRecord::Schema.define(version: 2019_05_05_170918) do
     t.integer "buyable_id"
     t.string "buyable_type"
     t.bigint "charge_id"
+    t.string "payment_source"
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["charge_id"], name: "index_passes_on_charge_id"
     t.index ["order_id"], name: "index_passes_on_order_id"

@@ -76,8 +76,14 @@ var RedeemToou = (function() {
             if (error.code === 401) {
                 Routes.goRedeemLogin();
             } else {
-                showOverlay("Denied", "denied");
-                shake($(".overlay"))
+                var message = "<div>Denied</div>";
+                if (error.response.hasOwnProperty("unredeemable") ) {
+                    error.response.unredeemable.forEach(function(e) {
+                        message += "<div>"+e+"</div>";
+                    });
+                }
+                showOverlay(message, "denied");
+                shake($(".overlay"));
             }
         });
         

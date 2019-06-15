@@ -43,21 +43,24 @@ class RedemptionApiController < ApiBaseController
         token, code = params.require([:auth_token, :code])
         decoded_token = JsonWebToken.decode(token)
         if decoded_token === nil
-          render json: {}, status: :bad_request
+          render json: {}, status: :unauthorized
         else
            merchant_id = decoded_token[:merchant_id] 
-           begin
-                merchant = Merchant.find(merchant_id)
-                if (code =~ /\d{4}/ and code === "0000")
-                    render json: {amount: "$9"}, status: :ok
-                else
-                    render json: {}, status: :bad_request
-                end
-           rescue
+           merchant = begin
+                Merchant.find(merchant_id)
+            rescue
+                # Invoked if Merchant not found
                render json: {}, status: :unauthorized
-           end
-           
-
+               return
+            end     
+            
+            charge = CaptureOrder.call(merchant, code)
+            if charge.success?
+                render json: {amount: "$%0.2f" % charge.destination_amount_cents/100.00}, status: :ok
+            else
+                render json: charge.errors, status: :bad_request 
+            end
+            
         end
     end
     

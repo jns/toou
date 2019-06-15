@@ -129,7 +129,7 @@ class PlaceOrder
     end
     
     def create_pass(recipient_phone) 
-        expiry = Date.today + 30.days
+        expiry = Date.today + 180.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "PlaceOrder#create_pass", current_user: acct.id, message: "Creating pass for order #{@order.id}")
         Pass.create(message: @message, expiration: expiry, account: acct, order: @order, buyable: @buyable)
