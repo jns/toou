@@ -50,11 +50,11 @@ class RedemptionApiController < ApiBaseController
     def redeem
         code = params.require(:code)
         if @current_user.is_a? Merchant    
-            charge = CaptureOrder.call(@current_user, code)
-            if charge.success?
-                render json: {amount: "$%0.2f" % (charge.destination_amount_cents/100.0)}, status: :ok
+            cmd = CaptureOrder.call(@current_user, code)
+            if cmd.success?
+                render json: {amount: "$%0.2f" % (cmd.result.destination_amount_cents/100.0)}, status: :ok
             else
-                render json: charge.errors, status: :bad_request 
+                render json: cmd.errors, status: :bad_request 
             end
         else 
            render json: {}, status: :unauthorized 
