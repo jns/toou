@@ -27,7 +27,7 @@ var ProductList = (function() {
         selectedProductId = target.data("product-id");
         
         var buyable = products.find(function(p) { return p.id === selectedProductId; });
-        
+        $(".message-form").show();
         $('.recipient-form').show();
         $('.payment-form').show();
         Payment.setBuyable(buyable);
@@ -67,6 +67,7 @@ var SendGifts = (function() {
     var mount = function() {
         m.mount($('.product-list')[0], ProductList);
         m.mount($('.recipient-form')[0], RecipientForm);
+        $(".message-form").hide();
         $('.recipient-form').hide();
         $('.payment-form').hide();
         return null;

@@ -1,32 +1,44 @@
 /* global m , Credentials , Modal $ */
-var ModalRedeemContent = {
-    merchant: {},
-    pass: {},
+var ModalRedeemContent = (function() {
+
+    var merchant = {};
+    var pass = {};
+
+    var setMerchant = function(_merchant) {
+        merchant = _merchant;
+    };
     
-    cancelCode: function() {
+    var setPass = function(_pass) {
+        pass = _pass;
+    };
+
+    var cancelCode = function() {
         
-    },
+    };
     
     
-    getCode: function() {
+    var getCode = function() {
         m.request({
             url: "/api/redemption/get_code",
             method: "POST",
-            body: {authentication: Credentials.getToken()}
+            body: {authorization: Credentials.getToken(), 
+                   data: {merchant_id: merchant.id, pass_sn: pass.serialNumber}}
         }).then(function(data) {
             Modal.setBody("<div class=\"text-center\">Show this code to your server</div><h3 class=\"text-center\">"+data.code+"</h3>");
-            Modal.setCancelButton("Cancel", this.cancelCode);
+            Modal.setCancelButton("Cancel", cancelCode);
         }).catch(function(error) {
             Modal.setBody("Sorry, there was a problem. Please try again.");
             Modal.setCancelButton("OK");
         });
-    },
+    };
     
-    view: function() {
-        return m(".text-center", [m(".btn .btn-primary", {onclick: this.getCode}, "Request Code"),
+    var view = function() {
+        return m(".text-center", [m(".btn .btn-primary", {onclick: getCode}, "Request Code"),
             m(".small", "If not redeemed within 10 minutes, you can try again later.")]);
-    }
-};
+    };
+    
+    return {view: view, setMerchant: setMerchant, setPass: setPass};
+})();
 
 var PassComponent = (function() {
     
@@ -66,8 +78,8 @@ var PassComponent = (function() {
     var redeem = function(event) {
         var merch_id = $(event.target).parent(".merchant").data("merchant-id");
         var merchant = merchants.find(function(merch) {return merch.id === merch_id});
-        ModalRedeemContent.merchant = merchant;
-        ModalRedeemContent.pass = pass;
+        ModalRedeemContent.setMerchant(merchant);
+        ModalRedeemContent.setPass(pass);
         Modal.setTitle("Redeem Pass at " + merchant.name);
         Modal.setBody(ModalRedeemContent);
         Modal.setCancelButton("Not Now");

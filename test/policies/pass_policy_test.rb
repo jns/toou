@@ -46,4 +46,12 @@ class PassPolicyTest < ActiveSupport::TestCase
     refute PassPolicy.new(users(:quantum_user), nil).destroy?
     refute PassPolicy.new(users(:admin_user), nil).destroy?
   end
+  
+  test "allow owner to get code" do
+    assert false
+  end
+  
+  test "deny theif to get code" do
+    assert false
+  end
 end

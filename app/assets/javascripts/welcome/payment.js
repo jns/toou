@@ -60,9 +60,10 @@ var Payment = (function() {
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
-          total: {label: "Total", amount: buyable.max_price_cents, pending: false},
+          total: {label: "Total", amount: buyable.max_price_cents + 125, pending: false},
           displayItems: [
-              {label: buyable.name, amount: buyable.max_price_cents,pending: true}
+              {label: buyable.name, amount: buyable.max_price_cents,pending: false},
+              {label: "Sending Fee", amount: 125, pending: false}
           ],
           requestPayerName: true,
           requestPayerEmail: true,

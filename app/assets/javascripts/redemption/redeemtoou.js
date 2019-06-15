@@ -5,7 +5,7 @@ var MerchantInfo = (function() {
     var oninit = function() {
         m.request({
             method: "POST",
-            body: {auth_token: Credentials.getToken()},
+            body: {authorization: Credentials.getToken()},
             url: "/api/redemption/merchant_info"
         }).then(function(merchantData) {
            merchantName = merchantData.name;
@@ -69,7 +69,7 @@ var RedeemToou = (function() {
         return m.request({
             method: "POST",
             url: "/api/redemption/redeem",
-            body: {auth_token: Credentials.getToken(), code: code}
+            body: {authorization: Credentials.getToken(), code: code}
         }).then(function(data) {
             showOverlay("<div>Approved</div><div>"+data.amount+"</div>", "approved");
         }).catch(function(error) {

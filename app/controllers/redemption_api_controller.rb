@@ -1,6 +1,6 @@
 class RedemptionApiController < ApiBaseController
 
-    skip_before_action :authorize_request
+    skip_before_action :authorize_request, only: [:authorize_device]
     
    # Authorize a device to redeem Toou Vouchers on behalf of a merchant
     # @param [Int] the merchant id
@@ -20,54 +20,27 @@ class RedemptionApiController < ApiBaseController
     # @param auth_token
     # @return
     def merchant_info
-        token = params.require(:auth_token)
-        decoded_token = JsonWebToken.decode(token)
-        if decoded_token === nil 
-            render json: {}, status: :unauthorized
+        if @current_user.is_a? Merchant
+            render json: {name: @current_user.name}, status: :ok
         else
-            merchant_id = decoded_token[:merchant_id] 
-            begin
-                merchant = Merchant.find(merchant_id)
-                render json: {name: merchant.name}, status: :ok
-            rescue
-               render json: {}, status: :bad_request
-            end
+            render json: {}, status: :unauthorized
         end
     end
     
     # Get a temporary redemption code to use at a merchant
     def get_code
-        code = Random.new.rand(10000)
-        if code < 5000
-            render json: {code: "%04d" % code}, status: :ok
+
+        merchant = paramsMerchant
+        pass = paramsPass 
+        
+        authorize pass
+    
+        cmd = AddPassToMerchantQueue.call(merchant, pass)
+        if cmd.success? 
+            render json: {code: cmd.result}, status: :ok
         else
-            render json: {}, status: :bad_request
-        end
-        # auth_token, data = params.require([:auth_token, data: [:merchant_id, :pass_sn]])
-        # decoded_token = JsonWebToken.decode(token)
-        # if decoded_token === nil
-        #   render json: {}, status: :unauthorized
-        # else
-        #   merchant_id = decoded_token[:merchant_id] 
-        #   merchant = nil
-        #   pass = nil
-        #   begin
-        #         Merchant.find(merchant_id)
-        #         Pass.find_by(serial_number: data)
-        #     rescue
-        #         # Invoked if Merchant not found
-        #       render json: {}, status: :unauthorized
-        #       return
-        #     end
-            
-        #     cmd = AddPassToMerchantQueue.call(merchant, pass)
-            
-        #     if cmd.success? 
-        #         render json: {code: cmd.result}, status: :ok
-        #     else
-        #       render json: cmd.errors, status: :bad_request 
-        #     end
-        # end
+          render json: cmd.errors, status: :bad_request 
+        end   
     end
     
     # Redeem a Toou Voucher 
@@ -75,28 +48,32 @@ class RedemptionApiController < ApiBaseController
     # @param a toou voucher code
     # @return 200 if successful
     def redeem
-        token, code = params.require([:auth_token, :code])
-        decoded_token = JsonWebToken.decode(token)
-        if decoded_token === nil
-          render json: {}, status: :unauthorized
-        else
-           merchant_id = decoded_token[:merchant_id] 
-           merchant = begin
-                Merchant.find(merchant_id)
-            rescue
-                # Invoked if Merchant not found
-               render json: {}, status: :unauthorized
-               return
-            end     
-            
-            charge = CaptureOrder.call(merchant, code)
+        code = params.require([:code])
+        if @current_user.is_a? Merchant    
+            charge = CaptureOrder.call(@current_user, code)
             if charge.success?
                 render json: {amount: "$%0.2f" % charge.destination_amount_cents/100.00}, status: :ok
             else
                 render json: charge.errors, status: :bad_request 
             end
-            
+        else 
+           render json: {}, status: :unauthorized 
         end
     end
+    
+    private
+    
+    def paramsMerchant
+        Rails.logger.debug params.inspect
+        data = params.require(:data).permit(:merchant_id)
+        Merchant.find(data[:merchant_id])
+    end 
+    
+    def paramsPass
+        data = params.require(:data).permit(:pass_sn)
+        if SerialNumber.isValid? data[:pass_sn]
+            Pass.find_by(serial_number: data[:pass_sn])
+        end
+    end 
     
 end

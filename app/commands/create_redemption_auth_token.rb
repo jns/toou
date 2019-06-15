@@ -7,11 +7,7 @@ class CreateRedemptionAuthToken
   end
 
   def call
-    JsonWebToken.encode(merchant_id: merchant.id, user_type: "Merchant", datetime: Time.new) 
+    JsonWebToken.encode(user_id: @merchant.id, user_type: "Merchant", datetime: Time.new) 
   end
-
-  private
-
-  attr_accessor :merchant
 
 end
