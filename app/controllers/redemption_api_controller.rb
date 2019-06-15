@@ -37,7 +37,7 @@ class RedemptionApiController < ApiBaseController
     
         cmd = AddPassToMerchantQueue.call(merchant, pass)
         if cmd.success? 
-            render json: {code: cmd.result}, status: :ok
+            render json: {code: "%04d" % cmd.result}, status: :ok
         else
           render json: cmd.errors, status: :bad_request 
         end   
@@ -52,7 +52,7 @@ class RedemptionApiController < ApiBaseController
         if @current_user.is_a? Merchant    
             charge = CaptureOrder.call(@current_user, code)
             if charge.success?
-                render json: {amount: "$%0.2f" % charge.destination_amount_cents/100.00}, status: :ok
+                render json: {amount: "$%0.2f" % (charge.destination_amount_cents/100.0)}, status: :ok
             else
                 render json: charge.errors, status: :bad_request 
             end
