@@ -37,7 +37,7 @@ class RedemptionApiController < ApiBaseController
     
         cmd = AddPassToMerchantQueue.call(merchant, pass)
         if cmd.success? 
-            render json: {code: "%04d" % cmd.result}, status: :ok
+            render json: {code: "%04d" % cmd.result.destination_amount_cents}, status: :ok
         else
           render json: cmd.errors, status: :bad_request 
         end   
