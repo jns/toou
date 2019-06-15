@@ -172,10 +172,21 @@ class ApiController < ApiBaseController
        end
     end
     
+    # Returns pass data for the user
+    def pass 
+        serialNumber = serialNumberParam
+        @pass = @current_user.passes.find{|p| p.serial_number == serialNumber}
+        unless @pass
+            render json: {}, status: :not_found
+            return
+        end
+        render 'pass.json.jbuilder', status: :ok
+    end
+    
     # Returns the specific pkpass if the user is authorized
     # Required Params
     # @param serial_number
-    def pass
+    def pkpass
         
         serialNumber = serialNumberParam
         

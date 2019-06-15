@@ -35,6 +35,41 @@ class RedemptionApiController < ApiBaseController
         end
     end
     
+    # Get a temporary redemption code to use at a merchant
+    def get_code
+        code = Random.new.rand(10000)
+        if code < 5000
+            render json: {code: "%04d" % code}, status: :ok
+        else
+            render json: {}, status: :bad_request
+        end
+        # auth_token, data = params.require([:auth_token, data: [:merchant_id, :pass_sn]])
+        # decoded_token = JsonWebToken.decode(token)
+        # if decoded_token === nil
+        #   render json: {}, status: :unauthorized
+        # else
+        #   merchant_id = decoded_token[:merchant_id] 
+        #   merchant = nil
+        #   pass = nil
+        #   begin
+        #         Merchant.find(merchant_id)
+        #         Pass.find_by(serial_number: data)
+        #     rescue
+        #         # Invoked if Merchant not found
+        #       render json: {}, status: :unauthorized
+        #       return
+        #     end
+            
+        #     cmd = AddPassToMerchantQueue.call(merchant, pass)
+            
+        #     if cmd.success? 
+        #         render json: {code: cmd.result}, status: :ok
+        #     else
+        #       render json: cmd.errors, status: :bad_request 
+        #     end
+        # end
+    end
+    
     # Redeem a Toou Voucher 
     # @param auth_token
     # @param a toou voucher code

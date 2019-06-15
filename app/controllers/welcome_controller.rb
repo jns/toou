@@ -33,12 +33,6 @@ class WelcomeController < ApplicationController
     
     #View a specific pass
     def pass
-        @pass = Pass.find_by(serial_number: params.require([:serial_number]))
-        begin 
-            authorize @pass
-        rescue Pundit::NotAuthorizedError
-            redirect_to action: :pass_not_found
-        end
     end
 
 

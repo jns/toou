@@ -8,7 +8,11 @@ var Modal = (function() {
     };
     
     var setBody = function(body) {
+        
+        m.mount($(".modal-body")[0], null);
+        
         if (body.hasOwnProperty('view')) {
+            $(".modal-body").html("");
             m.mount($('.modal-body')[0], body);
         } else {
             $('.modal-body').html(body);
@@ -38,6 +42,7 @@ var Modal = (function() {
     };
     
     var show = function(completion) {
+        
         $('#modal').modal('show');
         $('#modal').on('hidden.bs.modal',function(e) { 
             $('#modal').off('hidden.bs.modal');

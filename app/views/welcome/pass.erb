@@ -1,29 +1,5 @@
 
 <div class="card">
-    <div class="card-body pass" data-product-id="<%= @pass.buyable.id %>">
-        <div class="product float-left mt-0" style="width: 75px; height: 75px;">
-            <div class="product-icon <%= @pass.buyable.icon %>"></div>
-        </div>
-        
-        <div class="card-text pass-from">
-            From <%= @pass.purchaser.name %> (<%= @pass.purchaser.phone_number %>)
-        </div>
-        <div class="card-text pass-message">
-            <%= @pass.message %>
-        </div>
-        <div class="card-text">
-            Good for a <%= @pass.buyable.name %>
-        </div>
-        
-        <div class="barcode mt-3">
-            <%= barcode_for @pass %>
-        </div>
-        <div class="card-text mt-0 mb-3 text-center">
-            <%= @pass.barcode_payload %>
-        </div>
-        <div class="card-text" id="load-redeem-locations">
-            <a>Where can I redeem?</a>
-        </div>
-        <div class="merchant-list"></div>
-    </div>
+    <div class="card-body pass"></div>
 </div>
+<%= render partial: 'modal' %>

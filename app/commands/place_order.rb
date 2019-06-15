@@ -6,6 +6,8 @@ class PlaceOrder
 
     prepend SimpleCommand
     
+    FEE = 125
+    
     cattr_accessor :charge_client, :customer_client, :source_client
     self.charge_client = Stripe::Charge
     self.customer_client = Stripe::Customer
@@ -55,7 +57,7 @@ class PlaceOrder
             end
             
             # Charge the customer for each pass
-            charge(@buyable.price(:cents) * @order.passes.count)
+            charge( (@buyable.price(:cents)+FEE) * @order.passes.count)
                 
             
             @order.passes.each do |pass|

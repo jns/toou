@@ -1,27 +1,82 @@
-/* global m , $ */
-var MerchantList = (function() {
+/* global m , Credentials , Modal $ */
+var ModalRedeemContent = {
+    merchant: {},
+    pass: {},
     
+    cancelCode: function() {
+        
+    },
+    
+    
+    getCode: function() {
+        m.request({
+            url: "/api/redemption/get_code",
+            method: "POST",
+            body: {authentication: Credentials.getToken()}
+        }).then(function(data) {
+            Modal.setBody("<div class=\"text-center\">Show this code to your server</div><h3 class=\"text-center\">"+data.code+"</h3>");
+            Modal.setCancelButton("Cancel", this.cancelCode);
+        }).catch(function(error) {
+            Modal.setBody("Sorry, there was a problem. Please try again.");
+            Modal.setCancelButton("OK");
+        });
+    },
+    
+    view: function() {
+        return m(".text-center", [m(".btn .btn-primary", {onclick: this.getCode}, "Request Code"),
+            m(".small", "If not redeemed within 10 minutes, you can try again later.")]);
+    }
+};
+
+var PassComponent = (function() {
+    
+    var pass;
     var merchants = [];
-    var contents = m(".text-center.h4", "Sorry, There are no merchants that will redeem this pass.");
     
     var oninit = function() {
-        var product_id = $(".pass").data('product-id');
+        var pass_sn = document.location.pathname.split("/").pop();
+        m.request({
+            method: "POST",
+            url: "/api/pass/"+pass_sn,
+            body: {authorization: Credentials.getToken()}
+        }).then(function(data) {
+            pass = data;
+            loadMerchants(pass.buyable);
+        }).catch(function(error) {
+            if (error.code === 401) {
+                $(".placeholder").html("Not Logged In");
+            }
+        });
+    };
+    
+    var loadMerchants = function(product) {
+        var product_id = product.id;
         return m.request({
             method: "POST",
             url: "/api/merchants", 
             body: {query: {product_id: product_id}}
         }).then(function(data) {
             merchants = data;
-            if (merchants.length === 0) {
-                contents =  m(".text-center.h4", "Sorry, There are no merchants that will redeem this pass.");
-            }
         }).catch(function(e) {
             console.log(e);
         });
     };
     
+    
+    var redeem = function(event) {
+        var merch_id = $(event.target).parent(".merchant").data("merchant-id");
+        var merchant = merchants.find(function(merch) {return merch.id === merch_id});
+        ModalRedeemContent.merchant = merchant;
+        ModalRedeemContent.pass = pass;
+        Modal.setTitle("Redeem Pass at " + merchant.name);
+        Modal.setBody(ModalRedeemContent);
+        Modal.setCancelButton("Not Now");
+        Modal.setOkButton(null);
+        Modal.show();
+    };
+    
     var addLocation = function(merchant, loc) {
-        return m("div.m-1.p-2.border", [
+        return m("div.m-1.p-2.border.merchant[data-merchant-id="+merchant.id+"]", {onclick: redeem}, [
             m("div", merchant.name),
             m("div", loc.name),
             m("div", loc.address1),
@@ -36,24 +91,37 @@ var MerchantList = (function() {
         return m("div", locations);
 
     };
+
     
     var view = function() {
-        if (merchants.length > 0) {
-            contents = merchants.map(function(m) {return addMerchant(m);});
-        }
         
-        return m(".container",contents);
+        if (typeof pass === "undefined") {
+            return m(".h3.text-center.placeholder", "Loading...");
+        } else {
+            var merchList = []
+            if (merchants.length > 0) {
+                merchList = merchants.map(function(m) {return addMerchant(m);});
+            } 
+            return [m(".product.float-left.mt-0", {style: "width: 75px; height: 75px"}, [
+                        m(".product-icon", {class: pass.buyable.icon}),
+                        ]),
+                    m(".card-text.pass-from", "From " + pass.purchaser.name),
+                    m(".card-text.pass-message", pass.message),
+                    m(".card-text", "Good for a " + pass.buyable.name),
+                    m(".container", [m(".mt-5.text-center", "Select A Merchant To Redeem"),
+                                     m(".small.text-center", "Don't worry, you can change your mind"),
+                                     merchList]),
+                    ];
+        }
     };
+    
     return {view: view, oninit: oninit};
-});
+    
+})();
 
 var Pass = (function() {
     var mount = function() {
-        $("#load-redeem-locations").click(function() { 
-            $(".merchant-list").show();
-        });
-        $(".merchant-list").hide();
-        m.mount($(".merchant-list")[0], MerchantList);
+        m.mount($(".pass")[0], PassComponent);
     };
     return {mount: mount};
 })();
