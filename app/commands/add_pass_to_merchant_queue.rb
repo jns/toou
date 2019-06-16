@@ -13,7 +13,7 @@ class AddPassToMerchantQueue
             code = Random.new.rand(10000)
             mpq = MerchantPassQueue.create(merchant: @merchant, pass: @pass, code: code)
             RemovePassFromQueue.set(wait: 10.minutes).perform_later(mpq.id)
-            return code
+            return "%04d" % code
         elsif @pass.expired?
             errors.add(:unredeemable, "Pass is expired")
         elsif @pass.used?

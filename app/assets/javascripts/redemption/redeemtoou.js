@@ -9,6 +9,11 @@ var MerchantInfo = (function() {
             url: "/api/redemption/merchant_info"
         }).then(function(merchantData) {
            merchantName = merchantData.name;
+        }).catch(function(error) {
+            if (error.code === 401) {
+                Credentials.setToken();
+                Routes.goRedeemLogin();
+            }
         });
     };
     

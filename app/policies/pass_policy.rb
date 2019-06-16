@@ -4,8 +4,8 @@ class PassPolicy < AdminPolicy
         record.account == user
     end
     
-    # Pass must belong to current user to get a code
+    # Pass must belong to current user and be redeemable to get a code
     def get_code?
-       record.account == user 
+       record.account == user && record.can_redeem?
     end
 end
