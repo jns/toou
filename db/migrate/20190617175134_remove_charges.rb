@@ -22,7 +22,7 @@ class RemoveCharges < ActiveRecord::Migration[5.2]
           charge = pass.charge
           pass.merchant = charge.merchant
           pass.transfer_stripe_id = charge.stripe_id
-          pass.trasnfer_amount_cents = charge.destination_amount_cents
+          pass.transfer_amount_cents = charge.destination_amount_cents
           pass.transfer_created_at = charge.created_at
           pass.save
           
@@ -32,26 +32,32 @@ class RemoveCharges < ActiveRecord::Migration[5.2]
           order.commitment_amount_cents = charge.destination_amount_cents
           order.save
         end
+        
+        remove_column :passes, :charge_id
+        remove_column :passes, :redemption_code # never used
       end
       
       dir.down do
+        
+        add_column :passes, :charge_id, :bigint
+        add_column :passes, :redemption_code, :string
+        
         Pass.where("transfer_stripe_id is not null").each do |pass|
           order = pass.order
-          Charge.create(account_id: order.account_id,
+          c = Charge.create(account_id: order.account_id,
                         merchant_id: pass.merchant_id,
                         source_amount_cents: order.charge_amount_cents,
-                        destination_amount_cents: pass.trasnfer_amount_cents,
+                        destination_amount_cents: pass.transfer_amount_cents,
                         stripe_id: pass.transfer_stripe_id,
                         created_at: pass.transfer_created_at)
+          pass.charge_id = c.id
+          pass.save
         end
+
       end
       
     end
-    
-    change_table :passes do |t|
-      t.remove :charge
-      t.remove :redemption_code
-    end
+   
     
     drop_table :charges do |t|
       t.bigint "account_id"

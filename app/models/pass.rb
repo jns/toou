@@ -18,6 +18,9 @@ class Pass < ActiveRecord::Base
     # When a pass is used, a charge is created
     belongs_to :charge
     
+    # A pass is redeemed by a merchant
+    belongs_to :merchant
+    
     alias :recipient :account
     
     # Assign a serial number and a credit card from the pool upon creation

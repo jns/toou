@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_14_201019) do
+ActiveRecord::Schema.define(version: 2019_06_17_175134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,16 +35,17 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "charges", force: :cascade do |t|
-    t.bigint "account_id"
-    t.bigint "merchant_id"
-    t.integer "source_amount_cents"
-    t.integer "destination_amount_cents"
-    t.string "stripe_id"
+  create_table "cards", force: :cascade do |t|
+    t.string "pan"
+    t.string "token"
+    t.datetime "expiration"
+    t.string "cvc"
+    t.integer "spend_limit"
+    t.string "state"
+    t.bigint "pass_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_charges_on_account_id"
-    t.index ["merchant_id"], name: "index_charges_on_merchant_id"
+    t.index ["pan"], name: "index_cards_on_pan"
   end
 
   create_table "countries", force: :cascade do |t|
@@ -127,6 +128,9 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
     t.integer "account_id"
     t.datetime "created_at"
     t.string "status"
+    t.string "charge_stripe_id"
+    t.integer "charge_amount_cents"
+    t.integer "commitment_amount_cents"
     t.index ["account_id"], name: "index_orders_on_account_id"
   end
 
@@ -139,12 +143,14 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
     t.integer "account_id"
     t.string "message"
     t.integer "order_id"
-    t.string "redemption_code"
     t.integer "buyable_id"
     t.string "buyable_type"
-    t.bigint "charge_id"
+    t.bigint "merchant_id"
+    t.string "transfer_stripe_id"
+    t.integer "transfer_amount_cents"
+    t.datetime "transfer_created_at"
     t.index ["account_id"], name: "index_passes_on_account_id"
-    t.index ["charge_id"], name: "index_passes_on_charge_id"
+    t.index ["merchant_id"], name: "index_passes_on_merchant_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
   end
 
