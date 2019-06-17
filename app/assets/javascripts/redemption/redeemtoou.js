@@ -74,7 +74,7 @@ var RedeemToou = (function() {
         return m.request({
             method: "POST",
             url: "/api/redemption/redeem",
-            body: {authorization: Credentials.getToken(), code: code}
+            body: {authorization: Credentials.getToken(), data: {code: code}}
         }).then(function(data) {
             showOverlay("<div>Approved</div><div>"+data.amount+"</div>", "approved");
         }).catch(function(error) {

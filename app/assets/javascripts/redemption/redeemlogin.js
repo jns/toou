@@ -13,7 +13,7 @@ var MerchantAutocomplete = (function() {
         m.request({
             method: "POST",
             url: "/api/redemption/authorize_device",
-            body: {"merchant_id": merch_id}
+            body: {data: {merchant_id: merch_id}}
         }).then(function(data) {
             console.log(data);
             Credentials.setToken(data.auth_token);
@@ -36,7 +36,7 @@ var MerchantAutocomplete = (function() {
         
         m.request({
             method: "POST",
-            body: {"query": {"name": text}},
+            body: {query: {name: text}},
             url: "/api/merchants"
         }).then(function(data) {
             content.length = 0;

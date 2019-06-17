@@ -1,4 +1,4 @@
-
+/* global m, Credentials, Modal, $ */
 var OneTimePasscode = (function() {
     
     var passcode = null;

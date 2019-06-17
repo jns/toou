@@ -14,7 +14,8 @@ var Login = (function() {
             Credentials.setPhoneNumber(phone_number);
             Modal.setBody(OneTimePasscode);
         }).catch(function(e) {
-            feedback = JSON.parse(e.message).error + " Please try again.";
+            console.log(e);
+            feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");
             $(".feedback").show();
         });
