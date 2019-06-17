@@ -7,7 +7,7 @@ class AuthenticateUserTest < ActiveSupport::TestCase
     end
     
     test "authenticate user succeeds" do
-        acct = Account.find(1)
+        acct = accounts(:josh)
         otp = acct.generate_otp
         acct.save
         

@@ -130,37 +130,6 @@ class MerchantApiController < ApiBaseController
         render 'charges.json.jbuilder', status: :ok
     end
 
-    # Redeems a specific product
-    def redeem
-        data = params.require(:data).permit(:serial_number)
-        
-        begin
-            merchant = @current_user.merchant
-            authorize merchant
-            
-            if not SerialNumber.isValid?(data[:serial_number])
-                render json: {error: "Invalid Serial Number"}, status: :bad_request and return
-            end
-            
-            pass = Pass.where("serial_number like ?", "#{data[:serial_number]}%").take
-        
-            if pass 
-                cmd = CaptureOrder.call(merchant, pass)
-                if cmd.success?
-                    render json: {message: "Pass Redeemed", 
-                                  product: {id: pass.buyable.id, name: pass.buyable.name},
-                                  amount_cents: pass.charge.destination_amount_cents}, 
-                            status: :ok
-                else
-                    errorStr = cmd.errors.values.join(",") 
-                    render json: {error: errorStr}, status: :bad_request
-                end
-            else
-                render json: {error: "Pass Not Found"}, status: :not_found
-            end
-        rescue ActiveRecord::RecordNotFound
-            render json: {error: "Not Authorized"}, status: :unauthorized
-        end
-    end
+ 
 
 end

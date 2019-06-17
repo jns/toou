@@ -3,7 +3,7 @@ require 'test_helper'
 class OrderTest < ActiveSupport::TestCase
 
     def setup
-      @acct1 = Account.find(1)
+      @acct1 = accounts(:josh)
     end
     
     test "Order has timestamp at creation" do

@@ -6,14 +6,20 @@ class CaptureOrderTest < ActiveSupport::TestCase
     	MockStripeCharge.charges.clear
     end
 	
+	def get_code(merchant, pass)
+		code = Random.new.rand(10000)
+		mpq = MerchantPassQueue.create(merchant: merchant, pass: pass, code: code)
+		return "%04d" % code
+	end
 	
 	test "capture an order" do
 		merchant = merchants(:quantum)
 		pass = passes(:redeemable_pass)
 		refute pass.used?
 		
-		assert_difference "Charge.count" do 
-			cmd = CaptureOrder.call(merchant, pass)
+		assert_difference "Charge.count" do
+			code = get_code(merchant, pass)
+			cmd = CaptureOrder.call(merchant, code)
 			assert cmd.success?
 			assert Pass.find(pass.id).used?
 		end
@@ -24,7 +30,8 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:redeemable_cupcake)
 		refute pass.used?
 		
-		cmd = CaptureOrder.call(merchant, pass)
+		code = get_code(merchant, pass)
+		cmd = CaptureOrder.call(merchant, code)
 		refute cmd.success?
 		assert_not_nil cmd.errors[:unredeemable]
 	end
@@ -34,7 +41,8 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:expired_beer)
 		refute pass.used?
 		
-		cmd = CaptureOrder.call(merchant, pass)
+		code = get_code(merchant, pass)
+		cmd = CaptureOrder.call(merchant, code)
 		refute cmd.success?
 		assert_not_nil cmd.errors[:unredeemable]
 	end
@@ -44,7 +52,8 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:used_beer_pass)
 		assert pass.used?
 		
-		cmd = CaptureOrder.call(merchant, pass)
+		code = get_code(merchant, pass)
+		cmd = CaptureOrder.call(merchant, code)
 		refute cmd.success?
 		assert_not_nil cmd.errors[:unredeemable]
     end
@@ -56,12 +65,20 @@ class CaptureOrderTest < ActiveSupport::TestCase
     	
     	assert merchant.products.member? pass.buyable
     	
-    	cmd = CaptureOrder.call(merchant, pass)
+    	code = get_code(merchant, pass)
+    	cmd = CaptureOrder.call(merchant, code)
     	refute cmd.success?
     end
     
     test "MPQ is deleted" do
-    	assert false
+    	merchant = merchants(:quantum)
+		pass = passes(:redeemable_pass)
+		
+		code = get_code(merchant, pass)
+		assert MerchantPassQueue.find_by(merchant: merchant, code: code)
+		cmd = CaptureOrder.call(merchant, code)
+		assert cmd.success?
+		assert_nil MerchantPassQueue.find_by(merchant: merchant, code: code)	
     end
     
 end

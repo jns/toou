@@ -12,6 +12,11 @@ class Promotion < ApplicationRecord
     
     has_many :passes, as: :buyable
     
+    # Placeholder so that promotions have icons.
+    def icon 
+       "promotion" 
+    end
+    
     # Set the status to draft if it isn't set
     before_validation do 
         self.status ||= DRAFT

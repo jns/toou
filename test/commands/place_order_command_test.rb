@@ -61,7 +61,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     
    test "call PlaceOrder creates a new account" do 
       
-      purchaser = Account.find(1)
+      purchaser = accounts(:josh)
       
       # Generate a random 10 digit phone number and confirm it doesn't exist
       # newAcct = Array.new(10){ [*'0'..'9'].sample }.join

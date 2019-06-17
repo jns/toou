@@ -6,7 +6,7 @@ class RedemptionApiController < ApiBaseController
     # @param [Int] the merchant id
     # @return [json] an authentication token {auth_token: token}
     def authorize_device
-        merch_id = params.require(:merchant_id)
+        merch_id = params.require(:data).require(:merchant_id)
         merchant = Merchant.find(merch_id)
         command = CreateRedemptionAuthToken.call(merchant)
        if command.success?
@@ -33,14 +33,19 @@ class RedemptionApiController < ApiBaseController
         merchant = paramsMerchant
         pass = paramsPass 
         
-        authorize pass
-    
-        cmd = AddPassToMerchantQueue.call(merchant, pass)
-        if cmd.success? 
-            render json: {code: cmd.result}, status: :ok
-        else
-          render json: cmd.errors, status: :bad_request 
-        end   
+        begin
+            authorize pass
+        
+            cmd = AddPassToMerchantQueue.call(merchant, pass)
+            if cmd.success? 
+                render json: {code: cmd.result}, status: :ok
+            else
+              render json: cmd.errors, status: :bad_request 
+            end  
+        rescue  Pundit::NotAuthorizedError
+            render json: {}, status: :not_found
+        end
+        
     end
     
     # Redeem a Toou Voucher 
@@ -48,7 +53,7 @@ class RedemptionApiController < ApiBaseController
     # @param a toou voucher code
     # @return 200 if successful
     def redeem
-        code = params.require(:code)
+        code = params.require(:data).require(:code)
         if @current_user.is_a? Merchant    
             cmd = CaptureOrder.call(@current_user, code)
             if cmd.success?

@@ -8,14 +8,14 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     # Seed test database with countries
     #load "#{Rails.root}/db/seeds.rb"
     
-    @acct1 = Account.find(1)
+    @acct1 = accounts(:josh)
     @acct1_passcode = @acct1.generate_otp
     @devId = "12345"
     
-    @acct2 = Account.find(2)
+    @acct2 = accounts(:pete)
     @acct2_passcode = @acct2.generate_otp
     
-    @acct3 = Account.find(3)
+    @acct3 = accounts(:three)
     @acct3_passcode = @acct3.generate_otp
     
     # Don't throw errors from the SMS client
@@ -47,7 +47,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     MessageSender.client.messages.clear
     
     assert_difference 'MessageSender.client.messages.size', 1 do
-      post "/api/requestOneTimePasscode", params: {"phone_number": number_to_phone(@acct1.phone_number.to_s), "device_id": @devId}, as: :json
+      post "/api/requestOneTimePasscode", params: {phone_number: number_to_phone(@acct1.phone_number.to_s), device_id: @devId}, as: :json
       assert_response :success
     end
     
@@ -57,7 +57,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5555"
     assert_nil Account.search_by_phone_number(number)
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": @devId}, as: :json
+    post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: @devId}, as: :json
     assert_response :success
         
     acct = Account.search_by_phone_number(number)
@@ -69,7 +69,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5556"
     assert_nil Account.search_by_phone_number(number)
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number}, as: :json
+    post "/api/requestOneTimePasscode", params: {phone_number: number}, as: :json
     assert_response :success
     
     acct = Account.search_by_phone_number(number)
@@ -81,7 +81,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5556"
     assert_nil Account.search_by_phone_number(number)
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": ""}, as: :json
+    post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: ""}, as: :json
     assert_response :success
     
     acct = Account.search_by_phone_number(number)
@@ -95,7 +95,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     number = "(555) 555-5557"
     assert_nil Account.search_by_phone_number(number)
     
-    post "/api/requestOneTimePasscode", params: {"phone_number": number, "device_id": ""}, as: :json
+    post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: ""}, as: :json
     assert_response :internal_server_error
     
     log_entry = Log.last
@@ -104,7 +104,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Authentication Succeeds" do
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
     
     assert_response :success
     json = JSON.parse(@response.body) 
@@ -112,7 +112,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Authenticate without deviceid" do
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": ""}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: ""}, as: :json  
     
     assert_response :success
     json = JSON.parse(@response.body) 
@@ -121,19 +121,19 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Authentication Fails" do
     bad_otp = "not a passcode"
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": bad_otp, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: bad_otp, device_id: @devId}, as: :json  
     
     assert_response :unauthorized
   end
   
   test "Fetch Passes" do
     
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
     # Posting with no parameters will return only valid passes
-    post "/api/passes", params: {"authorization": token}
+    post "/api/passes", params: {authorization: token}
     passes = JSON.parse(@response.body)
     
     assert_equal 1, passes.size
@@ -146,7 +146,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/passes", params: {authorization: token, "serialNumbers": ["abc123", "abc124"]}
+    post "/api/passes", params: {authorization: token, serialNumbers: ["abc123", "abc124"]}
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
@@ -156,12 +156,12 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Fetch a pass with an emoji" do
-    post "/api/authenticate", params: {"phone_number": @acct3.phone_number.to_s, "pass_code": @acct3_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct3.phone_number.to_s, pass_code: @acct3_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
     # Posting with no parameters will return valid passes
-    post "/api/passes", params: {"authorization": token}
+    post "/api/passes", params: {authorization: token}
     passes = JSON.parse(@response.body)
     assert_equal 1, passes.size
     assert_equal "This pass has an emoji \u{1F44D}", passes.first["message"]
@@ -170,12 +170,12 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch Invalid Pass" do
   
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/passes", params: {authorization: token, "serialNumbers": ["12345abc"]}
+    post "/api/passes", params: {authorization: token, serialNumbers: ["12345abc"]}
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
@@ -188,7 +188,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
     token = "ThisIs.NotA.Token"
     
-    post "/api/passes", params: {"authorization": token, "serialNumbers": ["abc123", "abc124"]}
+    post "/api/passes", params: {authorization: token, serialNumbers: ["abc123", "abc124"]}
     body = JSON.parse(@response.body)
     assert_response :unauthorized
     assert_not_nil(body["error"])
@@ -197,7 +197,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Place Order Succeeds" do
     
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
@@ -205,10 +205,10 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order",  
       params: {authorization: token,
-               "recipients": [@acct1.phone_number.to_s],
-               "message": "So Long and Thanks for all the Fish",
-               "payment_source": "mock_payment_source_token",
-               "product": {"id": products(:beer).id, "type": "Product"}}
+               recipients: [@acct1.phone_number.to_s],
+               message: "So Long and Thanks for all the Fish",
+               payment_source: "mock_payment_source_token",
+               product: {id: products(:beer).id, type: "Product"}}
     
     assert_response :success
     order = JSON.parse(@response.body)
@@ -220,23 +220,23 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
      
     # Posting with an array of serial numbers will return those serial numbers
     post "/api/place_order", 
-      params: {"authorization": "Not.a.token",
-               "recipients": ["310-909-7243","5043834228"],
-               "message": "So Long and Thanks for all the Fish", 
-               "product": {"id": promotions(:generic).id, "type": "Promotion"}
-      }
+      params: {authorization: "Not.a.token",
+               recipients: ["310-909-7243","5043834228"],
+               message: "So Long and Thanks for all the Fish", 
+               product: {id: promotions(:generic).id, type: "Promotion"}}
+      
     
     assert_response :unauthorized
   end
   
   test "Account History Succeeds" do
-    post "/api/authenticate", params: {"phone_number": @acct2.phone_number.to_s, "pass_code": @acct2_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct2.phone_number.to_s, pass_code: @acct2_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
     
     # Posting with an array of serial numbers will return those serial numbers
-    post "/api/history", params: {"authorization": token}
+    post "/api/history", params: {authorization: token}
     assert_response :success
     history = JSON.parse(@response.body)
     assert history.size == 3
@@ -246,79 +246,44 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Account History Unauthorized" do
     
-    post "/api/history", params: {"authorization": "Not.A.Token"}
+    post "/api/history", params: {authorization: "Not.A.Token"}
     assert_response :unauthorized
     
   end
   
-  test "Fetch an apple pkpass - Authorized" do
+  test "Fetch pass data - Authorized" do
     
-    post "/api/authenticate", params: {"phone_number": @acct1.phone_number.to_s, "pass_code": @acct1_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
     pass = passes(:distant_future)
   
-    post "/api/pass/#{pass.serial_number}", params: {"authorization": token}
+    post "/api/pass/#{pass.serial_number}", params: {authorization: token}
     assert_response :ok
   end
   
   
-  test "Fetch another users apple pkpass - Not Found" do
+  test "Fetch another users pass data returns 404" do
     
-    post "/api/authenticate", params: {"phone_number": @acct2.phone_number.to_s, "pass_code": @acct2_passcode, "device_id": @devId}, as: :json  
+    post "/api/authenticate", params: {phone_number: @acct2.phone_number.to_s, pass_code: @acct2_passcode, device_id: @devId}, as: :json  
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
   
     pass = passes(:distant_future)
   
-    post "/api/pass/#{pass.serial_number}", params: {"authorization": token}
+    post "/api/pass/#{pass.serial_number}", params: {authorization: token}
     assert_response :not_found
   end
   
-  test "Fetch an apple pkpass - Unuthorized" do
+  test "Fetch pass data when Unuthorized" do
     pass = passes(:distant_future)
     post "/api/pass/#{pass.serial_number}"
     assert_response :unauthorized
   end
+
   
-  test "Merchant can redeem a pass" do
-    pass = passes(:redeemable_pass)
-    merchant = merchants(:quantum)
-    user = users(:quantum_user)
-    user.update(password: "password")
-    
-    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
-    assert_response :ok
-    json = JSON.parse(@response.body) 
-    token = json["auth_token"]
-    assert_not_nil token
-    
-    post "/api/redeem", params: {authorization: token, data: {serial_number: pass.barcode_payload}}
-    assert_response :ok
-    
-    pass = Pass.find(pass.id)
-    assert pass.used?
-  end
-  
-  test "Redeem a used pass returns bad request and generates no charge" do
-    pass = passes(:used_beer_pass)
-    merchant = merchants(:quantum)
-    
-    user = users(:quantum_user)
-    user.update(password: "password")
-    
-    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
-    assert_response :ok
-    json = JSON.parse(@response.body) 
-    token = json["auth_token"]
-    assert_not_nil token
-    
-    assert_no_difference 'Charge.count' do
-      post "/api/redeem", params: {authorization: token, data: {serial_number: pass.barcode_payload}}
-      assert_response :bad_request
-    end
-  end
+
   
   test "Merchant credits endpoint returns charges credited to merchant" do
     merchant = merchants(:quantum)

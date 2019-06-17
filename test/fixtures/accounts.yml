@@ -1,31 +1,25 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 test:
-  id: 100
   phone_number: '+10000000000'
 
 josh:
-  id: 1
   phone_number: '+13109097243'
 
 pete:
-  id: 2
   phone_number: '+15043834228'
   email: peter.shimpeno@gmail.com
 
 three:
-  id: 3
   email: someone@somewhere
   phone_number: '+18187577604'
   
 notifiable:
-  id: 4
   phone_number: "+12052070297"
   device_id: ABC123
 
   
 not_notifiable:
-  id: 5
   phone_number: "+16263983837"
 
 new_person_1:
