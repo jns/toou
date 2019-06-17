@@ -23,7 +23,7 @@ var OneTimePasscode = (function() {
     var view = function() {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col", "We emailed you a passcode")
+                    m(".col", "We texted you a passcode")
                     ]),
                 m(".row", [
                     m(".col.input-group", [
