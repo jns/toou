@@ -57,8 +57,10 @@ class PlaceOrder
             end
             
             # Charge the customer for each pass
-            charge( (@buyable.price(:cents)+FEE) * @order.passes.count)
-                
+            amount_cents = (@buyable.price(:cents)+FEE) * @order.passes.count
+            response = charge( amount_cents )
+            c = Charge.create(account: @account, amount_cents: amount_cents, stripe_id: response.id)
+            @order.update(charge: c)
             
             @order.passes.each do |pass|
                 PassNotificationJob.perform_later(pass.id)

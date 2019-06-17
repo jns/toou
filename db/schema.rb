@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_14_201019) do
+ActiveRecord::Schema.define(version: 2019_06_17_054203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,14 +37,11 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
 
   create_table "charges", force: :cascade do |t|
     t.bigint "account_id"
-    t.bigint "merchant_id"
-    t.integer "source_amount_cents"
-    t.integer "destination_amount_cents"
     t.string "stripe_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "amount_cents"
     t.index ["account_id"], name: "index_charges_on_account_id"
-    t.index ["merchant_id"], name: "index_charges_on_merchant_id"
   end
 
   create_table "countries", force: :cascade do |t|
@@ -127,26 +124,26 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
     t.integer "account_id"
     t.datetime "created_at"
     t.string "status"
+    t.bigint "charge_id"
     t.index ["account_id"], name: "index_orders_on_account_id"
+    t.index ["charge_id"], name: "index_orders_on_charge_id"
   end
 
   create_table "passes", force: :cascade do |t|
     t.string "serial_number"
     t.datetime "expiration"
-    t.string "passTypeIdentifier", default: "pass.com.eloisaguanlao.testpass", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "account_id"
     t.string "message"
     t.integer "order_id"
-    t.string "redemption_code"
     t.integer "buyable_id"
     t.string "buyable_type"
-    t.bigint "charge_id"
     t.string "payment_source"
+    t.bigint "transfer_id"
     t.index ["account_id"], name: "index_passes_on_account_id"
-    t.index ["charge_id"], name: "index_passes_on_charge_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+    t.index ["transfer_id"], name: "index_passes_on_transfer_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -182,6 +179,15 @@ ActiveRecord::Schema.define(version: 2019_06_14_201019) do
     t.integer "user_id"
     t.integer "role_id"
     t.index ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id"
+  end
+
+  create_table "transfers", force: :cascade do |t|
+    t.integer "amount_cents"
+    t.string "stripe_transfer_id"
+    t.bigint "merchant_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["merchant_id"], name: "index_transfers_on_merchant_id"
   end
 
   create_table "users", force: :cascade do |t|

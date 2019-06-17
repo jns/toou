@@ -1,6 +1,6 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serial_number, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable, :payment_source
+    attr_readonly :serial_number, :expiration, :created_at, :account, :order, :buyable, :payment_source
     
     USED = "USED"
     EXPIRED = "EXPIRED"
@@ -15,8 +15,8 @@ class Pass < ActiveRecord::Base
     # What was purchased
     belongs_to :buyable, polymorphic: true
     
-    # When a pass is used, a charge is created
-    belongs_to :charge
+    # When a pass is used, a transfer is created
+    belongs_to :transfer
     
     alias :recipient :account
     
@@ -26,7 +26,7 @@ class Pass < ActiveRecord::Base
     end
     
     # Passes must be part of an order
-    validates_presence_of :order, :buyable, :account, :passTypeIdentifier
+    validates_presence_of :order, :buyable, :account
     
     def purchaser
        order.account 
@@ -55,7 +55,7 @@ class Pass < ActiveRecord::Base
     end
     
     def used?
-       return (self.charge != nil) 
+       return (self.transfer != nil) 
     end
     
     def not_used?

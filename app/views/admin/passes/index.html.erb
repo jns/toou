@@ -1,7 +1,7 @@
 <p id="notice"><%= notice %></p>
 
 
-<div class="card card-body content-width mx-auto">
+<div class="card card-body mx-auto">
 
 <h4>Listing Passes</h4>
 
@@ -11,7 +11,7 @@
       <th>Serialnumber</th>
       <th>Account</th>
       <th>Expiration</th>
-      <th>Passtypeidentifier</th>
+      <th>Status</th>
     </tr>
   </thead>
 
@@ -21,14 +21,11 @@
         <td><%= link_to pass.serial_number, admin_pass_path(pass) %></td>
         <td><%= link_to pass.account.phone_number, admin_account_path(pass.account) %></td>
         <td><%= pass.expiration %></td>
-        <td><%= pass.passTypeIdentifier %></td>
+        <td><%= pass.status %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<%= link_to 'New Pass', new_admin_pass_path %>
 
 </div>

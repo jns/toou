@@ -10,16 +10,16 @@ class PassTest < ActiveSupport::TestCase
       assert_equal Pass::VALID, passes(:distant_future).status
   end
 
-  test "Pass is used if it has a charge" do
-    assert_not_nil passes(:used_beer_pass).charge
+  test "Pass is used if it has a transfer" do
+    assert_not_nil passes(:used_beer_pass).transfer
     assert passes(:used_beer_pass).used?
     refute passes(:used_beer_pass).not_used?
     refute passes(:used_beer_pass).can_redeem?
     refute passes(:used_beer_pass).expired?
   end
   
-  test "Pass is not used if it does not have a charge" do
-    assert_nil passes(:redeemable_pass).charge
+  test "Pass is not used if it does not have a transfer" do
+    assert_nil passes(:redeemable_pass).transfer
     refute passes(:redeemable_pass).used?
     assert passes(:redeemable_pass).not_used?
     assert passes(:redeemable_pass).can_redeem?

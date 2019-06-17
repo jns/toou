@@ -9,6 +9,9 @@ class Order < ActiveRecord::Base
     # The recipients of the passes
     has_many :passes
     
+    # Orders have an associated charge
+    belongs_to :charge
+    
     before_create do 
        self.status = OK_STATUS 
     end

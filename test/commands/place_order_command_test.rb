@@ -13,7 +13,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
     test "Order a Product" do
        from = accounts(:pete)
        to = [accounts(:josh).phone_number]
-       assert_difference "MockStripeCharge.charges.count" do
+       assert_difference "Charge.count", 1 do
             cmd = PlaceOrder.call(from, "payment source", to, "message", products(:beer))
            assert cmd.success?
            assert_equal products(:beer), cmd.result.passes.first.buyable
@@ -79,9 +79,11 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
    end
    
    test "Do not charge unless order is successful" do
-        cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
-        refute cmd.success?
-        assert_nil cmd.result
+       assert_no_difference "Charge.count" do
+            cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
+            refute cmd.success?
+            assert_nil cmd.result
+        end
         assert_equal 0, accounts(:josh).orders.size
         assert MockStripeCharge.charges.empty?
     end

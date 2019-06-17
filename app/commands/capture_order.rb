@@ -49,19 +49,15 @@ class CaptureOrder
         end
         
         begin
-            dst_amount = amount
             response = transfer(amount, @merchant, order)
-            c = Charge.create(account: @pass.account, 
-                              merchant: @merchant, 
-                              stripe_id: response.id, 
-                              source_amount_cents: dst_amount, 
-                              destination_amount_cents: dst_amount)
-            @pass.charge = c
-            @pass.save
+            t = Transfer.create(merchant: @merchant,
+                               stripe_transfer_id: response.id,
+                               amount_cents: amount)
+            @pass.update(transfer: t)
             @mpq.destroy
-            
+            Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: @merchant.id, message: "Transferred #{amount} to Merchant #{@merchant.id} - #{response.id}")
             Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
-            return c
+            return t
             
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
