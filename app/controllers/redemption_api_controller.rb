@@ -57,7 +57,7 @@ class RedemptionApiController < ApiBaseController
         if @current_user.is_a? Merchant    
             cmd = CaptureOrder.call(@current_user, code)
             if cmd.success?
-                render json: {amount: "$%0.2f" % (cmd.result.destination_amount_cents/100.0)}, status: :ok
+                render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
             else
                 render json: cmd.errors, status: :bad_request 
             end

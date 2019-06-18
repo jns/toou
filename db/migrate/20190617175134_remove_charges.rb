@@ -6,6 +6,7 @@ class RemoveCharges < ActiveRecord::Migration[5.2]
       t.string :transfer_stripe_id
       t.integer :transfer_amount_cents
       t.datetime :transfer_created_at
+      t.foreign_key :merchants
     end
     
     # Modifies Orders to track order payment
@@ -35,13 +36,15 @@ class RemoveCharges < ActiveRecord::Migration[5.2]
         
         remove_column :passes, :charge_id
         remove_column :passes, :redemption_code # never used
+        remove_column :passes, :passTypeIdentifier # not used
       end
       
       dir.down do
         
         add_column :passes, :charge_id, :bigint
         add_column :passes, :redemption_code, :string
-        
+        add_column :passes, :passTypeIdentifier, :string, default: 'pass.com.eloisaguanlao.testpass', null: false
+    
         Pass.where("transfer_stripe_id is not null").each do |pass|
           order = pass.order
           c = Charge.create(account_id: order.account_id,

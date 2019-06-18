@@ -92,22 +92,31 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 	    assert_response :bad_request
     end
     
-    test "Test that failed redemption does not create a charge" do
-        assert_no_difference "Charge.count" do
-           # Force insert a code for an invalid pass (This will normall get stopped by other checks)
-           code = "9999"
-           merchant = merchants(:quantum)
-           pass = passes(:expired)
-           MerchantPassQueue.create(merchant: merchant, pass: pass, code: code)
+    test "Test that failed redemption does not create a transfer" do
+       # Force insert a code for an invalid pass (This will normall get stopped by other checks)
+       code = "9999"
+       merchant = merchants(:quantum)
+       pass = passes(:expired)
+       MerchantPassQueue.create(merchant: merchant, pass: pass, code: code)
+    
+        assert_no_difference 'MockStripeTransfer.transfers.count' do
            perform_redemption(merchant, code)
            assert_response :bad_request
+           pass.reload
+           assert_nil pass.transfer_stripe_id
+           assert_nil pass.transfer_amount_cents
+           assert_nil pass.transfer_created_at
         end
     end
     
     test "Redemption creates a charge" do
-        assert_difference "Charge.count", 1 do
-           perform_valid_redemption
+        
+        merchant = merchants(:quantum)
+        pass = passes(:redeemable_pass)
+        code = get_code(merchant, pass)
+    
+        assert_difference ->{merchant.charges.count} do
+            perform_redemption(merchant, code)
         end
     end
-
 end

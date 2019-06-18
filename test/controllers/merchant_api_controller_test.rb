@@ -116,4 +116,21 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		post "/api/verify_device", params: {authorization: token, data: {device: "device-1234"}}
 		assert_response :unauthorized
 	end
+	
+	test "Merchant credits endpoint returns charges credited to merchant" do
+	    merchant = merchants(:quantum)
+	    user = users(:quantum_user)
+	    user.update(password: "password")
+	    
+	    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
+	    assert_response :ok
+	    json = JSON.parse(@response.body) 
+	    token = json["auth_token"]
+	    assert_not_nil token
+	    
+	    post "/api/credits", params: {authorization: token, data: {merchant_id: merchant.id}}
+	    assert_response :ok
+	    credits = JSON.parse(response.body)
+	    assert_equal 1, credits.size
+	end
 end

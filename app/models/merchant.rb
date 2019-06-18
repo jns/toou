@@ -4,7 +4,6 @@ class Merchant < ApplicationRecord
     has_many :locations
     has_many :merchant_products
     has_many :products, through: :merchant_products
-    has_many :charges
     has_many :merchant_pass_queues
     
     def can_redeem?(pass)
@@ -13,6 +12,12 @@ class Merchant < ApplicationRecord
     
     def enrolled
        stripe_id != nil
+    end
+    
+    def charges
+        Pass.where(merchant: self).collect{|p| 
+            {id: p.id, created_at: p.transfer_created_at, amount_cents: p.transfer_amount_cents}
+        }
     end
     
 end

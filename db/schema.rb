@@ -137,7 +137,6 @@ ActiveRecord::Schema.define(version: 2019_06_17_175134) do
   create_table "passes", force: :cascade do |t|
     t.string "serial_number"
     t.datetime "expiration"
-    t.string "passTypeIdentifier", default: "pass.com.eloisaguanlao.testpass", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "account_id"
@@ -200,4 +199,5 @@ ActiveRecord::Schema.define(version: 2019_06_17_175134) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "passes", "merchants"
 end

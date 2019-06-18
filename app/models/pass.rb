@@ -1,6 +1,6 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serial_number, :expiration, :passTypeIdentifier, :create_at, :account, :order, :buyable, :payment_source
+    attr_readonly :serial_number, :expiration, :created_at, :account, :order, :buyable, :payment_source
     
     USED = "USED"
     EXPIRED = "EXPIRED"
@@ -59,7 +59,7 @@ class Pass < ActiveRecord::Base
     end
     
     def used?
-       return (self.charge != nil) 
+       return (self.transfer_stripe_id != nil) 
     end
     
     def not_used?

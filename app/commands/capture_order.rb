@@ -11,6 +11,8 @@ class CaptureOrder
     end
     
     def call
+        
+        
         begin
             throw "Invalid Code" unless (@code =~ /\d{4}/)
             @mpq = MerchantPassQueue.find_by(merchant: @merchant, code: @code.to_i) 
@@ -22,8 +24,7 @@ class CaptureOrder
         end
         
         product = @pass.buyable
-        amount = product.price(:cents, @merchant)
-        sender = @pass.purchaser
+        amount = product.price(:cents)
         receiver = @pass.account
         order = @pass.order
         
@@ -49,19 +50,17 @@ class CaptureOrder
         end
         
         begin
-            dst_amount = amount
-            response = transfer(amount, @merchant, order)
-            c = Charge.create(account: @pass.account, 
-                              merchant: @merchant, 
-                              stripe_id: response.id, 
-                              source_amount_cents: dst_amount, 
-                              destination_amount_cents: dst_amount)
-            @pass.charge = c
-            @pass.save
+                    
+            tx = transfer(amount, @merchant, order)
+            @pass.update(merchant: @merchant, 
+                         transfer_stripe_id: tx.id, 
+                         transfer_amount_cents: amount, 
+                         transfer_created_at: Time.new)
+
             @mpq.destroy
             
             Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
-            return c
+            return @pass
             
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
@@ -89,8 +88,8 @@ class CaptureOrder
             # Something else happened, completely unrelated to Stripe
             errors.add(:unknown_error, e.message) 
         ensure
-            errors.each do |e|
-                Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: receiver.id, message: e)
+            errors.each do |err|
+                Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: receiver.id, message: err)
             end
         end
         
