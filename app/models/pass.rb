@@ -30,7 +30,7 @@ class Pass < ActiveRecord::Base
     end
     
     # Passes must be part of an order
-    validates_presence_of :order, :buyable, :account, :passTypeIdentifier
+    validates_presence_of :order, :buyable, :account
     
     def purchaser
        order.account 

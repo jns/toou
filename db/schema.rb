@@ -35,19 +35,6 @@ ActiveRecord::Schema.define(version: 2019_06_17_175134) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "cards", force: :cascade do |t|
-    t.string "pan"
-    t.string "token"
-    t.datetime "expiration"
-    t.string "cvc"
-    t.integer "spend_limit"
-    t.string "state"
-    t.bigint "pass_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["pan"], name: "index_cards_on_pan"
-  end
-
   create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "abbreviation"
