@@ -35,3 +35,6 @@ expired_order_for_beer_lover:
 used_order_for_beer_lover:
   account: new_person_1
   created_at: 2019-01-01 08:00:00
+  charge_stripe_id: charge1234
+  charge_amount_cents: 700
+  commitment_amount_cents: 650

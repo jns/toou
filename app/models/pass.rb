@@ -16,6 +16,7 @@ class Pass < ActiveRecord::Base
     belongs_to :buyable, polymorphic: true
     
     # When a pass is used, a charge is created
+    # DEPRECATED - Will through an error after running migration in 4c98d69ce
     belongs_to :charge
     
     # A pass is redeemed by a merchant

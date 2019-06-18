@@ -97,5 +97,6 @@ used_beer_pass:
   passTypeIdentifier: pass.com.toou
   message: This pass was used
   buyable: beer (Product)
-  charge: beer_lover_charge
-  
+  transfer_stripe_id: transfer1234
+  transfer_amount_cents: 650
+  transfer_created_at: 2019-01-02 00:00:00

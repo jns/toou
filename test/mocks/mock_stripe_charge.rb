@@ -14,7 +14,7 @@ class MockStripeCharge
    def initialize(options = {})
       @options ||= {}
       @options.merge(options)
-      @id = rand(100000...999999).to_s
+      @id = "ch" + rand(100000...999999).to_s
    end
    
    def to_s

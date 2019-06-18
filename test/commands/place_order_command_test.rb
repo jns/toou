@@ -10,7 +10,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         @promo = promotions(:generic)
     end
     
-    test "Order a Product" do
+    test "Ordering a Product touches Stripe::Charge API" do
        from = accounts(:pete)
        to = [accounts(:josh).phone_number]
        assert_difference "MockStripeCharge.charges.count" do
@@ -18,10 +18,20 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
            assert cmd.success?
            assert_equal products(:beer), cmd.result.passes.first.buyable
         end
-       
     end
    
-    test "Order a Promotion" do
+   test "Ordering a product creates an order" do
+      from = accounts(:pete)
+      to = [accounts(:beer_lover).phone_number]
+      cmd = PlaceOrder.call(from, "pmt_source", to, "message", products(:beer))
+      assert cmd.success?
+      assert cmd.result.is_a? Order
+      assert_not_nil cmd.result.charge_stripe_id
+      assert_equal products(:beer).max_price_cents, cmd.result.commitment_amount_cents
+      assert cmd.result.charge_amount_cents > cmd.result.commitment_amount_cents
+   end
+   
+    test "Order a Promotion is possible" do
        from = accounts(:pete)
        to = [accounts(:josh).phone_number]
        cmd = PlaceOrder.call(from, "payment source", to, "message", promotions(:active))
@@ -78,7 +88,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       assert_not_nil Account.search_by_phone_number(newAcct)
    end
    
-   test "Do not charge unless order is successful" do
+   test "Do not touch Stripe::Charge API unless order is successful" do
         cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
         refute cmd.success?
         assert_nil cmd.result
@@ -97,8 +107,9 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
         assert_equal products(:beer), cmd.result.passes.first.buyable
     end
     
-    test "Cannot place order without a product" do
+    test "Cannot place order without a buyable" do
        cmd = PlaceOrder.call accounts(:josh), "payment source", [accounts(:josh).phone_number], "message", nil
        refute cmd.success?
     end
+    
 end
