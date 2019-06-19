@@ -31,13 +31,21 @@ var PassesComponent = (function() {
     };
     
     var addPassCard = function(pass) { 
-        return m(".card.pass", {key: pass.serial_number, onclick: showPass, "data-pass-serial-number": pass.serialNumber }, [
-                m(".card-body.card-text",[
+        var cardBody = [
                     m(".pass-product", "Good for one " + pass.buyable.name),
                     m(".pass-from", "From " + pass.purchaser.name + "(" + pass.purchaser.phone_number + ")"),
                     m(".pass-message", pass.message),
-                    ])
-            ]);
+            ];
+            
+        if (pass.status === "VALID") {
+            cardBody.push(m(".pass-expiration", "Expires on "+ pass.expires_on));
+            cardBody.push(m(".btn .btn-primary", {onclick: showPass}, "Redeem"));
+        } else {
+            cardBody.push(m(".pass-status-"+pass.status, pass.status));
+        }
+        
+        return m(".card.pass", {key: pass.serial_number, "data-pass-serial-number": pass.serialNumber }, [
+                m(".card-body.card-text", cardBody)]);
     };
     
     var view = function() {

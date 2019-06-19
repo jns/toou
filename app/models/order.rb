@@ -17,6 +17,11 @@ class Order < ActiveRecord::Base
        passes.collect{|p| p.account} 
     end
     
+    def redeemable_passes
+       passes.select{|p| p.can_redeem?} 
+    end
+    
+    
     def pass_status
        valid = 0
        used = 0

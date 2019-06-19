@@ -132,17 +132,14 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     json = JSON.parse(@response.body) 
     token = json["auth_token"]
     
-    # Posting with no parameters will return only valid passes
+    # Posting with no parameters will return all passes
     post "/api/passes", params: {authorization: token}
+    assert_response :ok
     passes = JSON.parse(@response.body)
     
-    assert_equal 1, passes.size
-    assert_equal "abc124", passes.first["serialNumber"]
-    
+    assert_equal @acct1.passes.count, passes.size
+    # Verify json structure
     assert_equal ["name", "phone_number", "email"], passes.first["purchaser"].keys
-    
-    assert_equal @acct2.phone_number.to_s, passes.first["purchaser"]["phone_number"]
-    assert_equal @acct2.email, passes.first["purchaser"]["email"]
     
   
     # Posting with an array of serial numbers will return those serial numbers
@@ -178,7 +175,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/passes", params: {authorization: token, serialNumbers: ["12345abc"]}
     passes = JSON.parse(@response.body)
     
-    assert_equal 2, passes.size
+    # Verify that invalid serial returns invalid pass
+    assert_equal @acct1.passes.count+1, passes.size
     assert_equal "INVALID", passes.find{|p| p["serialNumber"] == "12345abc"}["status"]
     
   end

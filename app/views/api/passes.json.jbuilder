@@ -1,6 +1,7 @@
 json.array! @passes do |pass|
     json.serialNumber pass.serial_number
     json.expiration pass.expiration
+    json.expires_on pass.expiration.to_date.to_formatted_s(:long)
     json.message pass.message
     json.status pass.status
     json.buyable do

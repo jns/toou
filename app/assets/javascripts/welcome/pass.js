@@ -89,6 +89,7 @@ var PassComponent = (function() {
     
     var addLocation = function(merchant, loc) {
         return m("div.m-1.p-2.border.merchant[data-merchant-id="+merchant.id+"]", {onclick: redeem}, [
+            m("div.float-right.btn.btn-primary.btn-sm", "Redeem Here"),
             m("div", merchant.name),
             m("div", loc.name),
             m("div", loc.address1),
