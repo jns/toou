@@ -76,6 +76,10 @@ $(document).on("turbolinks:load", function() {
     } else if (path === "/mredeem/toou") {
         RedeemToou.mount();
         Breadcrumb.hide();
+    } else if (path == "/admin") {
+        Breadcrumb.hide();
+    } else if (path.match(/admin\/.*/)) {
+        Breadcrumb.show("Dashboard", "/admin");
     } else {
         Breadcrumb.home();
     }

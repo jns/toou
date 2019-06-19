@@ -51,7 +51,7 @@ class Pass < ActiveRecord::Base
     end
     
     def expired? 
-        return (Time.new - self.expiration) > 0
+        return not_used? && (Time.new - self.expiration) > 0  
     end
     
     def not_expired? 

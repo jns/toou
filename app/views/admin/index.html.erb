@@ -1,3 +1,36 @@
-<h2>
-	Admin Dashboard
-</h2>
+<div class="container content-width">
+<div class="h4 text-center">Dashboard</div>    
+<div class="row">
+    <div class="col card m-2">
+        <div class="h4 text-center">Orders</div>
+        <div class="text-center"><span class="h1"><%= @new_orders_today %></span> TODAY</div>
+        <div class="text-center"><span class="h5"><%= @new_orders_yesterday %></span> YESTERDAY</div>
+        <div class="text-center"><span><%= @orders_total %></span> TOTAL</div>
+    </div>
+    <div class="col card m-2">
+        <div class="h4 text-center">Redemptions</div>
+        <div class="text-center"><span class="h1"><%= @redemptions_today %></span> TODAY</div>
+        <div class="text-center"><span class="h5"><%= @redemptions_yesterday %></span> YESTERDAY</div>
+        <div class="text-center"><span><%= @redemptions_total %></span> TOTAL</div>
+    </div>
+    <div class="col card m-2">
+        <div class="h4 text-center">Commitments</div>
+        <div class="h3 text-center"><%= @commitments %></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col card m-2">
+        <div class="h4 text-center">New Customers</div>
+        <div class="text-center"><span class="h1"><%= @new_accounts_today %></span> TODAY</div>
+        <div class="text-center"><span class="h5"><%= @new_accounts_yesterday %></span> YESTERDAY</div>
+        <div class="text-center"><span><%= @accounts_total %></span> TOTAL</div>
+    </div>
+    <div class="col card m-2">
+        <div class="h4 text-center">New Merchants</div>
+        <div class="text-center"><span class="h1"><%= @merchants_today %></span> TODAY</div>
+        <div class="text-center"><span class="h5"><%= @merchants_yesterday %></span> YESTERDAY</div>
+        <div class="text-center"><span><%= @merchants_total %></span> TOTAL</div>
+    </div>
+    <div class="col m-2"></div>
+</div>
+</div>

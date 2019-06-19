@@ -16,4 +16,20 @@ class Order < ActiveRecord::Base
     def recipients 
        passes.collect{|p| p.account} 
     end
+    
+    def pass_status
+       valid = 0
+       used = 0
+       expired = 0
+       passes.each{|p| 
+            used += 1 if p.used?
+            expired += 1 if p.expired?
+            valid += 1 if p.can_redeem?
+       }
+       result = ""
+       result += "#{valid} VALID " if valid > 0
+       result += "#{used} USED " if used > 0
+       result += "#{expired} EXPIRED" if expired > 0
+       return result
+    end
 end

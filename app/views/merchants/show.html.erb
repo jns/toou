@@ -66,8 +66,8 @@
         </tr>
         <% @merchant.charges.each do |c| %>
         <tr>
-            <td><%= c.created_at.to_date.to_formatted_s(:short) %></td>
-            <td><%= number_to_currency(c.destination_amount_dollars) %></td>
+            <td><%= c[:created_at].to_date.to_formatted_s(:short) %></td>
+            <td><%= number_to_currency(c[:amount_cents]/100.0) %></td>
         </tr>
         <% end %>
     </table>

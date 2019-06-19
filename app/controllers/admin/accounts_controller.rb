@@ -7,7 +7,7 @@ class AccountsController < AdminController
   # GET /accounts.json
   def index
     authorize Account
-    @accounts = policy_scope(Account)
+    @accounts = policy_scope(Account).sort{|a,b| b.created_at <=> a.created_at}
   end
 
   # GET /accounts/1

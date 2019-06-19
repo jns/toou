@@ -1,13 +1,14 @@
 <p id="notice"><%= notice %></p>
 
 
-<div class="card card-body content-width mx-auto">
-<h4>Listing Accounts</h4>
+<div class="card card-body mx-auto">
+<h4>Listing Customers</h4>
 
 <table class="table">
   <thead>
     <tr>
       <th scope="col">#</th>
+      <th scope="col">Date Create</th>
       <th scope="col">Mobile</th>
       <th scope="col">Name</th>
       <th scope="col">Email</th>
@@ -18,6 +19,7 @@
     <% @accounts.each do |account| %>
       <tr>
         <td><%= link_to account.id, admin_account_path(account) %></td>
+        <td><%= account.created_at.to_formatted_s(:short) %></td>
         <td><%= link_to account.phone_number, admin_account_path(account) %></td>
         <td><%= link_to account.name, admin_account_path(account) %></td>
         <td><%= account.email %></td>

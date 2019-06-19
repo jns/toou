@@ -22,7 +22,7 @@
           <%= link_to "Logs", '/admin/logs', class: 'dropdown-item' if @current_user.admin? %>
           <%= link_to "Passes", '/admin/passes', class: 'dropdown-item' if @current_user.admin? %>
           <%= link_to "Orders", '/admin/orders', class: 'dropdown-item' if @current_user.admin? %>
-          <%= link_to "Accounts", '/admin/accounts', class: 'dropdown-item' if @current_user.admin? %>
+          <%= link_to "Customers", '/admin/accounts', class: 'dropdown-item' if @current_user.admin? %>
           <div class="dropdown-divider"></div>
           <%= link_to "logout", '/logout', class: 'dropdown-item' %>
         </div>
@@ -32,7 +32,7 @@
 
 <div class="below-header">
 <div class="alert-warning text-center m-2" role="alert">
-  This is an Alpha Version.  Promotions are not real and credit cards will not be charged.
+  TEST VERSION <br/>  Promotions are not real and credit cards will not be charged.
 </div>
 <div class="flash">
     <% flash.each do |name, msg| -%>

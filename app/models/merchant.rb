@@ -6,6 +6,8 @@ class Merchant < ApplicationRecord
     has_many :products, through: :merchant_products
     has_many :merchant_pass_queues
     
+    scope :enrolled, ->{ where('stripe_id is not null') }
+    
     def can_redeem?(pass)
        products.member?(pass.buyable) and !user.tester?
     end

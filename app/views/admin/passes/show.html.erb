@@ -1,5 +1,7 @@
 <p id="notice"><%= notice %></p>
 
+<div class="content-width container">
+  <h4>Pass Detail</h4>
 <p>
   <strong>Serialnumber:</strong>
   <%= @pass.serial_number %>
@@ -11,13 +13,13 @@
 </p>
 
 <p>
-  <strong>Passtypeidentifier:</strong>
-  <%= @pass.passTypeIdentifier %>
+  <strong>Recipient</strong>
+  <%= if @pass.account then @pass.account.name else "NA" end %>
 </p>
 
 <p>
-  <strong>Recipient</strong>
-  <%= if @pass.account then @pass.account.name else "NA" end %>
+  <strong>Sender</strong>
+  <%= @pass.purchaser.name %>
 </p>
 
 <p>
@@ -26,6 +28,10 @@
 </p>
 
 <p>
-  <%= link_to 'Download', pkpassUrl(@pass), download: true %>
+  <strong>Status</strong>
+  <%= @pass.status %>
 </p>
+
 <%= link_to 'Back', admin_passes_path %>
+</div>
+
