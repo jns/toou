@@ -1,12 +1,11 @@
 class InvalidPass
 
-    attr_reader :serial_number, :expiration, :message, :passTypeIdentifier, :status
+    attr_reader :serial_number, :expiration, :message, :status
     
-    def initialize(serialNumber, type = "pass.com.eloisaguanlao.testpass")
+    def initialize(serialNumber)
         @serial_number = serialNumber
-        @passTypeIdentifier = type
         @message  = ""
-        @expiration = ""
+        @expiration = Time.new
         @status = "INVALID"
     end
     

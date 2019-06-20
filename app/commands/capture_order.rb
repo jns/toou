@@ -24,9 +24,9 @@ class CaptureOrder
         end
         
         product = @pass.buyable
-        amount = product.price(:cents)
         receiver = @pass.account
         order = @pass.order
+        amount = order.commitment_amount_cents
         
         unless @merchant.can_redeem?(@pass)
             Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Pass #{@pass.id} not redeemable by Merchant #{@merchant.id}")
