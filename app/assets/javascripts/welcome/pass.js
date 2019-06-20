@@ -76,7 +76,7 @@ var PassComponent = (function() {
     
     
     var redeem = function(event) {
-        var merch_id = $(event.target).parent(".merchant").data("merchant-id");
+        var merch_id = $(event.target).closest(".merchant").data("merchant-id");
         var merchant = merchants.find(function(merch) {return merch.id === merch_id});
         ModalRedeemContent.setMerchant(merchant);
         ModalRedeemContent.setPass(pass);
@@ -89,12 +89,12 @@ var PassComponent = (function() {
     
     var addLocation = function(merchant, loc) {
         return m("div.m-1.p-2.border.merchant[data-merchant-id="+merchant.id+"]", {onclick: redeem}, [
-            m("div.float-right.btn.btn-primary.btn-sm", "Redeem Here"),
             m("div", merchant.name),
             m("div", loc.name),
             m("div", loc.address1),
             m("div", loc.address2),
             m("div", loc.city + ", " + loc.state + " " + loc.zip),
+            m(".text-center.mt-1", [m(".btn.btn-primary.btn-sm", "Redeem Here")]),
             ]);
     }
     var addMerchant = function(merchant) {

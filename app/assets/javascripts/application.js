@@ -46,6 +46,10 @@ $(document).on("turbolinks:load", function() {
     //     "/promos": Promos,
     //     });
     
+    if (Credentials.hasToken()) {
+        $(".sign-out").html("sign out");
+        $(".sign-out").click(function() {Credentials.setToken(); window.location.reload();});
+    }
     
     var path = window.location.pathname;
     

@@ -39,7 +39,7 @@ var PassesComponent = (function() {
             
         if (pass.status === "VALID") {
             cardBody.push(m(".pass-expiration", "Expires on "+ pass.expires_on));
-            cardBody.push(m(".btn .btn-primary", {onclick: showPass}, "Redeem"));
+            cardBody.push(m(".text-center", [m(".btn.btn-primary.mt-2", {onclick: showPass}, "Redeem")]));
         } else {
             cardBody.push(m(".pass-status-"+pass.status, pass.status));
         }
