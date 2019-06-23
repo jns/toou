@@ -78,17 +78,28 @@ class MerchantsController < ApplicationController
         state, code = params.require([:state, :code])
         
         if code === "TEST_OK"
-            @merchant = {name: "test"}
-            return head :ok
+            @merchant = Merchant.new(name: "Test")
+            render status: :ok
+            return
         end
         
-        @merchant = Merchant.find(state)
-        unless @merchant
+        if code === "TEST_ERROR"
+           @error = "Testing error"
+           render status: :ok
+           return
+        end
+        
+        begin
+            @merchant = Merchant.find(state)
+            cmd = EnrollStripeConnectedAccount.call(@merchant, code)
+            unless cmd.success?
+                @error = cmd.errors[:enrollment_error]
+            end
+        rescue ActiveRecord::RecordNotFound
             render status: :bad_request
         end
         
-        @cmd = EnrollStripeConnectedAccount.call(@merchant, code)
-    
+
     end
     
     def stripe_dashboard_link 

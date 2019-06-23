@@ -1,7 +1,11 @@
 <h2 class="text-center">
-    <% if @cmd.success? %>
-        Congratulations <%= @merchant.name %>. You are enrolled.
+    <% if @error %>
+        <div class="error"><%= @error %></div>
     <% else %>
-        <%= @cmd.errors[:enrollment_error] %>
+        Congratulations <%= @merchant.name %>. You are enrolled.
     <% end %>
 </h2>
+
+<div class="text-center mt-5">
+    <%= link_to "Return to Dashboard", merchants_path, {class: "btn btn-primary"} %>
+</div>
