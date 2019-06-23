@@ -1,61 +1,68 @@
 
-<div class="container content-width">
+<div class="container content-width mx-auto">
     
-    <div class="row">
-        <div class="col">Name</div>
-        <div class="col">
+    <div class="row justify-content-center">
+        <div class="col-sm-4">Name</div>
+        <div class="col-sm-8">
             <%= @merchant.name %>
         </div>
     </div>
     
-    <div class="row">
-        <div class="col">Website</div>
-        <div class="col">
+    <div class="row justify-content-center">
+        <div class="col-sm-4">Website</div>
+        <div class="col-sm-8">
             <%= link_to @merchant.website, @merchant.website %>
         </div>
     </div>
     
-    <div class="row">
-        <div class="col">Phone Number</div>
-        <div class="col">
+    <div class="row justify-content-center">
+        <div class="col-sm-4">Phone Number</div>
+        <div class="col-sm-8">
             <%=  @merchant.phone_number %>
         </div>
     </div>
     
-    <div class="row">
-        <div class="col">
+    <div class="row justify-content-center mt-3">
+        <div class="col-sm-12">
             <% if @merchant.stripe_id %>
                 <a class="stripe-dashboard-link" data-merchant-id="<%= @merchant.id %>" href="">Visit Stripe Dashboard</a>
             <% else %>
-                <a class="stripe-connect" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Now</span></a>
+                <a class="stripe-connect" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Stripe Account</span></a>
             <% end %>
         </div>
     </div>
 </div>
 
+<%= form_for @merchant, url: {action: :update} do %>
 <div class="container content-width products mt-5">
     <h5>Products</h5>
-    <table class="table">
-        <tr>
-            <th>Product</th>
+    <table class="table merchant-products">
+          <thead>
+            <th>Redeem?</th>
+            <th class="text-left">Product</th>
             <th>Price</th>
-            <th>Max Price</th>
-        </tr>
-        <% @merchant.products.each do |p| %>
+        </thead>
+        <% @products.each do |p| %>
+        <tbody>
         <tr>
-            <td>
-                <%= p.name %>
+            <td width="10" class="text-center">
+                <%= check_box_tag "products[#{p.id}]", p.id, p.can_redeem?(@merchant), {class: 'form-check-input product-redeem-checkbox'} %>
             </td>
-            <td>
-                <%= number_to_currency(p.price(:dollars,@merchant)) %>
+            <td class="text-left">
+                <%= p.name %>
             </td>
             <td>
                 <%= number_to_currency(p.price(:dollars)) %>
             </td>
         </tr>
+        </tbody>
         <% end %>
     </table>
+    <div class="merchant-products-submit text-right" style="display: none">
+        <%= submit_tag 'Save', {class: "btn btn-primary"}%>
+    </div>
 </div>
+<% end # End of Form %> 
 
 <div class="container content-width charges mt-5">
     <h5>Credits</h5>

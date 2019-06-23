@@ -6,6 +6,8 @@ class MerchantsController < ApplicationController
     #skip_before_action :validate_auth_token
     skip_before_action :set_user, only: [:enroll, :new_user, :onboard1, :onboard2, :onboard3]
     
+    
+    
     # Info message for now
     def new_user
     end
@@ -52,8 +54,23 @@ class MerchantsController < ApplicationController
     def show
        set_merchant
        authorize @merchant
+       @products = Product.all
     end
 
+    
+    def update
+       set_merchant
+    #   authorize @merchant
+       products = params.require(:products)
+       Product.all.each do |p|
+         if products[p.id.to_s]
+             @merchant.add_product(p)
+         else
+             @merchant.remove_product(p)
+         end
+      end
+       redirect_to action: :show
+    end
     
     # GET enrolls a new merchant with stripe
     def enroll

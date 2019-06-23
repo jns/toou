@@ -8,8 +8,23 @@ class Merchant < ApplicationRecord
     
     scope :enrolled, ->{ where('stripe_id is not null') }
     
+    def add_product(product)
+        unless can_redeem_buyable?(product)
+            MerchantProduct.create(merchant: self, product: product)
+        end
+    end
+    
+    def remove_product(product)
+        mp = MerchantProduct.find_by(merchant: self, product: product)
+        mp.destroy if mp
+    end
+    
     def can_redeem?(pass)
        products.member?(pass.buyable) and !user.tester?
+    end
+    
+    def can_redeem_buyable?(buyable)
+       products.member?(buyable) 
     end
     
     def enrolled

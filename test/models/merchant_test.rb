@@ -15,5 +15,23 @@ class MerchantTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  test "Add a product to a merchant" do
+    quantum = merchants(:quantum)
+    cupcake = products(:cupcake)
+    refute quantum.can_redeem_buyable?(cupcake)
+    quantum.add_product(cupcake)
+    quantum.reload
+    assert quantum.can_redeem_buyable?(cupcake)
+  end
+  
+  test "Remove a product from a merchant" do
+    quantum = merchants(:quantum)
+    beer = products(:beer)
+    assert quantum.can_redeem_buyable?(beer)
+    quantum.remove_product(beer)
+    quantum.reload
+    refute quantum.can_redeem_buyable?(beer)
+  end
 
 end
