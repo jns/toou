@@ -1,5 +1,6 @@
 class MerchantsController < ApplicationController
 
+    layout "merchant"
     include MerchantsHelper
     
     #skip_before_action :validate_auth_token

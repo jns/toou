@@ -2,6 +2,9 @@ class UserController < ApplicationController
 
     skip_before_action :set_user, except: [:new_user]
 
+    def password_reset
+    end
+
     def new_merchant
         authorize User, :new?
         if request.get?
@@ -11,7 +14,7 @@ class UserController < ApplicationController
             user = User.create(user_params)
             user.roles << Role.merchant
             set_user(user)
-            redirect_to action: 'login'
+            redirect_to controller: :merchants, action: :index
         end
     end
     
@@ -26,7 +29,8 @@ class UserController < ApplicationController
             if user and user.authenticate(user_params[:password])
                 flash[:notice] = ""
                 set_user(user)
-                destination = session[:last] || "/"
+                destination = session[:last] || user_home(user)
+                
                 redirect_to destination
             else
                 flash[:notice] = "Invalid login credentials"
@@ -40,4 +44,15 @@ class UserController < ApplicationController
         redirect_to '/'
     end
     
+    private
+    
+    def user_home(user)
+        if user.admin?
+            return admin_path
+        elsif user.merchant?
+            return merchants_path
+        else
+            return "/"
+        end
+    end
 end

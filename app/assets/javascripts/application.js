@@ -36,6 +36,13 @@ var Routes = {
     }
 }
 
+var addSignout = function() {
+    if (Credentials.hasToken()) {
+        $(".sign-out").html("sign out");
+        $(".sign-out").click(function() {Credentials.setToken(); window.location.reload();});
+    }
+}
+
 $(document).on("turbolinks:load", function() {
     // var root = document.getElementById('mithril_root');
     // m.route(root, "/", {
@@ -46,11 +53,7 @@ $(document).on("turbolinks:load", function() {
     //     "/promos": Promos,
     //     });
     
-    if (Credentials.hasToken()) {
-        $(".sign-out").html("sign out");
-        $(".sign-out").click(function() {Credentials.setToken(); window.location.reload();});
-    }
-    
+
     var path = window.location.pathname;
     
     var routes = [];
@@ -60,12 +63,15 @@ $(document).on("turbolinks:load", function() {
     if (path === "/send_gifts") {
         SendGifts.mount();
         Breadcrumb.home();
+        addSignout();
     } else if (path === "/") {
         Splash.mount();
         Breadcrumb.hide();
+        addSignout();
     } else if (path === "/passes") {
         Passes.mount();
         Breadcrumb.home();
+        addSignout();
     } else if (path === "/merchants") {
         Breadcrumb.home();
     } else if (path.match(/\/merchants\/\d+/)) {
@@ -74,6 +80,7 @@ $(document).on("turbolinks:load", function() {
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
+        addSignout();
     }else if (path === "/mredeem") {
         RedeemLogin.mount();
         Breadcrumb.hide();

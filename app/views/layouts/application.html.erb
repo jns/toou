@@ -11,6 +11,7 @@
 <%= csrf_meta_tags %>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <%= content_for?(:head) ? yield(:head) : "" %>
 </head>
 <body>
 
@@ -36,7 +37,7 @@
     <% end -%>
 </div>
 
-<%= yield %>
+<%= content_for?(:content) ? yield(:content) : yield %>
 
 </body>
 <footer class="footer">
