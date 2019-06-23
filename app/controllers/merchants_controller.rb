@@ -113,8 +113,12 @@ class MerchantsController < ApplicationController
             else
                render json: {error: "Merchant is not enrolled in Stripe"}, status: :bad_request 
             end
-        rescue
+        rescue ActiveRecord::RecordNotFound
             render json: {error: "Merchant Not Found"}, status: :not_found
+        rescue Stripe::InvalidRequestError
+            render json: {error: "Error connecting to Stripe"}, status: :bad_request
+        rescue 
+            render json: {error: "Error connecting to Stripe"}, status: :unauthorized
         end
     end
     

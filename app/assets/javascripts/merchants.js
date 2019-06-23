@@ -62,6 +62,8 @@ var Merchants = (function() {
         if (typeof merchant_id != undefined && merchant_id !== null) {
             $.get("/merchants/"+merchant_id+"/stripe_dashboard_link",function(data) {
                 window.location = data.url;
+            }).fail(function() {
+                $(".stripe-dashboard-link").html("Error connecting to Stripe");
             });
         }
     };    
@@ -69,12 +71,7 @@ var Merchants = (function() {
     var enableProductSave = function(event) {
         $('.merchant-products-submit').fadeIn(500);
         var t = $(event.target);
-        console.log(t.val());
     };
-    
-    var saveProducts = function() {
-        
-    }
     
     var mount = function() {
         $('.stripe-connect').click(stripeConnect);

@@ -25,9 +25,9 @@
     <div class="row justify-content-center mt-3">
         <div class="col-sm-12">
             <% if @merchant.stripe_id %>
-                <a class="stripe-dashboard-link" data-merchant-id="<%= @merchant.id %>" href="">Visit Stripe Dashboard</a>
+                <div class="stripe-dashboard-link btn btn-link" data-merchant-id="<%= @merchant.id %>" href="">Visit Stripe Dashboard</div>
             <% else %>
-                <a class="stripe-connect" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Stripe Account</span></a>
+                <div class="stripe-connect btn btn-link" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Stripe Account</span></div>
             <% end %>
         </div>
     </div>
