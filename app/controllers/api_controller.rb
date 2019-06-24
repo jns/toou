@@ -89,7 +89,7 @@ class ApiController < ApiBaseController
            if command.success?
              render json: { auth_token: command.result }, status: :ok
            else
-             render json: { error: command.errors }, status: :unauthorized
+             render json: { error: "Invalid code"}, status: :unauthorized
            end
         rescue Exception => e
             render json: {error: e.message}, status: :internal_server_error

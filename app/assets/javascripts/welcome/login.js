@@ -5,6 +5,12 @@ var Login = (function() {
     var phone_number = null;
     var feedback = null;
     
+    
+    var oninit = function() {
+        Modal.setOkButton("Send", requestOTP);
+        Modal.setCancelButton("Not Now", Routes.goHome);
+    };
+    
     var requestOTP = function() {
         return m.request({
             method: "POST",
@@ -14,7 +20,6 @@ var Login = (function() {
             Credentials.setPhoneNumber(phone_number);
             Modal.setBody(OneTimePasscode);
         }).catch(function(e) {
-            console.log(e);
             feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");
             $(".feedback").show();
@@ -31,22 +36,22 @@ var Login = (function() {
                     ]),
                 m(".row", [
                     m(".col-sm.input-group", [
-                        m("input.form-control.text-center[name=phone_number][type=text][placeholder=10 digit phone number]", {
+                        m("input.form-control.text-center[name=phone_number][type=tel][placeholder=10 digit phone number]", {
                             value: phone_number, 
                             oninput: function(e) { phone_number = e.target.value;  },
                             onkeyup: function(e) { if (e.key === "Enter") { requestOTP(); } }
                             }),
-                        m("a.btn.input-group-append.input-group-text", {onclick: requestOTP}, [
-                            "Send",
-                            m("i.fas.fa-angle-right")
-                            ]),
+                        // m("a.btn.input-group-append.input-group-text", {onclick: requestOTP}, [
+                        //     "Send",
+                        //     m("i.fas.fa-angle-right")
+                        //     ]),
                         ]),
                     ]),
                 m(".row.col.text-center", [
                     m(".feedback", feedback)
                     ]),
-            ])
-    }
+            ]);
+    };
     
-    return {view: view}
+    return {view: view, oninit: oninit};
 })();

@@ -21,7 +21,7 @@ class RedemptionApiController < ApiBaseController
     # @return
     def merchant_info
         if @current_user.is_a? Merchant
-            render json: {name: @current_user.name}, status: :ok
+            render json: {name: @current_user.name, address: @current_user.address}, status: :ok
         else
             render json: {}, status: :unauthorized
         end

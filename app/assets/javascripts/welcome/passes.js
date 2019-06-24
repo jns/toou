@@ -5,6 +5,10 @@ var PassesComponent = (function() {
     
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         
+    var afterLogin = function() {
+        window.location.reload();    
+    };
+    
     var oninit = function() {
         contents = m(".text-center.h4", "Loading Passes...");
         return m.request({
@@ -19,9 +23,7 @@ var PassesComponent = (function() {
         }).catch(function(e) {
             Modal.setTitle("Please Login To Access Your Passes");
             Modal.setBody(Login);
-            Modal.setOkButton(null);
-            Modal.setCancelButton("Not Now", Routes.goHome);
-            Modal.show(oninit);
+            Modal.show(afterLogin);
         });
     };
     

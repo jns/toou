@@ -18,7 +18,7 @@ class RequestPasses
     
     def call 
         
-        unless @account
+        unless @account and @account.is_a? Account
             errors.add(:account, "Invalid account") 
             return
         end

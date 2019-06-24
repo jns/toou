@@ -4,6 +4,10 @@ var OneTimePasscode = (function() {
     var passcode = null;
     var feedback = null;
     
+    var oninit = function() {
+        Modal.setOkButton("Submit", authenticate);
+    }
+    
     var authenticate = function() {
         var phone_number = Credentials.getPhoneNumber();
         return m.request({
@@ -14,7 +18,7 @@ var OneTimePasscode = (function() {
             Credentials.setToken(data["auth_token"]);
             Modal.dismiss();
         }).catch(function(e) {
-            feedback =  JSON.parse(e.message).error;
+            feedback =  e.response["error"] + ". Please try again.";
             $(".feedback").addClass("invalid-feedback");
             $(".feedback").show();
         });
@@ -31,7 +35,7 @@ var OneTimePasscode = (function() {
                             value: passcode, 
                             oninput: function(e) { passcode = e.target.value; }
                             }),
-                        m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
+                        // m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),
                     ]),
                 m(".row.col.text-center", [
@@ -40,5 +44,5 @@ var OneTimePasscode = (function() {
             ]);
     };
     
-    return {view: view};
+    return {view: view, oninit: oninit};
 })();

@@ -21,6 +21,7 @@ var Modal = (function() {
     
     var setOkButton = function(buttonText, completion) {
         var button = $('.modal-footer > .ok-button');
+        button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
             button.click(completion);
@@ -32,6 +33,7 @@ var Modal = (function() {
     
     var setCancelButton = function(buttonText, completion) {
         var button = $('.modal-footer > .cancel-button');
+        button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
             button.click(completion);

@@ -1,6 +1,7 @@
 /* global $, Credentials , m, Routes */
 var MerchantInfo = (function() {
     var merchantName = "";
+    var merchantAddress = "";
     
     var oninit = function() {
         m.request({
@@ -9,6 +10,7 @@ var MerchantInfo = (function() {
             url: "/api/redemption/merchant_info"
         }).then(function(merchantData) {
            merchantName = merchantData.name;
+           merchantAddress = merchantData.address;
         }).catch(function(error) {
             if (error.code === 401) {
                 Credentials.setToken();
@@ -18,7 +20,7 @@ var MerchantInfo = (function() {
     };
     
     var view = function() {
-        return m(".span.h3", merchantName);    
+        return m(".text-center", [m(".h3", merchantName), m(".h6", merchantAddress)]);    
     };
     
     return {view: view, oninit: oninit};    

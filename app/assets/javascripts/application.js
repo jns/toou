@@ -28,18 +28,20 @@ var Routes = {
     },
     
     goRedeemLogin: function() {
-        window.location.pathname = "/mredeem";
+        // window.location.pathname = "/mredeem";
+        Turbolinks.visit("/mredeem", {action: "replace"})
     },
     
     goRedeem: function() {
-        window.location.pathname = "/mredeem/toou";
+        // window.location.pathname = "/mredeem/toou";
+        Turbolinks.visit("/mredeem/toou", {action: "replace"});
     }
 }
 
 var addSignout = function() {
     if (Credentials.hasToken()) {
-        $(".sign-out").html("sign out");
-        $(".sign-out").click(function() {Credentials.setToken(); window.location.reload();});
+        $(".sign-out").html("<div class=\"btn btn-link\">sign out</div>");
+        $(".sign-out").click(function() {Credentials.setToken(); Routes.goHome();});
     }
 }
 
