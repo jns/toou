@@ -22,10 +22,9 @@ var MerchantAutocomplete = (function() {
     };
     
     var addMerchant = function(merch) {
-        merch.locations.forEach(function(loc) {
-            var text = merch.name + " - " + loc.address1 + " - " + loc.city + ", " + loc.state; 
-            content.push(m("li.list-group-item[data-merchant-id="+merch.id+"]", {onclick: authorize}, text));
-        });
+        var loc = merch.location;
+        var text = merch.name + " - " + loc.address1 + " - " + loc.city + ", " + loc.state; 
+        content.push(m("li.list-group-item[data-merchant-id="+merch.id+"]", {onclick: authorize}, text));
     };
     
     var search = function() {
