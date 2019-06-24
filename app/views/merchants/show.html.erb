@@ -22,7 +22,14 @@
         </div>
     </div>
     
-    <div class="row justify-content-center mt-3">
+    <div class="row justify-content-center">
+        <div class="col-sm-4">Address</div>
+        <div class="col-sm-8">
+            <%=  @merchant.address %>
+        </div>
+    </div>
+    
+    <div class="row justify-content-left">
         <div class="col-sm-12">
             <% if @merchant.stripe_id %>
                 <div class="stripe-dashboard-link btn btn-link" data-merchant-id="<%= @merchant.id %>" href="">Visit Stripe Dashboard</div>
@@ -31,9 +38,16 @@
             <% end %>
         </div>
     </div>
+    
+    <div class="row justify-content-left">
+        <div class="col-sm-12">
+            <a class="btn btn-link edit-merchant" href="<%= edit_merchant_url %>">Edit</a>
+        </div>
+    </div>
+    
 </div>
 
-<%= form_for @merchant, url: {action: :update} do %>
+<%= form_for @merchant, url: {action: :update_products}, method: "post" do %>
 <div class="container content-width products mt-5">
     <h5>Products</h5>
     <table class="table merchant-products">
@@ -42,11 +56,12 @@
             <th class="text-left">Product</th>
             <th>Price</th>
         </thead>
-        <% @products.each do |p| %>
         <tbody>
+        <% @products.each do |p| %>
         <tr>
             <td width="10" class="text-center">
-                <%= check_box_tag "products[#{p.id}]", p.id, p.can_redeem?(@merchant), {class: 'form-check-input product-redeem-checkbox'} %>
+                <%= hidden_field "products[#{p.id}]", "id", {value: p.id}%>
+                <%= check_box "products[#{p.id}]", "can_redeem", {checked: p.can_redeem?(@merchant), class: 'form-check-input product-redeem-checkbox'}, true, false %>
             </td>
             <td class="text-left">
                 <%= p.name %>
@@ -55,8 +70,8 @@
                 <%= number_to_currency(p.price(:dollars)) %>
             </td>
         </tr>
-        </tbody>
         <% end %>
+        </tbody>
     </table>
     <div class="merchant-products-submit text-right" style="display: none">
         <%= submit_tag 'Save', {class: "btn btn-primary"}%>

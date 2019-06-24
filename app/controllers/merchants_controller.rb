@@ -44,13 +44,18 @@ class MerchantsController < ApplicationController
     # POST creates a new merchant with data from the form
     def create
         authorize Merchant
-        merchant_params = params.require(:merchant).permit(:name, :website, :phone_number)
         @merchant = Merchant.create(merchant_params)
         @merchant.user = @current_user
         @merchant.save
         redirect_to action: "index"
     end
     
+    def edit
+       set_merchant
+       authorize @merchant
+    end
+    
+
     def show
        set_merchant
        authorize @merchant
@@ -59,17 +64,28 @@ class MerchantsController < ApplicationController
 
     
     def update
-       set_merchant
-    #   authorize @merchant
-       products = params.require(:products)
-       Product.all.each do |p|
-         if products[p.id.to_s]
-             @merchant.add_product(p)
-         else
-             @merchant.remove_product(p)
-         end
-      end
-       redirect_to action: :show
+        set_merchant
+        authorize @merchant
+        
+        # Update merchant properties if provided
+        data = merchant_params
+        @merchant.update(data)
+        redirect_to action: :show
+    end
+    
+    def update_products
+        set_merchant
+        authorize @merchant
+        
+        products = merchant_products
+        Product.all.each do |p|
+            if products[p.id.to_s] and products[p.id.to_s]["can_redeem"]
+                @merchant.add_product(p)
+            else
+                @merchant.remove_product(p)
+            end
+        end
+        redirect_to action: :show
     end
     
     # GET enrolls a new merchant with stripe
@@ -126,5 +142,13 @@ class MerchantsController < ApplicationController
     
     def set_merchant
         @merchant = Merchant.find(params[:id]) 
+    end
+    
+    def merchant_params
+        params.require(:merchant).permit(:name, :website, :phone_number, :address1, :city, :state, :zip)
+    end
+    
+    def merchant_products
+       params.require(:products)
     end
 end

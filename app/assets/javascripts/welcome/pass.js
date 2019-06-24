@@ -90,18 +90,15 @@ var PassComponent = (function() {
     var addLocation = function(merchant, loc) {
         return m("div.m-1.p-2.border.merchant[data-merchant-id="+merchant.id+"]", {onclick: redeem}, [
             m("div", merchant.name),
-            m("div", loc.name),
             m("div", loc.address1),
             m("div", loc.address2),
             m("div", loc.city + ", " + loc.state + " " + loc.zip),
             m(".text-center.mt-1", [m(".btn.btn-primary.btn-sm", "Redeem Here")]),
             ]);
     }
+    
     var addMerchant = function(merchant) {
-        var locations = merchant.locations.map(function(loc) {
-            return addLocation(merchant, loc);
-        })
-        return m("div", locations);
+        return m("div", addLocation(merchant, merchant.location));
 
     };
 

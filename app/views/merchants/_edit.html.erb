@@ -1,0 +1,73 @@
+<%= form_with model: @merchant do |form| %>
+    <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <%= form.label :name, "Business Name" %>
+            <%= form.text_field :name, class: "form-control" %>
+          </div>  
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <%= form.label :website, "Business Website" %>
+            <%= form.text_field :website, class: "form-control" %>
+          </div>  
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <%= form.label :phone_number, "Business Phone Number" %>
+            <%= form.text_field :phone_number, class: "form-control" %>
+          </div>  
+        </div>
+    </div>
+    
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <%= form.label :address1, "Address" %>
+          <%= form.text_field :address1, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <%= form.label :city, "City" %>
+          <%= form.text_field :city, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <%= form.label :state, "State" %>
+          <%= form.text_field :state, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <%= form.label :zip, "Zip" %>
+          <%= form.text_field :zip, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+          <div class="form-group">
+            <%= form.submit "save", class: "btn btn-primary" %>
+          </div>  
+        </div>
+    </div>
+<% end %>   

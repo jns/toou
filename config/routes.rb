@@ -73,7 +73,9 @@ Rails.application.routes.draw do
   get 'merchants/onboard2', to: 'merchants#onboard2'
   get 'merchants/onboard3', to: 'merchants#onboard3'
   get 'merchants/enrollment_link', to: 'merchants#enrollment_link'
+  get 'merchants/edit/:id', to: 'merchants#edit'
   post 'merchants/update', to: 'merchants#update'
+  post 'merchants/update_products/:id', to: 'merchants#update_products'
   
   get 'keys/stripe_key', to: 'public_keys#stripe_key'
   get 'keys/stripe_client_id', to: 'public_keys#stripe_client_id' 

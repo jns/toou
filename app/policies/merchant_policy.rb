@@ -16,6 +16,19 @@ class MerchantPolicy < ApplicationPolicy
 		record.user === user	
 	end
 	
+	def edit?
+		record.user === user	
+	end
+	
+	def update?
+		record.user === user	
+	end
+	
+	
+	def update_products?
+		record.user === user	
+	end
+	
 	def enroll?
 		true	
 	end

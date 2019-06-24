@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  address1: 5375 Kearny Villa Rd
-  city: San Diego
-  state: CA
-  zip: 92123
-  merchant: quantum 
-

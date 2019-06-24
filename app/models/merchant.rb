@@ -1,12 +1,15 @@
 class Merchant < ApplicationRecord
     
     belongs_to :user
-    has_many :locations
     has_many :merchant_products
     has_many :products, through: :merchant_products
     has_many :merchant_pass_queues
     
     scope :enrolled, ->{ where('stripe_id is not null') }
+    
+    def address 
+       "#{address1} #{city}, #{state} #{zip}" 
+    end
     
     def add_product(product)
         unless can_redeem_buyable?(product)

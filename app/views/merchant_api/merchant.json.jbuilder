@@ -4,10 +4,10 @@ json.website @merchant.website
 json.phone_number @merchant.phone_number
 json.enrolled @merchant.enrolled
 
-json.locations @merchant.locations do |loc|
-	json.address1 loc.address1
-	json.address2 loc.address2
-	json.city loc.city
-	json.state loc.state
-	json.zip loc.zip
+json.location do
+	json.address1 @merchant.address1
+	json.address2 @merchant.address2
+	json.city @merchant.city
+	json.state @merchant.state
+	json.zip @merchant.zip
 end

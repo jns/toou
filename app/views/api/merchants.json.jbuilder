@@ -3,13 +3,13 @@ json.array! @merchants do |merchant|
 	json.name merchant.name
 	json.website merchant.website
 	
-	json.locations merchant.locations do |loc|
-		json.address1 loc.address1
-		json.address2 loc.address2
-		json.city loc.city
-		json.state loc.state
-		json.zip loc.zip
-		json.latitude loc.latitude
-		json.longitude loc.longitude
+	json.location do 
+		json.address1 merchant.address1
+		json.address2 merchant.address2
+		json.city merchant.city
+		json.state merchant.state
+		json.zip merchant.zip
+		json.latitude merchant.latitude
+		json.longitude merchant.longitude
 	end
 end

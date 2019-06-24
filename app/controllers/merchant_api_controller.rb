@@ -31,8 +31,7 @@ class MerchantApiController < ApiBaseController
             data = params.require(:data).permit(:name, :website, :phone_number, location: [:address1, :address2, :city, :state, :zip, :latitude, :longitude])
             @merchant.update(name: data[:name], website: data[:website], phone_number: data[:phone_number])
             if data[:location]
-               l = @merchant.locations.first 
-               l.update(address1: data[:location][:address1],
+               @merchant.update(address1: data[:location][:address1],
                         address2: data[:location][:address2],
                         city: data[:location][:city],
                         state: data[:location][:state],
