@@ -18,7 +18,7 @@
             <% @merchants.each do |m| %>
                 <tr>
                     <td>
-                        <%= link_to m.name, merchant_path(m) %>
+                        <%= link_to "#{m.name} - #{m.address}", merchant_path(m) %>
                     </td>
                 </tr> 
             <% end %>
