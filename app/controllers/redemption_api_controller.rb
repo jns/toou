@@ -48,6 +48,23 @@ class RedemptionApiController < ApiBaseController
         
     end
     
+    # Return the code and cancel the redemption
+    def cancel_code
+        merchant = paramsMerchant
+        pass = paramsPass 
+        
+        begin 
+            cmd = RevokePassFromMerchantQueue.call(merchant, pass)
+            if cmd.success?
+               render json: {}, status: :ok 
+            else
+                render json: cmd.errors, status: :bad_request
+            end
+        rescue Pundit::NotAuthorizedError
+            render json: {}, status: :not_found
+        end
+    end
+    
     # Redeem a Toou Voucher 
     # @param auth_token
     # @param a toou voucher code

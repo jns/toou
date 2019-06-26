@@ -119,4 +119,18 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
             perform_redemption(merchant, code)
         end
     end
+    
+    test "Cancel a redemption code" do
+        merchant = merchants(:quantum)
+        pass = passes(:redeemable_pass)
+        code = get_code(merchant, pass)
+        
+        token = forceAuthenticate(pass.account)
+
+        post "/api/redemption/cancel_code", params: {authorization: token, data: {merchant_id: merchant.id, pass_sn: pass.serial_number}}, as: :json
+	    assert_response :ok
+	    
+	    perform_redemption(merchant, code)
+	    assert_response :bad_request
+    end
 end

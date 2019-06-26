@@ -9,7 +9,13 @@ class AddPassToMerchantQueue
 
     def call
 
-        if @pass.can_redeem? 
+        if @pass.can_redeem?
+            
+            # If MPQ already exists, return existing
+            mpq = MerchantPassQueue.find_by(merchant: @merchant, pass: @pass)
+            return "%04d" % mpq.code if mpq 
+    
+            # otherwise create one
             code = Random.new.rand(10000)
             mpq = MerchantPassQueue.create(merchant: @merchant, pass: @pass, code: code)
             RemovePassFromQueue.set(wait: 10.minutes).perform_later(mpq.id)
