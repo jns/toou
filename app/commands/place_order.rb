@@ -28,62 +28,67 @@ class PlaceOrder
     end
     
     def call
-        begin
 
+        begin
+            throw "Invalid Acount" unless @account.is_a? Account
             throw "No Product Specified" unless @buyable
             throw "No Recipients" unless @recipients.count > 0
-            
-            Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
-            
-            # Create an order 
-            order = Order.create(account: @account)
-            
-            @recipients.each{ |r| 
-              throw "Recipient phone number cannot be empty" unless r
-              
-              # This will format the phone number 
-              pn = PhoneNumber.new(r).to_s
-              
-              # Only permit test users to place an order to themselve
-              if @account.test_user? and pn != @account.phone_number.to_s
-                throw "Test user can only place order for self"
-              end
-              
-              # generate the pass
-              create_pass(pn, @message, @buyable, order)
-            }
-            
-            
-            # Amount to keep in reserve to payout merchants
-            commitment_amount_cents = @buyable.price(:cents)*order.passes.count
-            # Amount charged to the customer
-            charge_amount_cents = commitment_amount_cents + FEE*order.passes.count
-            
-            # Create the charge on Stripe's servers - this will charge the user's card
-            c =  @@charge_client.create(
-                :amount => charge_amount_cents, # this number should be in cents
-                :currency => "usd",
-                :source => @payment_source,
-                :transfer_group => order.id,
-                :description => "TooU Purchase",
-                :capture => true, 
-                :metadata => {
-                    :order_id => order.id,
-                    :customer_id => @account.id,
-                    :commitment_amount => commitment_amount_cents
-                })
-            Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{order.id}")
-            
-            
-            order.update(charge_amount_cents: charge_amount_cents,
-                        commitment_amount_cents: commitment_amount_cents,
-                        charge_stripe_id: c.id)
-            
-            order.passes.each do |pass|
-                PassNotificationJob.perform_later(pass.id)
-            end
-            
-            return order
+
+            Order.transaction do # Wrap everything in a transaction
+                # Create an order 
+                order = Order.create(account: @account)
+                
+                
+                Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
+                
+                @recipients.each{ |r| 
+                  throw "Recipient phone number cannot be empty" unless r
+                  
+                  # This will format the phone number 
+                  pn = PhoneNumber.new(r).to_s
+                  
+                  # Only permit test users to place an order to themselve
+                  if @account.test_user? and pn != @account.phone_number.to_s
+                    throw "Test user can only place order for self"
+                  end
+                  
+                  # generate the pass
+                  create_pass(pn, @message, @buyable, order)
+                }
+                
+                
+                # Amount to keep in reserve to payout merchants
+                commitment_amount_cents = @buyable.price(:cents)*order.passes.count
+                # Amount charged to the customer
+                charge_amount_cents = commitment_amount_cents + FEE*order.passes.count
+                
+                # Create the charge on Stripe's servers - this will charge the user's card
+                c =  @@charge_client.create(
+                    :amount => charge_amount_cents, # this number should be in cents
+                    :currency => "usd",
+                    :source => @payment_source,
+                    :transfer_group => order.id,
+                    :description => "TooU Purchase",
+                    :capture => true, 
+                    :metadata => {
+                        :order_id => order.id,
+                        :customer_id => @account.id,
+                        :commitment_amount => commitment_amount_cents
+                    })
+                Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{order.id}")
+                
+                
+                order.update(charge_amount_cents: charge_amount_cents,
+                            commitment_amount_cents: commitment_amount_cents,
+                            charge_stripe_id: c.id)
+                
+                
+                order.passes.each do |pass|
+                    PassNotificationJob.perform_later(pass.id)
+                end
+                
+                return order
+            end # End of transaction
         
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
@@ -121,11 +126,6 @@ class PlaceOrder
             message = "Error creating order: #{e.message}"
             Log.create(log_type: Log::ERROR, context: PlaceOrder.name, current_user: @account.id, message: message)
             errors.add(:internal_server_error, message)
-        ensure
-            if errors.count > 0 and @order
-               @order.update(status: Order::FAILED_STATUS) 
-               @order.passes.each{|p| p.destroy}
-            end
         end
     end
     

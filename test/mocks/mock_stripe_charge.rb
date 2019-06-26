@@ -1,11 +1,16 @@
 class MockStripeCharge
    
+   INVALID_PAYMENT = "invalid_payment"
+   
    cattr_accessor :charges
    self.charges = []
    
    attr_reader :options, :id
    
    def MockStripeCharge.create(options = {})
+      if options[:source] === INVALID_PAYMENT
+         throw Stripe::CardError("INVALID PAYMENT")
+      end
        c = MockStripeCharge.new(options)
        self.charges << c
        return c

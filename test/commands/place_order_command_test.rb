@@ -88,12 +88,22 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       assert_not_nil Account.search_by_phone_number(newAcct)
    end
    
-   test "Do not touch Stripe::Charge API unless order is successful" do
+   test "Order fails and no Stripe::Charge if recipient not provided" do
         cmd = PlaceOrder.call accounts(:josh), "payment source", [nil], "message", @promo
         refute cmd.success?
         assert_nil cmd.result
         assert_equal 0, accounts(:josh).orders.size
         assert MockStripeCharge.charges.empty?
+    end
+    
+    test "Order fails, no charge, and no passes if payment source fails" do
+       
+       assert_no_difference ["Pass.count", "Order.count"] do 
+           cmd = PlaceOrder.call accounts(:josh), MockStripeCharge::INVALID_PAYMENT, [accounts(:josh).phone_number], "message", products(:beer)
+           refute cmd.success?
+           assert_nil cmd.result
+           assert MockStripeCharge.charges.empty?
+       end
     end
     
     test "Test account cannot place orders to others" do
