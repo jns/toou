@@ -7,7 +7,7 @@ var Login = (function() {
     
     
     var oninit = function() {
-        Modal.setOkButton("Send", requestOTP);
+        Modal.setOkButton("Ok", requestOTP);
         Modal.setCancelButton("Not Now", Routes.goHome);
     };
     

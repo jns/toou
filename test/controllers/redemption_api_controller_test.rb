@@ -132,5 +132,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 	    
 	    perform_redemption(merchant, code)
 	    assert_response :bad_request
+	    
+	    assert pass.can_redeem?
     end
 end

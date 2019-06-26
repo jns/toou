@@ -4,6 +4,10 @@ var ModalRedeemContent = (function() {
     var merchant = {};
     var pass = {};
 
+    var oninit = function() {
+        getCode();
+    };
+    
     var setMerchant = function(_merchant) {
         merchant = _merchant;
     };
@@ -13,7 +17,18 @@ var ModalRedeemContent = (function() {
     };
 
     var cancelCode = function() {
-        
+        m.request({
+            url: "/api/redemption/cancel_code",
+            method: "POST",
+            body: {authorization: Credentials.getToken(),
+                   data: {merchant_id: merchant.id, pass_sn: pass.serialNumber}}
+
+        }).then(function(){
+            Modal.dismiss();
+        }).catch(function() {
+            Modal.setBody("Sorry, there was a problem. Please try again.");
+            Modal.setCancelButton("OK");
+        });
     };
     
     
@@ -28,16 +43,16 @@ var ModalRedeemContent = (function() {
             Modal.setCancelButton("Cancel", cancelCode);
         }).catch(function(error) {
             Modal.setBody("Sorry, there was a problem. Please try again.");
-            Modal.setCancelButton("OK");
+            Modal.setCancelButton("OK", Modal.dismiss);
         });
     };
     
     var view = function() {
-        return m(".text-center", [m(".btn .btn-primary", {onclick: getCode}, "Request Code"),
+        return m(".text-center", [m(".btn .btn-link", {onclick: getCode}, "Fetching Redemption Code.."),
             m(".small", "If not redeemed within 10 minutes, you can try again later.")]);
     };
     
-    return {view: view, setMerchant: setMerchant, setPass: setPass};
+    return {view: view, oninit: oninit, setMerchant: setMerchant, setPass: setPass};
 })();
 
 var PassComponent = (function() {
@@ -82,7 +97,7 @@ var PassComponent = (function() {
         ModalRedeemContent.setPass(pass);
         Modal.setTitle("Redeem Pass at " + merchant.name);
         Modal.setBody(ModalRedeemContent);
-        Modal.setCancelButton("Not Now");
+        Modal.setCancelButton("Not Now", Modal.dismiss);
         Modal.setOkButton(null);
         Modal.show();
     };
