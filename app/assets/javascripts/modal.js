@@ -58,7 +58,21 @@ var Modal = (function() {
     
     var dismiss = function() {
         $('#modal').modal('hide');
-    }
+    };
     
-    return {show: show, dismiss: dismiss, setTitle: setTitle, setBody: setBody, setOkButton: setOkButton, setCancelButton: setCancelButton};
+    var disableOkButton = function() {
+        $('.modal-footer > .ok-button').prop('disabled', true);
+    };
+    
+    var enableOkButton = function () {
+        $('.modal-footer > .ok-button').prop('disabled', false);
+    };
+    
+    return {show: show, dismiss: dismiss, 
+            setTitle: setTitle, 
+            setBody: setBody, 
+            setOkButton: setOkButton, 
+            disableOkButton: disableOkButton,
+            enableOkButton: enableOkButton,
+           setCancelButton: setCancelButton};
 })();

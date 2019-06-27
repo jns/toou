@@ -71,7 +71,6 @@ var Payment = (function() {
         });
         
         pr.on("token", function(event) {
-            console.log("processing token");
             processPayment(buyable, event).then(function(response) {
                     event.complete('success');
                     completePurchase();
@@ -123,6 +122,9 @@ var Payment = (function() {
         Modal.show();
     };
     
+    
+    
+    
     var addPaymentButton = function(paymentRequest, buyable) {
         var elements = stripe.elements();
         var prButton = elements.create('paymentRequestButton', {
@@ -139,11 +141,13 @@ var Payment = (function() {
                 Modal.setBody(PaymentForm);
                 Modal.setCancelButton("Not Now", function(){ Modal.hide(); });
                 Modal.setOkButton("Buy", function(){ 
+                    Modal.disableOkButton();
                     PaymentForm.createToken().then(function(result) {
                         if (result.error) {
                           // Inform the customer that there was an error.
                           var errorElement = document.getElementById('payment-errors');
                           errorElement.textContent = result.error.message;
+                          Modal.enableOkButton();
                         } else {
                           // Send the token to your server.
                           var data = PaymentForm.payerData();
