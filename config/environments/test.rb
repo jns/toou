@@ -42,4 +42,5 @@ Rails.application.configure do
   
   # Change active job queue adapter so jobs are executed immediately
   config.active_job.queue_adapter = :test
+  
 end
