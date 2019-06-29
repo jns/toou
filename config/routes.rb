@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  get 'password_resets/new'
+  get 'password_resets/edit'
   resources :promotions
   post 'payments/ephemeral_keys'
 #  get 'v1/passes/*pass_type_id/:serial_number', to: 'pass_kit_api#fetch'
@@ -57,7 +59,6 @@ Rails.application.routes.draw do
   get 'login', to: 'user#login'
   post 'login', to: 'user#login'
   get 'logout', to: 'user#logout'
-  get 'password_reset', to: 'user#password_reset'
   get 'user/new_merchant', to: 'user#new_merchant'
   post 'user/new_merchant', to: 'user#new_merchant'
   
@@ -87,6 +88,7 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :password_resets, only: [:new, :edit, :create, :update]
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

@@ -1,0 +1,17 @@
+<div class="h2 text-center">Reset Password</div>
+<div class="container content-width">
+    <%= form_for(:password_reset, url: password_resets_path) do |f| %>
+      <div class="row">
+      </div>
+    <div class="row">
+        <div class="col-sm">
+            <%= f.email_field :email, class: 'form-control text-center', placeholder: "Enter your email" %>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-sm text-center">
+              <%= f.submit "Submit", class: "btn btn-primary" %>
+          </div>
+    </div>
+    <% end %>
+</div>
