@@ -7,8 +7,6 @@
     <a class="dropdown-item edit-merchant" href="<%= edit_merchant_url %>">Edit Information</a>
     <% if @merchant.stripe_id %>
         <div class="stripe-dashboard-link dropdown-item" data-merchant-id="<%= @merchant.id %>" href="">Visit Stripe Dashboard</div>
-    <% else %>
-        <div class="stripe-connect dropdown-item" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Stripe Account</span></div>
     <% end %>
   </div>
 </div>
@@ -43,6 +41,13 @@
         </div>
     </div>
 
+    <% unless @merchant.stripe_id %>
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <div class="stripe-connect dropdown-item" data-merchant-id="<%=@merchant.id %>" href=""><span>Connect Stripe Account</span></div>
+        </div>
+    </div>
+    <% end %>
 </div>
 
   <ul class="nav nav-tabs content-width mx-auto mt-4" id="AccountViewTabs" role="tablist">
@@ -51,6 +56,9 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" id="credits-tab" data-toggle="tab" href="#credits" role="tab" aria-controls="credits" aria-selected="false">Credits</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="devices-tab" data-toggle="tab" href="#devices" role="tab" aria-controls="devices" aria-selected="false">Approved Devices</a>
     </li>
   </ul>
   
@@ -101,4 +109,8 @@
             <% end %>
         </table>
     </div>
+    
+    <div class="tab-pane fade show" id="devices" role="tabpanel" aria-labelledby="devices-tab">
+    </div>
+
 </div>

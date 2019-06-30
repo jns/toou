@@ -4,6 +4,14 @@ class MerchantPolicy < ApplicationPolicy
 		user.merchant?	
 	end
 
+	def authorize_device?
+		user.merchant? && record.user === user	
+	end 
+	
+	def verify_device? 
+		user.merchant? && record.user === user	
+	end 
+	
 	def create?
 		if user 
 			user.merchant?

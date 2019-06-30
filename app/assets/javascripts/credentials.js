@@ -5,10 +5,6 @@ var Credentials = (function() {
     var PHONE_NUMBER = "phone";
     var TOKEN = "token";
     
-    var getAuthHeader = function() {
-        return {"Authorization": "Bearer " + getToken()};
-    };
-    
     var setPhoneNumber = function(phone_number) {
         return localStorage.setItem(PHONE_NUMBER, phone_number);
     };
@@ -17,20 +13,29 @@ var Credentials = (function() {
         return localStorage.getItem(PHONE_NUMBER);
     };
     
-    var setToken = function(token) {
-        if (typeof token === "undefined" || token === null) {
-            return localStorage.removeItem(TOKEN);
+    var setToken = function(arg1, arg2) {
+        var token, token_name;
+        if (arguments.length == 2) {
+            token_name = arg1;
+            token = arg2;
         } else {
-            return localStorage.setItem(TOKEN, token);
+            token_name = TOKEN;
+            token = arg1;
+        }
+        
+        if (typeof token === "undefined" || token === null) {
+            return localStorage.removeItem(token_name);
+        } else {
+            return localStorage.setItem(token_name, token);
         }
     };
     
-    var getToken = function() {
-        return localStorage.getItem(TOKEN);
+    var getToken = function(name = TOKEN) {
+        return localStorage.getItem(name);
     };
     
-    var hasToken = function() { 
-        var token = getToken();
+    var hasToken = function(name = TOKEN) { 
+        var token = getToken(name);
         return (typeof token !== "undefined" && token !== null);  
     };
     
@@ -38,6 +43,5 @@ var Credentials = (function() {
             getToken: getToken,
             setPhoneNumber: setPhoneNumber,
             getPhoneNumber: getPhoneNumber,
-            hasToken: hasToken,
-            getAuthHeader: getAuthHeader};
+            hasToken: hasToken};
 })();

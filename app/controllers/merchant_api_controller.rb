@@ -82,8 +82,10 @@ class MerchantApiController < ApiBaseController
     
     # Verify a device
     def verify_device
-       data = params.require(:data).permit(:device)
-       if @current_user.devices.collect{|d| d.device_id }.member?(data[:device])
+       data = params.require(:data).permit(:merchant_id, :device)
+       merchant = Merchant.find_by(data[:merchant_id])
+       authorize merchant
+       if merchant.devices.collect{|d| d.device_id }.member?(data[:device])
            render json: {}, status: :ok
        else
            render json: {}, status: :unauthorized

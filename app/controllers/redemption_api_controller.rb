@@ -1,13 +1,13 @@
 class RedemptionApiController < ApiBaseController
 
-    skip_before_action :authorize_request, only: [:authorize_device]
-    
    # Authorize a device to redeem Toou Vouchers on behalf of a merchant
     # @param [Int] the merchant id
     # @return [json] an authentication token {auth_token: token}
     def authorize_device
         merch_id = params.require(:data).require(:merchant_id)
         merchant = Merchant.find(merch_id)
+        
+        authorize merchant
         command = CreateRedemptionAuthToken.call(merchant)
        if command.success?
            render json: {auth_token: command.result}, status: :ok
@@ -71,15 +71,12 @@ class RedemptionApiController < ApiBaseController
     # @return 200 if successful
     def redeem
         code = params.require(:data).require(:code)
-        if @current_user.is_a? Merchant    
-            cmd = CaptureOrder.call(@current_user, code)
-            if cmd.success?
-                render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
-            else
-                render json: cmd.errors, status: :bad_request 
-            end
-        else 
-           render json: {}, status: :unauthorized 
+        authorize Device
+        cmd = CaptureOrder.call(@current_user.merchant, code)
+        if cmd.success?
+            render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
+        else
+            render json: cmd.errors, status: :bad_request 
         end
     end
     

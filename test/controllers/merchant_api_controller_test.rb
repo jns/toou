@@ -4,8 +4,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 
 	def auth_merchant(merchant, device = "test_device")
 	    
-	    user = merchant.user
-	    otp = user.generate_otp_for_device(device)
+	    otp = merchant.generate_otp_for_device(device)
 	    
 	    post "/api/authenticate_merchant_device", params: {data: {device: device, password: otp}}, as: :json  
 	    assert_response :ok

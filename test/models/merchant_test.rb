@@ -34,4 +34,48 @@ class MerchantTest < ActiveSupport::TestCase
     refute quantum.can_redeem_buyable?(beer)
   end
 
+  
+  test "generate otp for device" do
+    m = merchants(:quantum)
+    assert_difference "Device.count",1  do
+      otp = m.generate_otp_for_device("test_device")
+      assert otp
+      assert m.authenticate_device("test_device", otp)
+    end
+  end
+  
+  test "device otp can expire" do
+    m = merchants(:quantum)
+    otp = m.generate_otp_for_device("test_device")
+    d = Device.find_by(device_id: "test_device")
+    d.update(password_validity: Time.now)
+    refute m.authenticate_device("test_device", otp)
+  end
+  
+  test "Test merchant can authenticate" do
+    
+    m = merchants(:test_store)
+    assert_equal User::TEST_USERNAME, m.user.username
+    otp = m.generate_otp_for_device("a_device")
+    assert_equal User::TEST_PASSCODE, otp
+    assert m.authenticate_device("a_device", User::TEST_PASSCODE)
+    
+  end
+  
+  test "Merchant can Deauthorize device" do
+    m = merchants(:quantum)
+    m.generate_otp_for_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+    assert m.deauthorize_device("test_device")
+    assert_nil Device.find_by(device_id: "test_device")
+  end
+  
+  test "Merchant cannot deauthorize another merchant's device" do
+    m = merchants(:quantum)
+    m.generate_otp_for_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+    refute merchants(:cupcake_store).deauthorize_device("test_device")
+    assert_not_nil Device.find_by(device_id: "test_device")
+  end 
+
 end
