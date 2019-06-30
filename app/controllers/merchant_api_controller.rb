@@ -61,6 +61,7 @@ class MerchantApiController < ApiBaseController
 
     
     # Authorize a device to redeem Toou Vouchers on behalf of a merchant
+    # @param authorization a merchant user auth token
     # @param [merchant_id] the merchant id
     # @param [device_id] the device id
     # @return [json] an authentication token {auth_token: token}
@@ -68,8 +69,9 @@ class MerchantApiController < ApiBaseController
         merchant = merchant_params
         authorize merchant
         
-        device = params.require(:data).require(:device_id)
-        command = CreateRedemptionAuthToken.call(merchant, device)
+        device_id = params.require(:data).require(:device_id)
+        device = merchant.authorize_device(device_id)
+        command = CreateRedemptionAuthToken.call(device)
         if command.success?
            render json: {auth_token: command.result}, status: :ok
         else
@@ -83,8 +85,7 @@ class MerchantApiController < ApiBaseController
         authorize merchant
         
         device_id = params.require(:data).require(:device_id)
-        device = merchant.devices.find{|d| d.device_id == device_id}
-        device.destroy if device
+        merchant.deauthorize_device(device_id)
         render json: {}, status: :ok
     end 
     
