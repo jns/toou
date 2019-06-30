@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<div class="container content-width mx-auto">
+<div class="container content-width mx-auto merchant-data" data-merchant-id="<%=@merchant.id %>">
     
     <div class="row justify-content-center">
         <div class="col-sm-4">Name</div>
@@ -50,7 +50,7 @@
     <% end %>
 </div>
 
-  <ul class="nav nav-tabs content-width mx-auto mt-4" id="AccountViewTabs" role="tablist">
+  <ul class="nav nav-tabs mx-auto mt-4" id="AccountViewTabs" role="tablist">
     <li class="nav-item">
       <a class="nav-link active" id="products-tab" data-toggle="tab" href="#products" role="tab" aria-controls="products" aria-selected="true">Products</a>
     </li>
@@ -62,7 +62,7 @@
     </li>
   </ul>
   
-    <div class="tab-content content-width mx-auto" id="MerchantViewTabsContent">
+    <div class="tab-content mx-auto" id="MerchantViewTabsContent">
 
         <div class="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="products-tab">
         <%= form_for @merchant, url: {action: :update_products}, method: "post" do %>
@@ -111,6 +111,25 @@
     </div>
     
     <div class="tab-pane fade show" id="devices" role="tabpanel" aria-labelledby="devices-tab">
+        <div class="alert alert-warning authorize-device-link text-center">
+            <span class="alert-link">Click to Authorize This Device To Redeem TooUs</span>
+        </div>
+        <% if @merchant.devices.count > 0 %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Device</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @merchant.devices.each do |device| %>
+                <tr>
+                    <td><%= device.device_id %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <% end %>
     </div>
 
 </div>

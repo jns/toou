@@ -1,4 +1,4 @@
-/* global m, $, Breadcrumb */
+/* global m, $, Breadcrumb, Credentials */
 
 var MerchantProducts = (function() {
     
@@ -44,10 +44,30 @@ var Merchants = (function() {
     $.get("/keys/stripe_client_id", function(data) {
         client_id = data["stripe_client_id"];
     });
+    
+    $.get("/merchants/token")
+        .done(function(data) {
+           var token = data["auth_token"];
+            Credentials.setToken(token);
+        })
+        .fail(function() {
+           Credentials.setToken(); 
+        });
 
     var stripeConnect = function(event) {
         var stripe_connect_url;
         var merchant_id = $(event.currentTarget).data('merchant-id');
+        // m.request({
+        //     method: "POST",
+        //     url: "",
+        //     body: {authorization: Credentials.getToken(),
+        //             data: {merchant_id: merchant_id}}
+        // }).then(function(data){
+        //     console.log(data);
+        // }).catch(function(error){
+        //     console.log(error);
+        // });
+        
         if (typeof merchant_id != undefined && merchant_id !== null) {
             stripe_connect_url = "https://connect.stripe.com/express/oauth/authorize";
             stripe_connect_url += "?redirect_uri=https://" + window.location.host + "/merchants/enroll";
@@ -70,13 +90,44 @@ var Merchants = (function() {
     
     var enableProductSave = function(event) {
         $('.merchant-products-submit').fadeIn(500);
-        var t = $(event.target);
+    };
+    
+    var submitAuthDevice = function() {
+        var device_id = $('.authorize-device-link input[type="text"').val();
+        var merchant_id = $('.merchant-data').data('merchant-id');
+        $.post("/api/merchant/authorize_device", {
+            authorization: Credentials.getToken(),
+            data: {merchant_id: merchant_id, device_id: device_id}
+        })
+        .done(function(data) {
+            console.log(data["auth_token"]);
+            // window.location.reload();
+        })
+    };
+    
+    var authorizeDevice = function(event) {
+        var target = $(".authorize-device-link");
+        var form = $('<form class="form-inline justify-content-center">');
+        var deviceIdInput = $('<input type="text" placeholder="Name this device" class="form-control">');
+        // var dismiss = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+        // target.addClass("dismissable");
+        var deviceIdOk = $('<input type="submit" value="ok" class="btn btn-secondary mx-1">');
+        form.append(deviceIdInput);
+        form.append(deviceIdOk);
+        target.html(form);
+        // target.append(dismiss);
+        deviceIdInput.focus();
+        target.off("click");
+        
+        deviceIdOk.click(submitAuthDevice);
     };
     
     var mount = function() {
         $('.stripe-connect').click(stripeConnect);
         $('.stripe-dashboard-link').click(stripeDashboard);
         $('.product-redeem-checkbox').click(enableProductSave);
+        $('.authorize-device-link').click(authorizeDevice);        
+
     };
     
     return {mount: mount};

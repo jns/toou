@@ -65,8 +65,8 @@ Rails.application.routes.draw do
   post 'admin/authenticate', to: 'admin#authenticate'
   get 'admin/restricted', to: 'admin#restricted'
   
+  get 'merchants/token', to: 'merchants#get_auth_token' # temporary while stil have a hybrid traditional and single-page app
   get 'merchants/new_user', to: 'merchants#new_user'
-  #post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
   get 'merchants/onboard1', to: 'merchants#onboard1'
   get 'merchants/onboard2', to: 'merchants#onboard2'
