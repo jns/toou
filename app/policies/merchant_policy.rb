@@ -68,6 +68,15 @@ class MerchantPolicy < ApplicationPolicy
 		user.merchant? and record.user === user
 	end
 
+	# Redemption API Controller Policies
+		
+	
+	# Called by an authorized device seeking information about owning merchant
+    def merchant_info? 
+		user.is_a? Device and user.merchant === record    
+    end
+
+
 	class Scope < Scope
 		def resolve
 			scope.where(user: user)

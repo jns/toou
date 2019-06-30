@@ -2,17 +2,19 @@ class RedemptionApiController < ApiBaseController
 
     
     # Return merchant info
-    # @param auth_token
-    # @return
+    # @param authorization a Device auth token
+    # @param merchant_id the ID of the merchant the authorized device belongs to
+    # @return merchant name and address 
     def merchant_info
-        if @current_user.is_a? Merchant
-            render json: {name: @current_user.name, address: @current_user.address}, status: :ok
-        else
-            render json: {}, status: :unauthorized
-        end
+        merchant = paramsMerchant
+        authorize merchant
+        render json: {name: merchant.name, address: merchant.address}, status: :ok
     end
     
     # Get a temporary redemption code to use at a merchant
+    # @params authorization A customer token
+    # @params merchant_id A merchant id
+    # @params pass_sn A pass serial number
     def get_code
 
         merchant = paramsMerchant
@@ -34,6 +36,9 @@ class RedemptionApiController < ApiBaseController
     end
     
     # Return the code and cancel the redemption
+    # @param authorization A customer auth token
+    # @param data[:merchant_id] The merchant id currently associated with the pass and the code
+    # @param data[:pass_sn] The pass serial number
     def cancel_code
         merchant = paramsMerchant
         pass = paramsPass 
@@ -51,7 +56,7 @@ class RedemptionApiController < ApiBaseController
     end
     
     # Redeem a Toou Voucher 
-    # @param auth_token
+    # @param a Device auth token
     # @param a toou voucher code
     # @return 200 if successful
     def redeem

@@ -47,7 +47,6 @@ Rails.application.routes.draw do
   
   
   # Redemption api endpoints
-  post '/api/redemption/authorize_device', to: 'redemption_api#authorize_device'
   post '/api/redemption/redeem', to: 'redemption_api#redeem'
   post '/api/redemption/merchant_info', to: 'redemption_api#merchant_info'
   post '/api/redemption/get_code', to: 'redemption_api#get_code'
