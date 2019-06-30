@@ -2,11 +2,11 @@ require 'test_helper'
 
 class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 
-	def auth_merchant(merchant, device = "test_device")
+	def auth_merchant(merchant, password = "password")
+	    user = merchant.user
+	    user.update(password: password)
 	    
-	    otp = merchant.generate_otp_for_device(device)
-	    
-	    post "/api/authenticate_merchant_device", params: {data: {device: device, password: otp}}, as: :json  
+	    post "/api/merchant/authenticate", params: {data: {username: user.username, password: password}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]
@@ -14,35 +14,35 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	    token
 	end
 	
-	test "request passcode" do
-		user = users(:quantum_user)
-		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "test_device2"}}
-	    assert_response :ok
+	def auth_device(token, merchant, device)
+		post "/api/merchant/authorize_device", params: {authorization: token, data: {merchant_id: merchant.id, device_id: device}}, as: :json
+		assert_response :ok
+		json = JSON.parse(@response.body)
+		token = json["auth_token"]
+		assert_not_nil token
+		assert_not_nil merchant.reload.devices.find{|d| d.device_id === device}
+		token
+	end
 
-	end
-	
-	test "Tester Request Passcode" do
-		user = users(:tester)
-		post "/api/merchant/request_passcode", params: {data: {email: user.email, device: "testers_device"}}
-		assert_response :ok
-	end
-	
 	test "Deauthorize a device" do
-		token = auth_merchant(merchants(:quantum), "beer")
-		post "/api/merchant/deauthorize", params: {authorization: token, data: {device: "test_device"}}
+		m = merchants(:quantum)
+		token = auth_merchant(m, "beer")
+		auth_device(token, m, "test_device")
+		post "/api/merchant/deauthorize", params: {authorization: token, data: {merchant_id: m.id, device_id: "test_device"}}
 		assert_response :ok
+		assert_equal 0, m.reload.devices.count
 	end
 	
 	test "Deauthorize a non-existent device" do 
 		token = auth_merchant(merchants(:quantum))
-		post "/api/merchant/deauthorize", params: {authorization: token, data: {device: "nonexistent_device"}}
+		post "/api/merchant/deauthorize", params: {authorization: token, data: {merchant_id: merchants(:quantum).id, device_id: "nonexistent_device"}}
 		assert_response :ok
 	end
 	
 	test "Update merchant" do
 		token = auth_merchant(merchants(:quantum))
 		
-		put "/api/merchant", params: {authorization: token, data: {name: "name", website: "website", phone_number:"phone_number"}}
+		put "/api/merchant", params: {authorization: token, data: {merchant_id: merchants(:quantum).id, name: "name", website: "website", phone_number:"phone_number"}}
 		assert_response :ok
 		assert_equal "name", response.body["name"]
 		assert_equal "website", response.body["website"]
@@ -52,7 +52,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	test "products" do
 		merchant = merchants(:quantum)
 		token = auth_merchant(merchant)
-		post "/api/merchant/products", params: {authorization: token}
+		post "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id}}
 		assert_response :ok
 		JSON.parse(response.body).each do |p|
 			product = Product.find(p["id"])
@@ -66,7 +66,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		beer = products(:beer)
 		qbeer = merchant_products(:quantum_beer)
 		cupcake = products(:cupcake)
-		put "/api/merchant/products", params: {authorization: token, data: {product: {id: beer.id, price_cents: qbeer.price_cents+1, can_redeem: true}}}
+		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, product: {id: beer.id, price_cents: qbeer.price_cents+1, can_redeem: true}}}
 		assert_response :ok
 		
 		JSON.parse(response.body).each do |p|
@@ -82,7 +82,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		token = auth_merchant(merchant)
 		beer = products(:beer)
 		cupcake = products(:cupcake)
-		put "/api/merchant/products", params: {authorization: token, data: {product: {id: beer.id, can_redeem: false}}}
+		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, product: {id: beer.id, can_redeem: false}}}
 		assert_response :ok
 		
 		JSON.parse(response.body).each do |p|
@@ -92,42 +92,24 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		end
 	end
 	
-	test "verify tester device" do
-		token = auth_merchant(merchants(:test_store), "device-123")
-		post "/api/verify_device", params: {authorization: token, data: {device: "device-123"}}
-		assert_response :ok
-	end
-	
-	test "verify two devices simultaneously" do
-		token1 = auth_merchant(merchants(:quantum), "device1")
-		token2 = auth_merchant(merchants(:quantum), "device2")
+	test "authorize multiple devices simultaneously" do
 		
-		post "/api/verify_device", params: {authorization: token1, data: {device: "device1"}}
-		assert_response :ok
-		post "/api/verify_device", params: {authorization: token2, data: {device: "device2"}}
-		assert_response :ok
+		merchant = merchants(:quantum)
+		token = auth_merchant(merchant)
 		
-	end
-	
-	
-	test "fail tester device" do
-		token = auth_merchant(merchants(:test_store), "device-123")
-		post "/api/verify_device", params: {authorization: token, data: {device: "device-1234"}}
-		assert_response :unauthorized
+		assert_equal 0, merchant.devices.count
+		dev_token1 = auth_device(token ,merchant, "device1")
+		dev_token2 = auth_device(token, merchant, "device2")
+		merchant.reload
+		assert_equal 2, merchant.devices.count
+		
 	end
 	
 	test "Merchant credits endpoint returns charges credited to merchant" do
 	    merchant = merchants(:quantum)
-	    user = users(:quantum_user)
-	    user.update(password: "password")
+	    token = auth_merchant(merchant)
 	    
-	    post "/api/authenticate_merchant", params: {data: {username: user.username, password: "password"}}, as: :json  
-	    assert_response :ok
-	    json = JSON.parse(@response.body) 
-	    token = json["auth_token"]
-	    assert_not_nil token
-	    
-	    post "/api/credits", params: {authorization: token, data: {merchant_id: merchant.id}}
+	    post "/api/merchant/credits", params: {authorization: token, data: {merchant_id: merchant.id}}
 	    assert_response :ok
 	    credits = JSON.parse(response.body)
 	    assert_equal 1, credits.size

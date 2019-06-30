@@ -3,10 +3,24 @@ class MerchantApiController < ApiBaseController
 	include MerchantsHelper
 	
 
-	skip_before_action :authorize_request, only: [:request_passcode, :authenticate_merchant, :authenticate_device]
+	skip_before_action :authorize_request, only: [:authenticate_merchant]
 
+    # Authenticate a merchant user
+    # @param [String] username The merchant's username
+    # @param [String] password The merchant's password
+    def authenticate_merchant 
+       credentials = params.require(:data).permit([:username, :password])
+       command = CreateAuthToken.call(credentials[:username], credentials[:password])
+       if command.success?
+           render json: {auth_token: command.result}, status: :ok
+       else
+           render json: {error: command.errors}, status: :unauthorized
+       end
+    end
+    
     def products
-        @merchant = @current_user.merchant
+        @merchant = merchant_params
+        authorize @merchant
         if request.put?
             data = params.require(:data).permit(product: [:id, :can_redeem, :price_cents])
             product = Product.find(data[:product][:id])
@@ -26,7 +40,8 @@ class MerchantApiController < ApiBaseController
     end
 
     def merchant
-        @merchant = @current_user.merchant
+        @merchant = merchant_params
+        authorize @merchant
         if request.put?
             data = params.require(:data).permit(:name, :website, :phone_number, location: [:address1, :address2, :city, :state, :zip, :latitude, :longitude])
             @merchant.update(name: data[:name], website: data[:website], phone_number: data[:phone_number])
@@ -43,94 +58,61 @@ class MerchantApiController < ApiBaseController
         render 'merchant.json.jbuilder', status: :ok
     end
 
-    # Authenticate a merchant user
-    # @param [String] username The merchant's username
-    # @param [String] password The merchant's password
-    def authenticate_merchant 
-       credentials = params.require(:data).permit([:username, :password])
-       command = CreateAuthToken.call(credentials[:username], credentials[:password])
-       if command.success?
-           render json: {auth_token: command.result}, status: :ok
-       else
-           render json: {error: command.errors}, status: :unauthorized
-       end
-    end
+
     
-    # Authenticate a merchant on a device using a passcode
-    # @param [String] device the merchant's device 
-    # @param [String] passcode the temporary passcode
-    # @return [json] an authentication token
-    def authenticate_device
-        credentials = params.require(:data).permit([:device, :password])
-        dev = Device.find_by(device_id: credentials[:device])
-        command = CreateDeviceAuthToken.call(dev, credentials[:password])
+    # Authorize a device to redeem Toou Vouchers on behalf of a merchant
+    # @param [merchant_id] the merchant id
+    # @param [device_id] the device id
+    # @return [json] an authentication token {auth_token: token}
+    def authorize_device
+        merchant = merchant_params
+        authorize merchant
+        
+        device = params.require(:data).require(:device_id)
+        command = CreateRedemptionAuthToken.call(merchant, device)
         if command.success?
-            render json: {auth_token: command.result}, status: :ok
+           render json: {auth_token: command.result}, status: :ok
         else
-            render json: {error: command.errors}, status: :unauthorized
+           render json: {error: command.errors}, status: :unauthorized
         end
     end
-    
- 
     
     # Deauthorizes a device belonging to a merchant    
     def deauthorize_device
-        data = params.require(:data).permit(:device)
-        @current_user.deauthorize_device(data[:device])
+        merchant = merchant_params
+        authorize merchant
+        
+        device_id = params.require(:data).require(:device_id)
+        device = merchant.devices.find{|d| d.device_id == device_id}
+        device.destroy if device
         render json: {}, status: :ok
     end 
     
-    # Verify a device
-    def verify_device
-       data = params.require(:data).permit(:merchant_id, :device)
-       merchant = Merchant.find_by(data[:merchant_id])
-       authorize merchant
-       if merchant.devices.collect{|d| d.device_id }.member?(data[:device])
-           render json: {}, status: :ok
-       else
-           render json: {}, status: :unauthorized
-       end
-    end
-    
-    # Delivers a one time passcode to the merchant's email 
-    #
-    # @param [String] email The email of the user to deliver a one time passcode
-    # @param [String] deviceId A unique id of the device 
-    # @return 200 For a valid phone number and deviceID
-    # @return 400 For an invalid email or a suspicious deviceId    
-    def request_passcode
-        data = params.require(:data).permit([:email, :device_id])
-        
-        user = User.find_by(email: data[:email])
-        if user
-            otp = user.generate_otp_for_device(data[:device_id]) 
-            MerchantNotificationsMailer.with(user: user, passcode: otp).passcode_email.deliver_later unless user.tester?
-           render json: {}, status: :ok
-        else
-            render status: :unauthorized, json: {error: "Email Address not found"}
-        end
-    end
 
+    # Return the stripe link for either connecting or accessing the dashboard
     def stripe_link
-        @merchant = @current_user.merchant
-        if @merchant 
-        	if (@merchant.stripe_id == nil)
-        		render json: {url: stripe_connect_url}, status: :ok
-        	else
-        		render json: {url: stripe_dashboard_url(@merchant.stripe_id)}, status: :ok
-        	end
-        else
-            return head :bad_request
-        end
+        @merchant = merchant_params
+        authorize merchant
+    	if (@merchant.stripe_id == nil)
+    		render json: {url: stripe_connect_url}, status: :ok
+    	else
+    		render json: {url: stripe_dashboard_url(@merchant.stripe_id)}, status: :ok
+    	end
     end
     
     # Returns all credits for a merchant
     def credits
-        merchant = @current_user.merchant
+        merchant = merchant_params
+        authorize merchant
         @charges = merchant.charges
         render 'charges.json.jbuilder', status: :ok
     end
 
- 
-
+    private
+    
+    def merchant_params
+       merchant_id = params.require(:data).require(:merchant_id) 
+       Merchant.find(merchant_id)
+    end
+    
 end

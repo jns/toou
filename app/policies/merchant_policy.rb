@@ -1,17 +1,10 @@
 class MerchantPolicy < ApplicationPolicy
 
+	# MerchantController Policies
 	def index?
 		user.merchant?	
 	end
 
-	def authorize_device?
-		user.merchant? && record.user === user	
-	end 
-	
-	def verify_device? 
-		user.merchant? && record.user === user	
-	end 
-	
 	def create?
 		if user 
 			user.merchant?
@@ -49,14 +42,32 @@ class MerchantPolicy < ApplicationPolicy
 		end
 	end
 	
-	def credits?
-		user.merchant? and record.user === user
+	# MerchantApiController Policies
+	
+	def authorize_device?
+		user.merchant? && record.user === user	
+	end 
+	
+	def deauthorize_device?
+		user.merchant? && record.user === user	
 	end
 	
-	def redeem?
+	def merchant? 
 		user.merchant? and record.user === user	
 	end
 	
+	def products? 
+		user.merchant? and record.user === user	
+	end 
+	
+	def credits?
+		user.merchant? and record.user === user
+	end
+
+	def stripe_link?
+		user.merchant? and record.user === user
+	end
+
 	class Scope < Scope
 		def resolve
 			scope.where(user: user)

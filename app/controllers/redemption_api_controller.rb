@@ -1,20 +1,5 @@
 class RedemptionApiController < ApiBaseController
 
-   # Authorize a device to redeem Toou Vouchers on behalf of a merchant
-    # @param [Int] the merchant id
-    # @return [json] an authentication token {auth_token: token}
-    def authorize_device
-        merch_id = params.require(:data).require(:merchant_id)
-        merchant = Merchant.find(merch_id)
-        
-        authorize merchant
-        command = CreateRedemptionAuthToken.call(merchant)
-       if command.success?
-           render json: {auth_token: command.result}, status: :ok
-       else
-           render json: {error: command.errors}, status: :unauthorized
-       end
-    end
     
     # Return merchant info
     # @param auth_token
