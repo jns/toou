@@ -11,10 +11,16 @@ class UserController < ApplicationController
             @new_user = User.new
         elsif request.post? 
             user_params = params.require(:user).permit(:username, :password)
+            user_params[:email] = user_params[:username]
             user = User.create(user_params)
-            user.roles << Role.merchant
-            set_user(user)
-            redirect_to controller: :merchants, action: :index
+            if user.id
+                user.roles << Role.merchant
+                set_user(user)
+                redirect_to controller: :merchants, action: :index
+            else
+               flash[:notice] = "Please use an email for username"
+               @new_user = user
+            end
         end
     end
     

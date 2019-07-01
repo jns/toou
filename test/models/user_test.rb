@@ -1,12 +1,13 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+
+  test "Can create a new user" do 
+  end
   
   test "admin user has admin role" do
-    u = User.create(username: "Test")
+    u = User.create(username: "Test", email: "test@test.com", password: "password")
+    assert_not_nil u.id
     refute u.admin?
     
     u.roles << Role.admin
@@ -15,7 +16,8 @@ class UserTest < ActiveSupport::TestCase
   
   
   test "merchant user has merchant role" do
-    u = User.create(username: "Merchant")
+    u = User.create(username: "Merchant", email: "merchant@merchant.com", password: "password")
+    assert_not_nil u.id
     refute u.merchant?
     
     u.roles << Role.merchant
