@@ -18,7 +18,7 @@ class CreateDeviceAuthToken
 
   def get_user
     if device
-      user = device.user
+      user = device.merchant.user
       return user if user && user.authenticate_device(device, password)
     end
     

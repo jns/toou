@@ -37,6 +37,8 @@ class AuthorizeApiRequest
         return User.find(user_id)
       elsif user_type === "Merchant"
         return Merchant.find(user_id)
+      elsif user_type === "MerchantDevice"
+        return Device.find(user_id)
       else
         errors.add(:authentication, "Unknown User Type")
         return nil

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_28_143058) do
+ActiveRecord::Schema.define(version: 2019_06_30_035337) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,10 +50,10 @@ ActiveRecord::Schema.define(version: 2019_06_28_143058) do
     t.string "password_digest"
     t.datetime "password_validity"
     t.string "device_id"
-    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_devices_on_user_id"
+    t.bigint "merchant_id"
+    t.index ["merchant_id"], name: "index_devices_on_merchant_id"
   end
 
   create_table "logs", force: :cascade do |t|

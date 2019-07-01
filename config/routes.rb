@@ -35,13 +35,12 @@ Rails.application.routes.draw do
   post  'api/pass/:serial_number', to: 'api#pass'
   post 'api/merchants', to: 'api#merchants'
   
-  post 'api/merchant/request_passcode', to: 'merchant_api#request_passcode'
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
-  post 'api/verify_device', to: 'merchant_api#verify_device'
-  post 'api/authenticate_merchant', to: 'merchant_api#authenticate_merchant'
-  post 'api/authenticate_merchant_device', to: 'merchant_api#authenticate_device'
-  post 'api/credits', to: 'merchant_api#credits'
-  post 'api/stripe_link', to: 'merchant_api#stripe_link'
+  post 'api/merchant/authenticate', to: 'merchant_api#authenticate_merchant'
+  post 'api/merchant/authorize_device', to: 'merchant_api#authorize_device'
+  post 'api/merchant/authorized_devices', to: 'merchant_api#authorized_devices'
+  post 'api/merchant/credits', to: 'merchant_api#credits'
+  post 'api/merchant/stripe_link', to: 'merchant_api#stripe_link'
   post 'api/merchant', to: 'merchant_api#merchant'
   put 'api/merchant', to: 'merchant_api#merchant'
   post 'api/merchant/products', to: 'merchant_api#products'
@@ -49,8 +48,8 @@ Rails.application.routes.draw do
   
   
   # Redemption api endpoints
-  post '/api/redemption/authorize_device', to: 'redemption_api#authorize_device'
   post '/api/redemption/redeem', to: 'redemption_api#redeem'
+  post '/api/redemption/device_info', to: 'redemption_api#device_info'
   post '/api/redemption/merchant_info', to: 'redemption_api#merchant_info'
   post '/api/redemption/get_code', to: 'redemption_api#get_code'
   post '/api/redemption/cancel_code', to: 'redemption_api#cancel_code'
@@ -68,8 +67,8 @@ Rails.application.routes.draw do
   post 'admin/authenticate', to: 'admin#authenticate'
   get 'admin/restricted', to: 'admin#restricted'
   
+  get 'merchants/token', to: 'merchants#get_auth_token' # temporary while stil have a hybrid traditional and single-page app
   get 'merchants/new_user', to: 'merchants#new_user'
-  #post 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
   get 'merchants/onboard1', to: 'merchants#onboard1'
   get 'merchants/onboard2', to: 'merchants#onboard2'

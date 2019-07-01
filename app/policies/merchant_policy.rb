@@ -1,5 +1,6 @@
 class MerchantPolicy < ApplicationPolicy
 
+	# MerchantController Policies
 	def index?
 		user.merchant?	
 	end
@@ -41,14 +42,45 @@ class MerchantPolicy < ApplicationPolicy
 		end
 	end
 	
-	def credits?
-		user.merchant? and record.user === user
+	# MerchantApiController Policies
+	
+	def authorize_device?
+		user.merchant? && record.user === user	
+	end 
+	
+	def deauthorize_device?
+		user.merchant? && record.user === user	
 	end
 	
-	def redeem?
+	def authorized_devices?
+		user.merchant? && record.user === user	
+	end 
+	
+	def merchant? 
 		user.merchant? and record.user === user	
 	end
 	
+	def products? 
+		user.merchant? and record.user === user	
+	end 
+	
+	def credits?
+		user.merchant? and record.user === user
+	end
+
+	def stripe_link?
+		user.merchant? and record.user === user
+	end
+
+	# Redemption API Controller Policies
+		
+	
+	# Called by an authorized device seeking information about owning merchant
+    def merchant_info? 
+		user.is_a? Device and user.merchant === record    
+    end
+
+
 	class Scope < Scope
 		def resolve
 			scope.where(user: user)

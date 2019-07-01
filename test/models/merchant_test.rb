@@ -33,5 +33,28 @@ class MerchantTest < ActiveSupport::TestCase
     quantum.reload
     refute quantum.can_redeem_buyable?(beer)
   end
+  
+  test "Merchant can authorize a device" do
+    m = merchants(:quantum)  
+    assert_difference 'm.devices.count' do 
+      m.authorize_device("A device")
+    end
+  end 
+  
+  test "Merchant can Deauthorize device" do
+    m = merchants(:quantum)
+    device =m.authorize_device("test_device")
+    assert_not_nil Device.find_by(merchant: m, device_id: "test_device")
+    assert m.deauthorize_device(device.id)
+    assert_nil Device.find_by(merchant: m, device_id: "test_device")
+  end
+  
+  test "Merchant cannot deauthorize another merchant's device" do
+    m = merchants(:quantum)
+    m.authorize_device("test_device")
+    assert_not_nil Device.find_by(merchant: m, device_id: "test_device")
+    refute merchants(:cupcake_store).deauthorize_device("test_device")
+    assert_not_nil Device.find_by(merchant: m, device_id: "test_device")
+  end 
 
 end

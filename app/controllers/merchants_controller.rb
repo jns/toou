@@ -6,7 +6,11 @@ class MerchantsController < ApplicationController
     #skip_before_action :validate_auth_token
     skip_before_action :set_user, only: [:enroll, :new_user, :onboard1, :onboard2, :onboard3]
     
-    
+    # Placeholder to retrieve an authentication token after already logged in and session is established
+    def get_auth_token 
+        token = JsonWebToken.encode(user_id: @current_user.id, user_type: "User")
+        render json: {auth_token: token}, status: :ok
+    end
     
     # Info message for now
     def new_user

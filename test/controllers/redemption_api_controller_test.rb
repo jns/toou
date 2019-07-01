@@ -2,9 +2,20 @@ require 'test_helper'
 
 class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 
-    
-    def authenticate_merchant(merchant)
-	    post "/api/redemption/authorize_device", params: {data: {merchant_id: merchant.id}}, as: :json  
+	def authenticate_merchant(merchant, password = "password")
+	    user = merchant.user
+	    user.update(password: password)
+	    
+	    post "/api/merchant/authenticate", params: {data: {username: user.username, password: password}}, as: :json  
+	    assert_response :ok
+	    json = JSON.parse(@response.body) 
+	    token = json["auth_token"]
+	    assert_not_nil token
+	    token
+	end
+
+    def authorize_device(merchant_token, merchant, device)
+	    post "/api/merchant/authorize_device", params: {authorization: merchant_token, data: {merchant_id: merchant.id, device_id: device}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]
@@ -31,8 +42,9 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
     
     def perform_redemption(merchant, code)
         merchant_token = authenticate_merchant(merchant)
+        device_token = authorize_device(merchant_token, merchant, "A Device")
 	    # Redeem it
-	    post "/api/redemption/redeem", params: {authorization: merchant_token, data: {code: code}}, as: :json
+	    post "/api/redemption/redeem", params: {authorization: device_token, data: {code: code}}, as: :json
     end
 	
     test "User can get a code for own pass" do

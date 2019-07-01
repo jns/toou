@@ -2,12 +2,16 @@ class CreateRedemptionAuthToken
  
   prepend SimpleCommand
   
-  def initialize(merchant)
-    @merchant = merchant
+  def initialize(device)
+    @device = device
   end
 
   def call
-    JsonWebToken.encode(user_id: @merchant.id, user_type: "Merchant", datetime: Time.new) 
+    begin
+      JsonWebToken.encode(user_id: @device.id, user_type: "MerchantDevice", datetime: Time.new) 
+    rescue
+      errors.add(:creation_error, "Error creating device token")
+    end
   end
 
 end

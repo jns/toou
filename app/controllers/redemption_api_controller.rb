@@ -1,33 +1,25 @@
 class RedemptionApiController < ApiBaseController
 
-    skip_before_action :authorize_request, only: [:authorize_device]
-    
-   # Authorize a device to redeem Toou Vouchers on behalf of a merchant
-    # @param [Int] the merchant id
-    # @return [json] an authentication token {auth_token: token}
-    def authorize_device
-        merch_id = params.require(:data).require(:merchant_id)
-        merchant = Merchant.find(merch_id)
-        command = CreateRedemptionAuthToken.call(merchant)
-       if command.success?
-           render json: {auth_token: command.result}, status: :ok
-       else
-           render json: {error: command.errors}, status: :unauthorized
-       end
-    end
     
     # Return merchant info
-    # @param auth_token
-    # @return
+    # @param authorization a Device auth token
+    # @param merchant_id the ID of the merchant the authorized device belongs to
+    # @return merchant name and address 
     def merchant_info
-        if @current_user.is_a? Merchant
-            render json: {name: @current_user.name, address: @current_user.address}, status: :ok
-        else
-            render json: {}, status: :unauthorized
-        end
+        merchant = @current_user.merchant
+        render json: {name: merchant.name, address: merchant.address}, status: :ok
+    end
+    
+    # Return device info
+    def device_info
+        device = @current_user
+        render json: {id: device.id, device_id: device.device_id, merchant_id: device.merchant_id}, status: :ok
     end
     
     # Get a temporary redemption code to use at a merchant
+    # @params authorization A customer token
+    # @params merchant_id A merchant id
+    # @params pass_sn A pass serial number
     def get_code
 
         merchant = paramsMerchant
@@ -49,6 +41,9 @@ class RedemptionApiController < ApiBaseController
     end
     
     # Return the code and cancel the redemption
+    # @param authorization A customer auth token
+    # @param data[:merchant_id] The merchant id currently associated with the pass and the code
+    # @param data[:pass_sn] The pass serial number
     def cancel_code
         merchant = paramsMerchant
         pass = paramsPass 
@@ -66,20 +61,17 @@ class RedemptionApiController < ApiBaseController
     end
     
     # Redeem a Toou Voucher 
-    # @param auth_token
+    # @param a Device auth token
     # @param a toou voucher code
     # @return 200 if successful
     def redeem
         code = params.require(:data).require(:code)
-        if @current_user.is_a? Merchant    
-            cmd = CaptureOrder.call(@current_user, code)
-            if cmd.success?
-                render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
-            else
-                render json: cmd.errors, status: :bad_request 
-            end
-        else 
-           render json: {}, status: :unauthorized 
+        authorize Device
+        cmd = CaptureOrder.call(@current_user.merchant, code)
+        if cmd.success?
+            render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
+        else
+            render json: cmd.errors, status: :bad_request 
         end
     end
     
