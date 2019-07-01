@@ -58,7 +58,7 @@ class MerchantApiController < ApiBaseController
         render 'merchant.json.jbuilder', status: :ok
     end
 
-
+    
     
     # Authorize a device to redeem Toou Vouchers on behalf of a merchant
     # @param authorization a merchant user auth token
@@ -89,6 +89,13 @@ class MerchantApiController < ApiBaseController
         render json: {}, status: :ok
     end 
     
+    def authorized_devices
+       merchant = merchant_params
+       authorize merchant
+       
+       @devices = policy_scope(Device).select{|d| d.merchant === merchant}
+       render 'devices.json.jbuilder', status: :ok
+    end
 
     # Return the stripe link for either connecting or accessing the dashboard
     def stripe_link

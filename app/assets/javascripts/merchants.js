@@ -1,5 +1,7 @@
 /* global m, $, Breadcrumb, Credentials */
 
+var MERCHANT_ID = 0;
+
 var MerchantProducts = (function() {
     
     var products = [];
@@ -35,6 +37,111 @@ var MerchantProducts = (function() {
 
     
     return {view: view};
+})();
+
+var AuthorizedDevices = (function() {
+    
+    var devices = [];
+    var DEVICE_INFO = "";
+    
+    var oninit = function() {
+        refresh();
+        $('.authorize-device-link').click(displayAuthorizeDeviceForm);
+    };
+    
+    var view = function() {
+        
+        var form = m("form.form-inline.justify-content-center.d-none", [
+            m("input.form-control", {type: "text", placeholder: "Name this device"}),
+            m("input.btn.btn-secondary.mx-1", {type: "submit", value: "Ok", onclick: authorizeNewDevice}),
+            ])
+            
+        var add_device_alert = m(".alert.alert-warning.text-center", {onclick: displayAuthorizeDeviceForm}, [
+                m("span.alert-link", "Click to Authorize This Device To Redeem TooUs"),
+                form,
+            ]);
+        
+        var contents = [];
+        if (!Credentials.hasToken("REDEMPTION_TOKEN")) {
+            contents.push(add_device_alert);
+        } else {
+ 
+        }
+        
+        var items =devices.map(function(d){return addDeviceRow(d);});
+        var table = m("table.table", items);
+        
+        contents.push(table);
+        
+        return m("", contents);
+    };
+    
+    var addDeviceRow = function(dev) {
+        var this_device = "";
+        if (DEVICE_INFO === dev["device_id"]) {
+            this_device = " (this device)";
+        };
+        return m("tr", [m("td", dev["device_id"] + this_device), 
+                      m("td[data-device="+dev["id"]+"]", {onclick: deauthorizeDevice}, m(".btn-link", "deauthorize"))]);  
+    };
+    
+        
+    var displayAuthorizeDeviceForm = function(event) {
+        $("#authorized_devices .alert-link").hide();
+        $("#authorized_devices form").removeClass("d-none");
+    };
+    
+    var authorizeNewDevice = function(ev) {
+        ev.preventDefault(); // suppress form submission
+        var device_id = $('#authorized_devices input[type="text"]').val();
+        m.request({
+            method: "POST",
+            url: "/api/merchant/authorize_device",
+            body: {authorization: Credentials.getToken(),
+                data: {merchant_id: MERCHANT_ID, device_id: device_id}}
+        }).then(function(data) {
+            Credentials.setToken("REDEMPTION_TOKEN", data["auth_token"]);
+            refresh();
+        });
+    };
+    
+    var deauthorizeDevice = function(ev) {
+        var device_id = $(ev.target).closest("td").data("device");
+        m.request({
+            method: "POST",
+            url: "/api/merchant/deauthorize",
+            body: {authorization: Credentials.getToken(), 
+                    data: {merchant_id: MERCHANT_ID, device_id: device_id}}
+        }).then(function() {
+            refresh();
+        });
+    };
+    
+    var refresh = function() {
+       m.request({
+            url: "/api/merchant/authorized_devices",
+            method: "post",
+            body: {authorization: Credentials.getToken(),
+                    data: {merchant_id: MERCHANT_ID}}
+        }).then(function(data) {
+            devices = data;
+        });
+        
+        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
+            m.request({
+                method: "POST", 
+                url: "/api/redemption/device_info",
+                body: {authorization: Credentials.getToken("REDEMPTION_TOKEN")}})
+            .then(function(data) {
+                DEVICE_INFO = data["device_id"];
+            })
+            .catch(function(error) {
+                Credentials.setToken("REDEMPTION_TOKEN", null);
+            });
+        }
+    };
+    
+    return {view: view, oninit: oninit, refresh: refresh};
 })();
 
 var Merchants = (function() {
@@ -91,43 +198,15 @@ var Merchants = (function() {
     var enableProductSave = function(event) {
         $('.merchant-products-submit').fadeIn(500);
     };
-    
-    var submitAuthDevice = function() {
-        var device_id = $('.authorize-device-link input[type="text"').val();
-        var merchant_id = $('.merchant-data').data('merchant-id');
-        $.post("/api/merchant/authorize_device", {
-            authorization: Credentials.getToken(),
-            data: {merchant_id: merchant_id, device_id: device_id}
-        })
-        .done(function(data) {
-            console.log(data["auth_token"]);
-            // window.location.reload();
-        })
-    };
-    
-    var authorizeDevice = function(event) {
-        var target = $(".authorize-device-link");
-        var form = $('<form class="form-inline justify-content-center">');
-        var deviceIdInput = $('<input type="text" placeholder="Name this device" class="form-control">');
-        // var dismiss = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        // target.addClass("dismissable");
-        var deviceIdOk = $('<input type="submit" value="ok" class="btn btn-secondary mx-1">');
-        form.append(deviceIdInput);
-        form.append(deviceIdOk);
-        target.html(form);
-        // target.append(dismiss);
-        deviceIdInput.focus();
-        target.off("click");
-        
-        deviceIdOk.click(submitAuthDevice);
-    };
+
+
     
     var mount = function() {
+        MERCHANT_ID = $('.merchant-data').data('merchant-id');
         $('.stripe-connect').click(stripeConnect);
         $('.stripe-dashboard-link').click(stripeDashboard);
         $('.product-redeem-checkbox').click(enableProductSave);
-        $('.authorize-device-link').click(authorizeDevice);        
-
+        m.mount($('#authorized_devices')[0], AuthorizedDevices);
     };
     
     return {mount: mount};

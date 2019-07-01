@@ -49,7 +49,7 @@ class Merchant < ApplicationRecord
     # Deauthorizes the specified device if the device belongs to this user
     # returns true if successful, false otherwise
     def deauthorize_device(device)
-        dev = device.is_a?(Device) ? device : Device.find_by(merchant: self, device_id: device)    
+        dev = device.is_a?(Device) ? device : Device.find_by(merchant: self, id: device)    
         if dev && dev.merchant === self
             dev.destroy 
             return true

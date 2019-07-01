@@ -1,3 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+quantum_device:
+    merchant: quantum
+    device_id: Quantum Device
     

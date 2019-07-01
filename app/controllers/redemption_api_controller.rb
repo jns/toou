@@ -11,6 +11,12 @@ class RedemptionApiController < ApiBaseController
         render json: {name: merchant.name, address: merchant.address}, status: :ok
     end
     
+    # Return device info
+    def device_info
+        device = @current_user
+        render json: {id: device.id, device_id: device.device_id, merchant_id: device.merchant_id}, status: :ok
+    end
+    
     # Get a temporary redemption code to use at a merchant
     # @params authorization A customer token
     # @params merchant_id A merchant id

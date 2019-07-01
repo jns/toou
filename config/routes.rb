@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
   post 'api/merchant/authenticate', to: 'merchant_api#authenticate_merchant'
   post 'api/merchant/authorize_device', to: 'merchant_api#authorize_device'
+  post 'api/merchant/authorized_devices', to: 'merchant_api#authorized_devices'
   post 'api/merchant/credits', to: 'merchant_api#credits'
   post 'api/merchant/stripe_link', to: 'merchant_api#stripe_link'
   post 'api/merchant', to: 'merchant_api#merchant'
@@ -48,6 +49,7 @@ Rails.application.routes.draw do
   
   # Redemption api endpoints
   post '/api/redemption/redeem', to: 'redemption_api#redeem'
+  post '/api/redemption/device_info', to: 'redemption_api#device_info'
   post '/api/redemption/merchant_info', to: 'redemption_api#merchant_info'
   post '/api/redemption/get_code', to: 'redemption_api#get_code'
   post '/api/redemption/cancel_code', to: 'redemption_api#cancel_code'

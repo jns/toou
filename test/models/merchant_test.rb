@@ -43,9 +43,9 @@ class MerchantTest < ActiveSupport::TestCase
   
   test "Merchant can Deauthorize device" do
     m = merchants(:quantum)
-    m.authorize_device("test_device")
+    device =m.authorize_device("test_device")
     assert_not_nil Device.find_by(merchant: m, device_id: "test_device")
-    assert m.deauthorize_device("test_device")
+    assert m.deauthorize_device(device.id)
     assert_nil Device.find_by(merchant: m, device_id: "test_device")
   end
   

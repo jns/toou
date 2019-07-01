@@ -28,9 +28,11 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		m = merchants(:quantum)
 		token = auth_merchant(m, "beer")
 		auth_device(token, m, "test_device")
-		post "/api/merchant/deauthorize", params: {authorization: token, data: {merchant_id: m.id, device_id: "test_device"}}
-		assert_response :ok
-		assert_equal 0, m.reload.devices.count
+		device = Device.find_by(merchant: m, device_id: "test_device")
+		assert_difference "m.devices.count", -1 do 
+			post "/api/merchant/deauthorize", params: {authorization: token, data: {merchant_id: m.id, device_id: device.id}}
+			assert_response :ok
+		end
 	end
 	
 	test "Deauthorize a non-existent device" do 
@@ -97,12 +99,11 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		merchant = merchants(:quantum)
 		token = auth_merchant(merchant)
 		
-		assert_equal 0, merchant.devices.count
-		dev_token1 = auth_device(token ,merchant, "device1")
-		dev_token2 = auth_device(token, merchant, "device2")
-		merchant.reload
-		assert_equal 2, merchant.devices.count
-		
+		assert_difference "merchant.devices.count", 2 do
+			dev_token1 = auth_device(token ,merchant, "device1")
+			dev_token2 = auth_device(token, merchant, "device2")
+			merchant.reload
+		end
 	end
 	
 	test "Merchant credits endpoint returns charges credited to merchant" do

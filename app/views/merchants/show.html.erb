@@ -50,6 +50,7 @@
     <% end %>
 </div>
 
+<div class="container content-width">
   <ul class="nav nav-tabs mx-auto mt-4" id="AccountViewTabs" role="tablist">
     <li class="nav-item">
       <a class="nav-link active" id="products-tab" data-toggle="tab" href="#products" role="tab" aria-controls="products" aria-selected="true">Products</a>
@@ -111,25 +112,7 @@
     </div>
     
     <div class="tab-pane fade show" id="devices" role="tabpanel" aria-labelledby="devices-tab">
-        <div class="alert alert-warning authorize-device-link text-center">
-            <span class="alert-link">Click to Authorize This Device To Redeem TooUs</span>
-        </div>
-        <% if @merchant.devices.count > 0 %>
-        <table>
-            <thead>
-                <tr>
-                    <th>Device</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% @merchant.devices.each do |device| %>
-                <tr>
-                    <td><%= device.device_id %></td>
-                </tr>
-                <% end %>
-            </tbody>
-        </table>
-        <% end %>
+        <div id="authorized_devices"></div>
     </div>
-
+    
 </div>

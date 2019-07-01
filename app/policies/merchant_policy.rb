@@ -52,6 +52,10 @@ class MerchantPolicy < ApplicationPolicy
 		user.merchant? && record.user === user	
 	end
 	
+	def authorized_devices?
+		user.merchant? && record.user === user	
+	end 
+	
 	def merchant? 
 		user.merchant? and record.user === user	
 	end
