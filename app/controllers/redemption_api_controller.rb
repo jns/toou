@@ -6,8 +6,7 @@ class RedemptionApiController < ApiBaseController
     # @param merchant_id the ID of the merchant the authorized device belongs to
     # @return merchant name and address 
     def merchant_info
-        merchant = paramsMerchant
-        authorize merchant
+        merchant = @current_user.merchant
         render json: {name: merchant.name, address: merchant.address}, status: :ok
     end
     

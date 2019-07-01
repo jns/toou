@@ -29,7 +29,7 @@ var Routes = {
     
     goRedeemLogin: function() {
         // window.location.pathname = "/mredeem";
-        Turbolinks.visit("/mredeem", {action: "replace"})
+        Turbolinks.visit("/login", {action: "replace"})
     },
     
     goRedeem: function() {

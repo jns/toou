@@ -4,19 +4,21 @@ var MerchantInfo = (function() {
     var merchantAddress = "";
     
     var oninit = function() {
-        m.request({
-            method: "POST",
-            body: {authorization: Credentials.getToken()},
-            url: "/api/redemption/merchant_info"
-        }).then(function(merchantData) {
-           merchantName = merchantData.name;
-           merchantAddress = merchantData.address;
-        }).catch(function(error) {
-            if (error.code === 401) {
-                Credentials.setToken();
-                Routes.goRedeemLogin();
-            }
-        });
+        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
+            m.request({
+                method: "POST",
+                body: {authorization: Credentials.getToken("REDEMPTION_TOKEN")},
+                url: "/api/redemption/merchant_info"
+            }).then(function(merchantData) {
+               merchantName = merchantData.name;
+               merchantAddress = merchantData.address;
+            }).catch(function(error) {
+                if (error.code === 401) {
+                    Credentials.setToken();
+                    // Routes.goRedeemLogin();
+                }
+            });
+        }
     };
     
     var view = function() {
@@ -76,7 +78,7 @@ var RedeemToou = (function() {
         return m.request({
             method: "POST",
             url: "/api/redemption/redeem",
-            body: {authorization: Credentials.getToken(), data: {code: code}}
+            body: {authorization: Credentials.getToken("REDEMPTION_TOKEN"), data: {code: code}}
         }).then(function(data) {
             showOverlay("<div>Approved</div><div>"+data.amount+"</div>", "approved");
         }).catch(function(error) {
@@ -86,7 +88,7 @@ var RedeemToou = (function() {
                 var message = "<div>Denied</div>";
                 if (error.response.hasOwnProperty("unredeemable") ) {
                     error.response.unredeemable.forEach(function(e) {
-                        message += "<div>"+e+"</div>";
+                        message += "<div class=\"small\">"+e+"</div>";
                     });
                 }
                 showOverlay(message, "denied");
@@ -127,12 +129,10 @@ var RedeemToou = (function() {
     };
     
     var mount = function() {
-        if (!Credentials.hasToken()) {
+        if (!Credentials.hasToken("REDEMPTION_TOKEN")) {
             Routes.goRedeemLogin();
             return;
         }
-        
-        $(".signout").click(signout);
         
         m.mount($(".merchant-info")[0], MerchantInfo);
         
@@ -153,10 +153,5 @@ var RedeemToou = (function() {
         $("#code-1").focus();
     };
     
-    var signout = function() {
-        Credentials.setToken();
-        Routes.goRedeemLogin();
-    };
-    
-    return {mount: mount, signout: signout};
+    return {mount: mount};
 })();
