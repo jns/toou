@@ -148,18 +148,20 @@ var Merchants = (function() {
 
     var client_id;
     
-    $.get("/keys/stripe_client_id", function(data) {
-        client_id = data["stripe_client_id"];
-    });
-    
-    $.get("/merchants/token")
-        .done(function(data) {
-           var token = data["auth_token"];
-            Credentials.setToken(token);
-        })
-        .fail(function() {
-           Credentials.setToken(); 
+    var aftermount = function() {
+        $.get("/keys/stripe_client_id", function(data) {
+            client_id = data["stripe_client_id"];
         });
+        
+        $.get("/merchants/token")
+            .done(function(data) {
+               var token = data["auth_token"];
+                Credentials.setToken(token);
+            })
+            .fail(function() {
+               Credentials.setToken(); 
+            });
+    }
 
     var stripeConnect = function(event) {
         var stripe_connect_url;
@@ -207,6 +209,7 @@ var Merchants = (function() {
         $('.stripe-dashboard-link').click(stripeDashboard);
         $('.product-redeem-checkbox').click(enableProductSave);
         m.mount($('#authorized_devices')[0], AuthorizedDevices);
+        aftermount();
     };
     
     return {mount: mount};

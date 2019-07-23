@@ -148,7 +148,7 @@ class ApiController < ApiBaseController
     end
 
     
-    # Returns available passes for authenticated user
+    # Returns available passes for authenticated user   
     # 
     def passes
         command = RequestPasses.call(@current_user, serialNumbers)
