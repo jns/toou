@@ -13,3 +13,9 @@ cupcake_store:
 test_store:
   name: Test Store
   user: tester
+  
+unenrolled_store:
+  name: Unenrolled Store
+  user: cupcake_user
+  phone_number: +11234567890
+  

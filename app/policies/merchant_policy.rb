@@ -56,6 +56,10 @@ class MerchantPolicy < ApplicationPolicy
 		user.merchant? && record.user === user	
 	end 
 	
+	def stripe_link?
+		user.merchant? && record.user === user	
+	end 
+	
 	def merchant? 
 		user.merchant? and record.user === user	
 	end

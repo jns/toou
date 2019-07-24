@@ -100,7 +100,7 @@ class MerchantApiController < ApiBaseController
     # Return the stripe link for either connecting or accessing the dashboard
     def stripe_link
         @merchant = merchant_params
-        authorize merchant
+        authorize @merchant
     	if (@merchant.stripe_id == nil)
     		render json: {url: stripe_connect_url}, status: :ok
     	else

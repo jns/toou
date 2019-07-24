@@ -44,11 +44,12 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	test "Update merchant" do
 		token = auth_merchant(merchants(:quantum))
 		
-		put "/api/merchant", params: {authorization: token, data: {merchant_id: merchants(:quantum).id, name: "name", website: "website", phone_number:"phone_number"}}
+		put "/api/merchant", params: {authorization: token, data: {merchant_id: merchants(:quantum).id, name: "name", website: "website", phone_number:"(555) 555-5555"}}
 		assert_response :ok
-		assert_equal "name", response.body["name"]
-		assert_equal "website", response.body["website"]
-		assert_equal "phone_number", response.body["phone_number"]
+		body = JSON.parse(response.body)
+		assert_equal "name", body["name"]
+		assert_equal "website", body["website"]
+		assert_equal "+15555555555", body["phone_number"]
 	end
 	
 	test "products" do
@@ -114,5 +115,19 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	    assert_response :ok
 	    credits = JSON.parse(response.body)
 	    assert_equal 1, credits.size
+	end 
+	
+	test "stripe link returns enrollment link for unenrolled merchant" do
+		merchant = merchants(:unenrolled_store)
+	    token = auth_merchant(merchant)
+	    
+	    post "/api/merchant/stripe_link", params: {authorization: token, data: {merchant_id: merchant.id}}
+	    assert_response :ok
+	    body = JSON.parse(response.body)
+	    url = URI.decode(body["url"])
+	    assert_not_nil url
+	    assert Regexp.new(merchant.user.email).match(url)
+	    assert Regexp.new(merchant.name).match(url)
+	    assert Regexp.new(merchant.phone_number).match(url)
 	end
 end

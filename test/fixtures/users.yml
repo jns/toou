@@ -6,7 +6,7 @@ quantum_user:
   roles: merchant_role
   
 admin_user:
-  username: admin_user
+  username: admin@toou.gifts
   email: admin@toou.gifts
   roles: admin_role
   

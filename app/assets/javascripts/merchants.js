@@ -166,23 +166,28 @@ var Merchants = (function() {
     var stripeConnect = function(event) {
         var stripe_connect_url;
         var merchant_id = $(event.currentTarget).data('merchant-id');
-        // m.request({
-        //     method: "POST",
-        //     url: "",
-        //     body: {authorization: Credentials.getToken(),
-        //             data: {merchant_id: merchant_id}}
-        // }).then(function(data){
-        //     console.log(data);
-        // }).catch(function(error){
-        //     console.log(error);
-        // });
         
         if (typeof merchant_id != undefined && merchant_id !== null) {
-            stripe_connect_url = "https://connect.stripe.com/express/oauth/authorize";
-            stripe_connect_url += "?redirect_uri=https://" + window.location.host + "/merchants/enroll";
-            stripe_connect_url += "&client_id=" + client_id;
-            stripe_connect_url += "&state="+merchant_id;
-            window.location = stripe_connect_url;
+            m.request({
+                method: "POST",
+                url: "/api/merchant/stripe_link",
+                body: {authorization: Credentials.getToken(),
+                        data: {merchant_id: merchant_id}}
+            }).then(function(data){
+                console.log(data.url);
+                window.location = data.url;
+            }).catch(function(error){
+                console.log(error);
+            });
+            //     stripe_connect_url = "https://connect.stripe.com/express/oauth/authorize";
+        //     stripe_connect_url += "?redirect_uri=https://" + window.location.host + "/merchants/enroll";
+        //     stripe_connect_url += "&client_id=" + client_id;
+        //     stripe_connect_url += "&state="+merchant_id;
+        //     stripe_connect_url += "&stripe_user[business_type]=company";
+        //     stripe_connect_url += "&stripe_user[email]=";
+        //     stripe_connect_url += "&stripe_user[business_name]=";
+        //     stripe_connect_url += "&stripe_user[phone_number]=";
+        //     window.location = stripe_connect_url;
         }
     };
     
