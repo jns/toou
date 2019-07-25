@@ -9,6 +9,9 @@ class Order < ActiveRecord::Base
     # The recipients of the passes
     has_many :passes
     
+    scope :today, ->{ where(created_at: (Time.now.beginning_of_day)..Time.now )}
+    scope :yesterday, -> {where(created_at: (Time.now - 1.day).beginning_of_day..(Time.now-1.day).end_of_day)}
+    
     before_create do 
        self.status = OK_STATUS 
     end
@@ -36,5 +39,9 @@ class Order < ActiveRecord::Base
        result += "#{used} USED " if used > 0
        result += "#{expired} EXPIRED" if expired > 0
        return result
+    end
+    
+    def fee
+       charge_amount_cents - commitment_amount_cents 
     end
 end

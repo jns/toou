@@ -31,6 +31,11 @@ class AdminController < ApplicationController
         transfers = Pass.sum(:transfer_amount_cents)
         commitments = Order.sum(:commitment_amount_cents)
         @commitments = "$%0.2f" % ((commitments - transfers)/100.0)
+        
+        @revenue_today = "$%0.2f" % Order.today.inject(0) {|sum, o| sum += o.fee}
+        @revenue_yesterday = "$%0.2f" % Order.yesterday.inject(0) {|sum, o| sum += o.fee}
+        @revenue_total = "$%0.2f" % Order.all.inject(0) {|sum, o| sum += o.fee}
+
     end
 
 end
