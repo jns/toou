@@ -32,9 +32,9 @@ class AdminController < ApplicationController
         commitments = Order.sum(:commitment_amount_cents)
         @commitments = "$%0.2f" % ((commitments - transfers)/100.0)
         
-        @revenue_today = "$%0.2f" % Order.today.inject(0.0) {|sum, o| sum += o.fee/100}
-        @revenue_yesterday = "$%0.2f" % Order.yesterday.inject(0.0) {|sum, o| sum += o.fee/100}
-        @revenue_total = "$%0.2f" % Order.where('charge_amount_cents is not null AND commitment_amount_cents is not null').inject(0.0) {|sum, o| sum += o.fee/100}
+        @revenue_today = "$%0.2f" % Order.today.inject(0.0) {|sum, o| sum += o.fee/100.0}
+        @revenue_yesterday = "$%0.2f" % Order.yesterday.inject(0.0) {|sum, o| sum += o.fee/100.0}
+        @revenue_total = "$%0.2f" % Order.where('charge_amount_cents is not null AND commitment_amount_cents is not null').inject(0.0) {|sum, o| sum += o.fee/100.0}
 
     end
 
