@@ -3,7 +3,11 @@ class AdminController < ApplicationController
     layout 'admin'
     
     def index
-        authorize :admin
+        begin
+            authorize :admin
+        rescue
+            redirect_to login_url
+        end
         
         today = Date.today
         @new_accounts = Account.select("date(created_at)").group("date(created_at)").count

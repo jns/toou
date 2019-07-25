@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
             @current_user = user
         else
             flash[:notice] = "Invalid Credentials"
-            redirect_to '/admin/login'
+            redirect_to login_url
         end
     end
     
