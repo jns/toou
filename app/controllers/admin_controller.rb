@@ -34,7 +34,7 @@ class AdminController < ApplicationController
         
         @revenue_today = "$%0.2f" % Order.today.inject(0) {|sum, o| sum += o.fee}
         @revenue_yesterday = "$%0.2f" % Order.yesterday.inject(0) {|sum, o| sum += o.fee}
-        @revenue_total = "$%0.2f" % Order.all.inject(0) {|sum, o| sum += o.fee}
+        @revenue_total = "$%0.2f" % Order.where('charge_amount_cents is not null AND commitment_amount_cents is not null').inject(0) {|sum, o| sum += o.fee}
 
     end
 
