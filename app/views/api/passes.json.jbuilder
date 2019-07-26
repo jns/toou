@@ -5,7 +5,7 @@ json.array! @passes do |pass|
     json.message pass.message
     json.status pass.status
     json.buyable do
-        json.name pass.buyable.name
+        json.partial! 'api/buyable', buyable: pass.buyable
     end
     json.purchaser do 
         json.name pass.purchaser.name

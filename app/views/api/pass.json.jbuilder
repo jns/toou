@@ -3,9 +3,7 @@ json.expiration @pass.expiration
 json.message @pass.message
 json.status @pass.status
 json.buyable do
-    json.id @pass.buyable.id
-    json.name @pass.buyable.name
-    json.icon @pass.buyable.icon
+    json.partial! 'api/buyable', buyable: @pass.buyable
 end
 json.purchaser do 
     json.name @pass.purchaser.name
