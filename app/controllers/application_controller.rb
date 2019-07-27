@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
     include Pundit
     #after_action :verify_authorized
     
-    rescue_from Pundit::NotAuthorizedError, :with => :record_not_found
+    rescue_from Pundit::NotAuthorizedError, :with => :user_not_authorized
     rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
     
     # Prevent CSRF attacks by raising an exception.
@@ -45,11 +45,17 @@ class ApplicationController < ActionController::Base
                 @current_user = nil
             end
         else
-            redirect_to login_url
+            @current_user = nil
+            # redirect_to login_url
         end
     end
     
     def record_not_found
         render file: File.join(Rails.root, "public", "404.html"), :status => 404
     end
+    
+    def user_not_authorized
+        # flash[:alert] = "You are not authorized to perform this action."
+        redirect_to(request.referrer || root_path)
+      end
 end

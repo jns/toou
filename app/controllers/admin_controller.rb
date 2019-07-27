@@ -6,7 +6,8 @@ class AdminController < ApplicationController
         begin
             authorize :admin
         rescue
-            redirect_to login_url
+            flash[:notice] = "Administrative access prohibitied"
+            redirect_to(request.referrer || root_path)
         end
         
         today = Date.today

@@ -9,13 +9,13 @@ class MerchantsControllerTest < ActionDispatch::IntegrationTest
     
     test "redirect post merchants if unauthorized" do
         post merchants_url
-        assert_redirected_to login_url
+        assert_redirected_to root_path
     end
     
     test "redirect get  merchant if unauthorized" do
         merchant = merchants(:quantum)
         get merchant_url(merchant)
-        assert_redirected_to login_url
+        assert_redirected_to root_path
     end
 
     # test "redirect patch merchant if unauthorized" do
@@ -44,14 +44,14 @@ class MerchantsControllerTest < ActionDispatch::IntegrationTest
 
     test "redirect 'new' if unauthorized" do
         get new_merchant_url
-        assert_redirected_to login_url
+        assert_redirected_to root_path
     end
 
        
     test "redirect 'stripe_dashboard' if unauthorized" do
         merchant = merchants(:quantum)
         get stripe_dashboard_link_merchant_url(merchant)
-        assert_redirected_to login_url
+        assert_response :unauthorized
     end
     
     test "do not redirect 'new_user' if unauthorized" do

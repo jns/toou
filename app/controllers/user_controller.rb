@@ -1,6 +1,6 @@
 class UserController < ApplicationController
 
-    skip_before_action :set_user, except: [:new_user]
+    # skip_before_action :set_user, except: [:new_user]
 
     def password_reset
     end
@@ -12,6 +12,12 @@ class UserController < ApplicationController
         elsif request.post? 
             user_params = params.require(:user).permit(:username, :password)
             user_params[:email] = user_params[:username]
+            if User.find_by(email: user_params[:email])
+                flash[:notice] = "Account already exists"
+                redirect_to :login
+                return
+            end 
+            
             user = User.create(user_params)
             if user.id
                 user.roles << Role.merchant

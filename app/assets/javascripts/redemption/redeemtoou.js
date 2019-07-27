@@ -15,7 +15,6 @@ var MerchantInfo = (function() {
             }).catch(function(error) {
                 if (error.code === 401) {
                     Credentials.setToken();
-                    // Routes.goRedeemLogin();
                 }
             });
         }
@@ -130,7 +129,7 @@ var RedeemToou = (function() {
     
     var mount = function() {
         if (!Credentials.hasToken("REDEMPTION_TOKEN")) {
-            Routes.goRedeemLogin();
+            Routes.deviceNotAuthorized();
             return;
         }
         

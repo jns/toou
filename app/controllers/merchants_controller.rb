@@ -4,7 +4,7 @@ class MerchantsController < ApplicationController
     include MerchantsHelper
     
     #skip_before_action :validate_auth_token
-    skip_before_action :set_user, only: [:enroll, :new_user, :onboard1, :onboard2, :onboard3]
+    skip_before_action :set_user, only: [:enroll, :onboard1, :onboard2, :onboard3]
     
     # Placeholder to retrieve an authentication token after already logged in and session is established
     def get_auth_token 
@@ -118,9 +118,10 @@ class MerchantsController < ApplicationController
         rescue ActiveRecord::RecordNotFound
             render status: :bad_request
         end
-        
-
     end
+    
+    def device_not_authorized
+    end    
     
     def stripe_dashboard_link 
         begin
@@ -138,7 +139,7 @@ class MerchantsController < ApplicationController
         rescue Stripe::InvalidRequestError
             render json: {error: "Error connecting to Stripe"}, status: :bad_request
         rescue 
-            render json: {error: "Error connecting to Stripe"}, status: :unauthorized
+            render json: {error: "User not authorized"}, status: :unauthorized
         end
     end
     

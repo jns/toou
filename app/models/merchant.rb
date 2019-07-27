@@ -9,7 +9,9 @@ class Merchant < ApplicationRecord
     scope :enrolled, ->{ where('stripe_id is not null') }
     
     before_save do
-        self.phone_number = PhoneNumber.new(self.phone_number).to_s
+        if ! self.phone_number.empty?
+            self.phone_number = PhoneNumber.new(self.phone_number).to_s
+        end
     end
     
     def address 

@@ -1,12 +1,12 @@
 class AdminPolicy < ApplicationPolicy
 
 	def index?
-		user.admin?	
+		user and user.admin?	
 	end
 	
 	  
   def show?
-    user.admin?
+    user and user.admin?
   end
   
   def edit?
@@ -27,7 +27,7 @@ class AdminPolicy < ApplicationPolicy
   
   class Scope < Scope
     def resolve
-      if user.admin?
+      if user and user.admin?
         scope.all
       else
         []

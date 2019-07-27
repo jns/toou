@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   # Redemption 
   get 'mredeem', to: 'redemption#index'
   get 'mredeem/toou', to: 'redemption#toou'
+  get 'mredeem/not_authorized', to: 'merchants#device_not_authorized'
   
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
