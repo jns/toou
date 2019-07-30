@@ -41,7 +41,7 @@ class UserController < ApplicationController
             if user and user.authenticate(user_params[:password])
                 flash[:notice] = ""
                 set_user(user)
-                destination = session[:last] || user_home(user)
+                destination = user_home(user)
                 
                 redirect_to destination
             else
