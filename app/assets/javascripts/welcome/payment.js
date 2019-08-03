@@ -2,6 +2,7 @@
 
 var PaymentForm = { 
     
+    buyable: null,
     stripe: null,
     card: null,
     
@@ -31,9 +32,13 @@ var PaymentForm = {
 
     view: function() {
         return m('form.container.form', [
-            m('.row.form-group',[ m('label.col', "name"), m('input.col.form-control[id=payer-name][type=text]')]),
-            m('.row.form-group',[ m('label.col', "phone"), m('input.col.form-control[id=payer-phone][type=text]')]),
-            m('.row.form-group',[ m('label.col', "email"), m('input.col.form-control[id=payer-email][type=text]')]),
+            m('.row.form-group',[m('label.col', this.buyable.name), m('label.col', "$"+this.buyable.max_price_dollars)]),
+            m('.row.form-group',[m('label.col', "TooU Fee"), m('label.col', "$1.25")]),
+            m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (this.buyable.max_price_dollars + 1.25))]),
+            
+            m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]),
+            m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]),
+            m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]),
             m('[id=card-input]'),
             m('.row[id=card-errors]'),
             ]);  
@@ -138,8 +143,10 @@ var Payment = (function() {
             } else {
                 // Payment API is not supported.  
                 // Fallback to a payment form
+                Modal.setTitle("Your Info");
+                PaymentForm.buyable = buyable;
                 Modal.setBody(PaymentForm);
-                Modal.setCancelButton("Not Now", function(){ Modal.hide(); });
+                Modal.setCancelButton("Not Now", Modal.dismiss);
                 Modal.setOkButton("Buy", function(){ 
                     Modal.disableOkButton();
                     PaymentForm.createToken().then(function(result) {
@@ -163,7 +170,7 @@ var Payment = (function() {
                 var button = $('<button class="btn btn-primary">').text("Send Now").click(function() { 
                     Modal.show();
                 });
-                $('#payment-request-button').append(button);
+                $('#payment-request-button').html(button);
             }
         });
     };
