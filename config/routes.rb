@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get 'pass/:serial_number', to: 'welcome#pass'
   get 'pass', to: 'welcome#pass_not_found'
   get 'support', to: 'welcome#support'
+  get "faq", to: 'welcome#faq'
   
   # Redemption 
   get 'mredeem', to: 'redemption#index'

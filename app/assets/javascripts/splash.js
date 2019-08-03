@@ -21,7 +21,13 @@ var Home = (function() {
                     ])
                 ]),
             m(".row", [
-                m(".col.text-center.mt-5", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!"))
+                m(".col.text-center.mt-5", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
+               ]),
+            m(".row", [
+                 m(".col.text-center.mt-5", m("a[href='/faq']", "Frequent Questions")),
+                ]),
+            m(".row", [
+                 m(".col.text-center.mt-5", m("a[href='/about']", "About TooU")),
                 ])
             ]);
     };
