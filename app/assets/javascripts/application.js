@@ -14,13 +14,12 @@
 //= require popper
 //= require bootstrap
 //= require jquery_ujs
-//= require turbolinks
 //= require breadcrumb
 //= require modal
 //= require splash
 //= require credentials
 
-/* global $, Breadcrumb */
+/* global $, Breadcrumb, Credentials */
 
 var Routes = {
     goHome: function() { 
@@ -28,24 +27,24 @@ var Routes = {
     },
     
     deviceNotAuthorized: function() {
-        // window.location.pathname = "/mredeem";
-        Turbolinks.visit("/mredeem/not_authorized", {action: "replace"})
+        window.location.pathname = "/mredeem/not_authorized";
+        // Turbolinks.visit("/mredeem/not_authorized", {action: "replace"})
     },
     
     goRedeem: function() {
-        // window.location.pathname = "/mredeem/toou";
-        Turbolinks.visit("/mredeem/toou", {action: "replace"});
+        window.location.pathname = "/mredeem/toou";
+        // Turbolinks.visit("/mredeem/toou", {action: "replace"});
     }
-}
+};
 
 var addSignout = function() {
     if (Credentials.hasToken()) {
         $(".sign-out").html("<div class=\"btn btn-link\">sign out</div>");
         $(".sign-out").click(function() {Credentials.setToken(); Routes.goHome();});
     }
-}
+};
 
-$(document).on("turbolinks:load", function() {
+$(function() {
     // var root = document.getElementById('mithril_root');
     // m.route(root, "/", {
     //     "/": Splash,
@@ -58,9 +57,6 @@ $(document).on("turbolinks:load", function() {
 
     var path = window.location.pathname;
     
-    var routes = [];
-    
-    routes.push({location: "Home"});
     
     if (path === "/send_gifts") {
         SendGifts.mount();
