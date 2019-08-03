@@ -303,7 +303,7 @@ DEPENDENCIES
   simple_command
   spring (= 2.0.2)
   stripe (= 3.17.0)
-  turbolinks
+  turbolinks (~> 5.2.0)
   twilio-ruby
   uglifier (>= 1.3.0)
   web-console (~> 3.7.0)
