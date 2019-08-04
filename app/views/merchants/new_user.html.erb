@@ -6,17 +6,19 @@
 
 <% if @current_user %>
 <div class="text-center m-4">
-	<%= link_to "Merchant Dashboard", merchants_path, {class: "btn btn-primary btn-sm w-25", style: "white-space: normal"} %>
-</div>
-<div class="text-center m-4">
-	<%= link_to "Redeem A TooU", "/mredeem/toou", {class: "btn btn-primary btn-sm w-25"} %>
+	<%= link_to "Merchant Dashboard", merchants_path, {class: "btn btn-primary btn-sm w-50", style: "white-space: normal"} %>
 </div>
 <% else %>
 <div class="text-center m-4">
-	<%= link_to "Create an Account", user_new_merchant_url, {class: "btn btn-primary btn-sm w-25"} %>
+	<%= link_to "Create an Account", user_new_merchant_url, {class: "btn btn-primary btn-sm w-50"} %>
 </div>
 <div class="text-center m-4">
-	<%= link_to "Login", login_url, {class: "btn btn-primary btn-sm w-25"} %>
+	<%= link_to "Login", login_url, {class: "btn btn-primary btn-sm w-50"} %>
 </div>
 <% end %>
+
+<div class="text-center m-4">
+	<%= link_to "Redeem A TooU", "/mredeem/toou", {class: "btn btn-primary btn-sm w-50"} %>
+</div>
+
 </div>
