@@ -30,11 +30,17 @@ var Credentials = (function() {
         }
     };
     
-    var getToken = function(name = TOKEN) {
+    var getToken = function(name) {
+        if (typeof name == 'undefined') {
+            name = TOKEN;
+        }
         return localStorage.getItem(name);
     };
     
-    var hasToken = function(name = TOKEN) { 
+    var hasToken = function(name) {
+        if (typeof name == 'undefined') {
+            name = TOKEN;
+        }
         var token = getToken(name);
         return (typeof token !== "undefined" && token !== null);  
     };

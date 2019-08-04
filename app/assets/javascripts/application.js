@@ -11,13 +11,13 @@
 // about supported directives.
 //
 //= require jquery3
-// require popper
-// require bootstrap
-// require jquery_ujs
-// require breadcrumb
-// require modal
-// require splash
-// require credentials
+//= require popper
+//= require bootstrap
+//= require jquery_ujs
+//= require breadcrumb
+//= require modal
+//= require splash
+//= require credentials
 
 /* global $, Breadcrumb, Credentials */
 
