@@ -6,8 +6,9 @@ class SendDeviceNotification
     @@connector = Apnotic::Connection
     @@dataStore = PersistentStore
     
-    def initialize(account)
+    def initialize(account, alert)
         @account = account
+        @alert = alert
     end
     
     def call
@@ -28,7 +29,7 @@ class SendDeviceNotification
         token = @account.device_id
         
         notification       = Apnotic::Notification.new(token)
-        notification.alert = "You've receive a drink from TooU!"
+        notification.alert = @alert
         notification.expiration = (Time.now + 1.day).to_i.to_s
         notification.priority = 10
         notification.topic = "gifts.toou.TooU"

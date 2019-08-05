@@ -5,11 +5,15 @@ class PassNotificationJob < ApplicationJob
     passes.each do |pass_id|
       pass = Pass.find(pass_id)
       acct = pass.account
-        if acct.can_receive_notifications?
-            SendDeviceNotification.call(acct) unless acct.test_user?
-        else
-          SendSmsNotification.call(pass) unless acct.test_user?
-        end
+      product = pass.buyable.name.downcase
+      sender = pass.purchaser.name.to_s
+      if acct.can_receive_notifications?
+          message = "You've received a #{product} from #{sender}"
+          SendDeviceNotification.call(acct, message) unless acct.test_user?
+      else
+        message = "Hi.You've got a #{product} waiting for you at TooU courtesy of #{sender}.  Visit https://toou.gifts to get your drink."
+        SendSmsNotification.call(pass, message) unless acct.test_user?
       end
+    end
   end
 end
