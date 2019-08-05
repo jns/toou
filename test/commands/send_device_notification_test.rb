@@ -12,7 +12,7 @@ class SendDeviceNotificationTest < ActiveJob::TestCase
         account = accounts(:josh)
         assert_equal false, account.can_receive_notifications?
         
-        cmd = SendDeviceNotification.call(account)
+        cmd = SendDeviceNotification.call(account, "a message")
         assert_equal false, cmd.success?
         assert_not_nil cmd.errors[:not_supported]
     end
@@ -21,7 +21,7 @@ class SendDeviceNotificationTest < ActiveJob::TestCase
         account = accounts(:notifiable)
         assert account.can_receive_notifications?
         
-        cmd = SendDeviceNotification.call(account)
+        cmd = SendDeviceNotification.call(account, "a message")
         assert cmd.success?
     end
 end
