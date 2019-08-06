@@ -8,10 +8,11 @@ class PassNotificationJob < ApplicationJob
       product = pass.buyable.name.downcase
       sender = pass.purchaser.name.to_s
       if acct.can_receive_notifications?
-          message = "You've received a #{product} from #{sender}"
-          SendDeviceNotification.call(acct, message) unless acct.test_user?
+          title = "You've received a #{product}"
+          message = "#{sender} says #{pass.message}"
+          SendDeviceNotification.call(acct, title, message) unless acct.test_user?
       else
-        message = "Hi.You've got a #{product} waiting for you at TooU courtesy of #{sender}.  Visit https://toou.gifts to get your drink."
+        message = "Hi. #{sender} just sent you a #{product} with the message \"#{pass.message}\". Visit https://toou.gifts/passes to get your #{product}."
         SendSmsNotification.call(acct, message) unless acct.test_user?
       end
     end

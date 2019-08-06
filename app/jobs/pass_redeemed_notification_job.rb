@@ -7,6 +7,7 @@ class PassRedeemedNotificationJob < ApplicationJob
       acct = pass.account
       product = pass.buyable.name.downcase
       recipient = pass.recipient
+      recipient_name = (pass.recipient.name ? pass.recipient.name : pass.recipient.phone_number)
       sender = pass.purchaser
       message = "Hooray! #{recipient.name.to_s} just used the TooU you sent them for a #{product}"
       if acct.can_receive_notifications?
