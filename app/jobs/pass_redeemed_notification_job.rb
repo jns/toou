@@ -11,7 +11,7 @@ class PassRedeemedNotificationJob < ApplicationJob
       sender = pass.purchaser
       message = "Hooray! #{recipient.name.to_s} just used the TooU you sent them for a #{product}"
       if acct.can_receive_notifications?
-          SendDeviceNotification.call(sender, message) unless sender.test_user?
+          SendDeviceNotification.call(sender, "TooU Redeemed", message) unless sender.test_user?
       else
         SendSmsNotification.call(sender, message) unless sender.test_user?
       end  

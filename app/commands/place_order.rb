@@ -36,7 +36,7 @@ class PlaceOrder
 
             Order.transaction do # Wrap everything in a transaction
                 # Create an order 
-                order = Order.create(account: @account)
+                @order = Order.create(account: @account)
                 
                 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
@@ -53,42 +53,43 @@ class PlaceOrder
                   end
                   
                   # generate the pass
-                  create_pass(pn, @message, @buyable, order)
+                  create_pass(pn, @message, @buyable, @order)
                 }
                 
                 
                 # Amount to keep in reserve to payout merchants
-                commitment_amount_cents = @buyable.price(:cents)*order.passes.count
+                commitment_amount_cents = @buyable.price(:cents)*@order.passes.count
                 # Amount charged to the customer
-                charge_amount_cents = commitment_amount_cents + FEE*order.passes.count
+                charge_amount_cents = commitment_amount_cents + FEE*@order.passes.count
                 
                 # Create the charge on Stripe's servers - this will charge the user's card
                 c =  @@charge_client.create(
                     :amount => charge_amount_cents, # this number should be in cents
                     :currency => "usd",
                     :source => @payment_source,
-                    :transfer_group => order.id,
+                    :transfer_group => @order.id,
                     :description => "TooU Purchase",
                     :capture => true, 
                     :metadata => {
-                        :order_id => order.id,
+                        :order_id => @order.id,
                         :customer_id => @account.id,
                         :commitment_amount => commitment_amount_cents
                     })
-                Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{order.id}")
+                Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{@order.id}")
                 
                 
-                order.update(charge_amount_cents: charge_amount_cents,
+                @order.update(charge_amount_cents: charge_amount_cents,
                             commitment_amount_cents: commitment_amount_cents,
                             charge_stripe_id: c.id)
                 
                 
-                order.passes.each do |pass|
-                    PassNotificationJob.perform_later(pass.id)
-                end
-                
-                return order
             end # End of transaction
+
+            @order.passes.each do |pass|
+                PassNotificationJob.perform_later(pass.id)
+            end
+            
+            return @order
         
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
