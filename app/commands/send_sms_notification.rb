@@ -3,8 +3,8 @@ class SendSmsNotification
     
     prepend SimpleCommand
     
-    def initialize(pass, message)
-        @account = pass.account
+    def initialize(acct, message)
+        @account = acct
         @message = message
     end
     

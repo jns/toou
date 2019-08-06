@@ -62,6 +62,8 @@ class CaptureOrder
             Log.create(log_type: Log::INFO, context: "CaptureOrder", current_user: receiver.id, message: "Captured order #{@pass.order.id}")
             return @pass
             
+            PassRedeemedNotificationJob.perform_later(@pass.id)
+                
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
             body = e.json_body

@@ -12,7 +12,7 @@ class PassNotificationJob < ApplicationJob
           SendDeviceNotification.call(acct, message) unless acct.test_user?
       else
         message = "Hi.You've got a #{product} waiting for you at TooU courtesy of #{sender}.  Visit https://toou.gifts to get your drink."
-        SendSmsNotification.call(pass, message) unless acct.test_user?
+        SendSmsNotification.call(acct, message) unless acct.test_user?
       end
     end
   end
