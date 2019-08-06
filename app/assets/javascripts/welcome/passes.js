@@ -34,7 +34,7 @@ var PassesComponent = (function() {
     
     var addPassCard = function(pass) { 
         var cardBody = [
-                    m(".pass-product", "Good for one " + pass.buyable.name),
+                    m(".pass-product", "Good for 1 (ONE) " + pass.buyable.name + " including tax and tip"),
                     m(".pass-from", "From " + pass.purchaser.name + "(" + pass.purchaser.phone_number + ")"),
                     m(".pass-message", pass.message),
             ];

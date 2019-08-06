@@ -8,7 +8,7 @@ var Home = (function() {
                 m(".col.text-center.mt-3", [
                     m("a[href='/send_gifts']", [
                         m(".buy-graphic"),
-                        m("span.regular-20pt.darkgray", "Treat Someone")
+                        m("span.regular-20pt.darkgray", "Send TooU")
                         ])
                     ])
                 ]),
@@ -16,7 +16,7 @@ var Home = (function() {
                 m(".col.text-center.mt-3", [
                     m("a[href='/passes']", [
                         m(".drink-graphic"),
-                        m("span.regular-20pt.darkgray", "My Drink Passes")
+                        m("span.regular-20pt.darkgray", "My TooU's")
                         ])
                     ])
                 ]),
