@@ -132,7 +132,7 @@ var PassComponent = (function() {
                         ]),
                     m(".card-text.pass-from", "From " + pass.purchaser.name),
                     m(".card-text.pass-message", pass.message),
-                    m(".card-text", "Good for a " + pass.buyable.name),
+                    m(".card-text", "Good for a " + pass.buyable.name + " up to " + pass.value_dollars + " including tax and tip."),
                     m(".container", [m(".mt-5.text-center", "Select A Merchant To Redeem"),
                                      m(".small.text-center", "Don't worry, you can change your mind"),
                                      merchList]),

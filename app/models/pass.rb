@@ -1,6 +1,6 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serial_number, :expiration, :created_at, :account, :order, :buyable, :payment_source
+    attr_readonly :serial_number, :expiration, :created_at, :account, :order, :buyable, :value
     
     USED = "USED"
     EXPIRED = "EXPIRED"
@@ -68,6 +68,10 @@ class Pass < ActiveRecord::Base
     
     def barcode_payload
        self.serial_number[0..5] 
+    end
+    
+    def value_dollars
+       self.value_cents / 100.0 
     end
     
 end
