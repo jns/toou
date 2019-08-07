@@ -26,8 +26,10 @@ var Modal = (function() {
             button.html(buttonText);
             button.click(completion);
             button.show();
+            enableOkButton();
         } else {
             button.hide();
+            disableOkButton();
         }    
     };
     
