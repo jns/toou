@@ -26,8 +26,8 @@ var PaymentForm = {
         });
     },
     
-    createToken: function() {        
-      return this.stripe.createToken(this.card);
+    createPaymentMethod: function() {        
+      return this.stripe.createPaymentMethod('card', this.card);
     },
 
     view: function() {
@@ -75,7 +75,7 @@ var Payment = (function() {
           requestPayerPhone: true
         });
         
-        pr.on("token", function(event) {
+        pr.on("paymentmethod", function(event) {
             processPayment(buyable, event).then(function(response) {
                     event.complete('success');
                     completePurchase();
@@ -89,6 +89,7 @@ var Payment = (function() {
     };
     
     var processPayment = function(buyable, event) {
+       console.log(event);
        var  payload = {
                 authorization: Credentials.getToken(),
                 purchaser: {
@@ -98,7 +99,7 @@ var Payment = (function() {
                 },
                 recipients: [document.getElementById('recipient_phone').value],
                 message: document.getElementById('message_input').value,
-                payment_source: event.token.id,
+                payment_source: event.paymentMethod.id,
                 product: {
                     id: buyable.id,
                     type: buyable.type
@@ -149,7 +150,7 @@ var Payment = (function() {
                 Modal.setCancelButton("Not Now", Modal.dismiss);
                 Modal.setOkButton("Buy", function(){ 
                     Modal.disableOkButton();
-                    PaymentForm.createToken().then(function(result) {
+                    PaymentForm.createPaymentMethod().then(function(result) {
                         if (result.error) {
                           // Inform the customer that there was an error.
                           var errorElement = document.getElementById('payment-errors');
@@ -158,7 +159,7 @@ var Payment = (function() {
                         } else {
                           // Send the token to your server.
                           var data = PaymentForm.payerData();
-                          data.token = result.token;
+                          data.paymentMethod = result.paymentMethod;
                           processPayment(buyable, data).then(function(response) {
                                 completePurchase();
                             }).catch(function(err) {

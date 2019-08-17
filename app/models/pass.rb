@@ -24,6 +24,8 @@ class Pass < ActiveRecord::Base
     
     alias :recipient :account
     
+    scope :valid_passes, ->{where("transfer_stripe_id is null and expiration > '#{Time.now.to_formatted_s(:db)}'")}
+    
     # Assign a serial number and a credit card from the pool upon creation
     before_create do
         self.serial_number = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 

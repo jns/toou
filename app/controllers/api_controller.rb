@@ -5,6 +5,11 @@ class ApiController < ApiBaseController
     # autheticates user with JWT
     skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :merchants]
     
+    # Account details for the current user
+    def account
+        render json: {name: "Josh", phone: "5555555555"}, status: :ok
+    end
+    
     # Returns active promotions
     def promotions
         @promotions = Promotion.where(status: Promotion::ACTIVE)
@@ -124,7 +129,13 @@ class ApiController < ApiBaseController
         # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, product)
         if command.success?
-            render json: {}, status: :ok
+            if command.result.status == Order::OK_STATUS
+                render json: {success: true}, status: :ok
+            elsif command.result.status == Order::PENDING_STATUS
+                render json: {requires_action: true, payment_intent_client_secret: command.result.intent.client_secret}, status: :ok
+            else
+                render json: {success: false}, status: :bad_request
+            end
         else
             render json: {error: command.errors}, status: :bad_request
         end
@@ -141,12 +152,16 @@ class ApiController < ApiBaseController
         
         command = PlaceOrder.call(@current_user, payment_source, recipients, message, product)
         if command.success?
+            
             render json: {order_id: command.result.id}, status: :ok
         else
             render json: {error: command.errors}, status: :bad_request
         end
     end
 
+    def confirm_payment
+        
+    end
     
     # Returns available passes for authenticated user   
     # 

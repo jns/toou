@@ -45,9 +45,29 @@ var Credentials = (function() {
         return (typeof token !== "undefined" && token !== null);  
     };
     
+    var getUserData = function() {
+        return new Promise(function(resolve, reject) {
+            if (typeof userData == 'undefined') {
+                fetch('/api/account', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({authorization: Credentials.getToken()})
+                }).then(function(response) { 
+                   resolve(response.json());
+                }).catch(function(err) {
+                    resolve(err.json());
+                });
+            } else {
+                resolve("Yay");
+            }
+        });
+    };
+    
     return {setToken: setToken, 
             getToken: getToken,
             setPhoneNumber: setPhoneNumber,
             getPhoneNumber: getPhoneNumber,
-            hasToken: hasToken};
+            hasToken: hasToken,
+            getUserData: getUserData,
+    };
 })();

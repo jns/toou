@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
   get 'api/products', to: 'api#products'
+  post 'api/account', to: 'api#account'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
@@ -48,6 +49,8 @@ Rails.application.routes.draw do
   post 'api/merchant/products', to: 'merchant_api#products'
   put 'api/merchant/products', to: 'merchant_api#products'
   
+  # Webhooks
+  post '/webhook/stripe_event', to: 'stripe_webhooks#stripe_event'
   
   # Redemption api endpoints
   post '/api/redemption/redeem', to: 'redemption_api#redeem'

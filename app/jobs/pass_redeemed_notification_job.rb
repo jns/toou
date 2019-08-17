@@ -7,9 +7,9 @@ class PassRedeemedNotificationJob < ApplicationJob
       acct = pass.account
       product = pass.buyable.name.downcase
       recipient = pass.recipient
-      recipient_name = (pass.recipient.name ? pass.recipient.name : pass.recipient.phone_number)
+      recipient_name = (recipient.name ? recipient.name : recipient.phone_number)
       sender = pass.purchaser
-      message = "Hooray! #{recipient.name.to_s} just used the TooU you sent them for a #{product}"
+      message = "Hooray! #{recipient_name.to_s} just used the TooU you sent them for a #{product}"
       if acct.can_receive_notifications?
           SendDeviceNotification.call(sender, "TooU Redeemed", message) unless sender.test_user?
       else

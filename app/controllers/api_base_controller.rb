@@ -8,6 +8,7 @@ class ApiBaseController < ActionController::Base
     attr_reader :current_user
 
     def authorize_request
+        puts request.params
         cmd = AuthorizeApiRequest.call(request.params)
         if cmd.success?
             @current_user = cmd.result

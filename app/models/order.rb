@@ -2,6 +2,10 @@ class Order < ActiveRecord::Base
     
     FAILED_STATUS = "FAILED"
     OK_STATUS = "OK"
+    PENDING_STATUS = "PENDING"
+    
+    # the payment intent
+    attr_accessor :payment_intent
     
     # The customer that made the purchase
     belongs_to :account
