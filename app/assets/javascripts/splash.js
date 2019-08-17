@@ -21,13 +21,16 @@ var Home = (function() {
                     ])
                 ]),
             m(".row", [
+                m(".col.text-center.mt-5..h5", m("a[href='merchant_map']", "Map of Participating Merchants"))
+                ]),
+            m(".row", [
                 m(".col.text-center.mt-5", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
                ]),
             m(".row", [
-                 m(".col.text-center.mt-5", m("a[href='/faq']", "Frequent Questions")),
+                 m(".col.text-center.mt-2", m("a[href='/faq']", "Frequent Questions")),
                 ]),
             m(".row", [
-                 m(".col.text-center.mt-5", m("a[href='/about']", "About TooU")),
+                 m(".col.text-center.mt-2", m("a[href='/about']", "About TooU")),
                 ])
             ]);
     };
