@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   get 'pass', to: 'welcome#pass_not_found'
   get 'support', to: 'welcome#support'
   get "faq", to: 'welcome#faq'
+  get "merchant_map", to: 'welcome#merchant_map'
   
   # Redemption 
   get 'mredeem', to: 'redemption#index'
