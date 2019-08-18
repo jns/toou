@@ -1,4 +1,4 @@
-/* global m, $, Credentials, Modal, OneTimePasscode */
+/* global m, $, Credentials, Modal, OneTimePasscode, CreateAccount */
 
 var Login = (function() {
     
@@ -17,8 +17,13 @@ var Login = (function() {
             url: "api/requestOneTimePasscode",
             body: {phone_number: phone_number},
         }).then(function(data) {
-            Credentials.setPhoneNumber(phone_number);
-            Modal.setBody(OneTimePasscode);
+            if (data["acct_complete"]) {
+                Credentials.setPhoneNumber(phone_number);
+                Modal.setBody(OneTimePasscode);
+            } else {
+                Modal.setTitle("Thanks for coming!")
+                Modal.setBody(CreateAccount);
+            }
         }).catch(function(e) {
             feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");

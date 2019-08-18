@@ -5,6 +5,8 @@ var Credentials = (function() {
     var PHONE_NUMBER = "phone";
     var TOKEN = "token";
     
+    var userData = undefined;
+    
     var setPhoneNumber = function(phone_number) {
         return localStorage.setItem(PHONE_NUMBER, phone_number);
     };
@@ -24,6 +26,7 @@ var Credentials = (function() {
         }
         
         if (typeof token === "undefined" || token === null) {
+            userData = undefined;
             return localStorage.removeItem(token_name);
         } else {
             return localStorage.setItem(token_name, token);
@@ -53,12 +56,17 @@ var Credentials = (function() {
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({authorization: Credentials.getToken()})
                 }).then(function(response) { 
-                   resolve(response.json());
+                    if (response.status == 200) {
+                        userData = response.json();
+                        resolve(userData);
+                    } else {
+                        resolve(undefined);
+                    }
                 }).catch(function(err) {
-                    resolve(err.json());
+                    resolve(undefined);
                 });
             } else {
-                resolve("Yay");
+                resolve(userData);
             }
         });
     };
