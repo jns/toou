@@ -12,6 +12,8 @@
       <th scope="col">Mobile</th>
       <th scope="col">Name</th>
       <th scope="col">Email</th>
+      <th scope="col"># Orders</th>
+      <th scope="col"># Passes</th>
     </tr>
   </thead>
 
@@ -23,6 +25,8 @@
         <td><%= link_to account.phone_number, admin_account_path(account) %></td>
         <td><%= link_to account.name, admin_account_path(account) %></td>
         <td><%= account.email %></td>
+        <td><%= account.orders.count %></td>
+        <td><%= account.passes.count %></td>
       </tr>
     <% end %>
   </tbody>
