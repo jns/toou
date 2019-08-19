@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   get 'api/products', to: 'api#products'
   patch 'api/account', to: 'api#account'
   post 'api/account', to: 'api#account'
+  post 'api/payment_methods', to: 'api#payment_methods'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'

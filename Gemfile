@@ -51,7 +51,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'apnotic', '~> 1.4.1'
 
 # Use Stripe for payment processing
-gem 'stripe', '3.17.0'
+gem 'stripe', '~> 4.24.0'
 
 # Use pundit for authorization policies
 gem 'pundit', '~> 2.0.1'

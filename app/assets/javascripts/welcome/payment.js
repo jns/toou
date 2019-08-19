@@ -2,19 +2,43 @@
 
 var PaymentForm = { 
     
+    userData: null,
     buyable: null,
     stripe: null,
-    card: null,
+    cardElement: null,
+    paymentMethods: null,
     
     oninit: function() {
- 
-        $.get("/keys/stripe_key", function(data) { 
+        
+        Credentials.getUserData().then(function(data) {
+            PaymentForm.userData = data;
+        });
+        
+        m.request("/api/payment_methods", {
+            method: "POST", 
+            body: {authorization: Credentials.getToken()}
+        }).then(function(data) {
+            if (data.length > 0) {
+                PaymentForm.paymentMethods = data;
+            } else {
+                PaymentForm.createCardElement();
+            }
+        }).catch(function(data) {
+            PaymentForm.createCardElement();
+        });
+    },
+    
+    
+    createCardElement: function() {
+        $.get("/keys/stripe_key", function(data) {
+            
+            $("#card-input").removeClass();
             PaymentForm.stripe = Stripe(data["stripe_public_api_key"]);
            
-            PaymentForm.card = PaymentForm.stripe.elements().create('card');
-            PaymentForm.card.mount('#card-input');
-        
-            PaymentForm.card.addEventListener('change', function(event) {
+            PaymentForm.cardElement = PaymentForm.stripe.elements().create('card');
+            PaymentForm.cardElement.mount('#card-input');
+
+            PaymentForm.cardElement.addEventListener('change', function(event) {
               var displayError = document.getElementById('card-errors');
               if (event.error) {
                 displayError.textContent = event.error.message;
@@ -22,8 +46,54 @@ var PaymentForm = {
                 displayError.textContent = '';
               }
             });
-                 
         });
+    },
+    
+    cardInput: function() {
+        if (this.paymentMethods == undefined ) {
+            return m("[id=card-input]");
+        } else if (this.paymentMethods.length > 1) { 
+            var options = this.paymentMethods.map(function(pm) {
+                return m("option", {value: pm["id"]}, pm.brand + " " + pm.last4);
+            });
+            return m(".row.form-group[id=card-input]", [m("label.col", "Payment Method"), 
+                                         m("select.col.form-control.form-control-sm", options), 
+                                         m(".btn.btn-sm", {onclick: PaymentForm.createCardElement}, "New card")]);
+        } else if (this.paymentMethods.length == 1) {
+            var pm = this.paymentMethods[0];
+            return m(".row.form-group[id=card-input]", [m("label.col", "Payment Method"), 
+                                                        m("input.col.text-center[type=text][readonly][id="+pm.id+"][value="+pm.brand + " *" + pm.last4+"]"), 
+                                                        m(".btn.btn-sm", {onclick: PaymentForm.createCardElement}, "New card")]);
+        } else {
+            return m("[id=card-input]");
+        }
+    },
+    
+    payerInputs: function() {
+        if (this.userData == undefined) {
+            return [];
+        } else {
+            var inputs = [];
+            if (this.userData["name"] != undefined) {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text][value='+this.userData["name"]+']')]));
+            } else {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]));
+            }
+            
+            if (this.userData["phone"] != undefined) {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text][value='+this.userData["phone"]+']')]));
+            } else {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]));
+            }
+            
+            
+            if (this.userData["email"] != undefined) {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text][value='+this.userData["email"]+']')]));
+            } else {
+                inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]));
+            }
+           return inputs;
+        }
     },
     
     createPaymentMethod: function() {        
@@ -31,15 +101,13 @@ var PaymentForm = {
     },
 
     view: function() {
+        console.log(this.userData);
         return m('form.container.form', [
             m('.row.form-group',[m('label.col', this.buyable.name), m('label.col', "$"+this.buyable.max_price_dollars)]),
             m('.row.form-group',[m('label.col', "TooU Fee"), m('label.col', "$1.25")]),
             m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (this.buyable.max_price_dollars + 1.25))]),
-            
-            m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]),
-            m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]),
-            m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]),
-            m('[id=card-input]'),
+            this.payerInputs(),
+            this.cardInput(),
             m('.row[id=card-errors]'),
             ]);  
     },
@@ -61,7 +129,7 @@ var Payment = (function() {
         stripe = Stripe(data["stripe_public_api_key"]);
     });
     
-    var createPaymentRequest = function(buyable) {
+    var createPaymentIntent = function(buyable) {
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
@@ -177,7 +245,7 @@ var Payment = (function() {
     };
     
     var setBuyable = function(buyable) {
-        var paymentRequest = createPaymentRequest(buyable);
+        var paymentRequest = createPaymentIntent(buyable);
         addPaymentButton(paymentRequest, buyable);
     };
     

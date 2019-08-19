@@ -7,7 +7,6 @@ class ApiController < ApiBaseController
     
     # Account details for the current user
     def account
-        puts request.method
         case request.method
         when "PATCH"
             data = params.require(:data).permit(:name, :email)
@@ -19,6 +18,12 @@ class ApiController < ApiBaseController
             render json: {}, status: :bad_request
         end
     end
+    
+    # Retreive 
+    def payment_methods
+        methods = [{brand: "visa", last4: "1234", id: "card_asdfawe"}, {brand: "visa", last4: "5677", id: "card_123asd"}]
+        render json: methods, status: :ok
+    end 
     
     # Returns active promotions
     def promotions
@@ -151,7 +156,6 @@ class ApiController < ApiBaseController
             render json: {error: command.errors}, status: :bad_request
         end
     end
-
     
     # Places an order for passes to be delivered to recipients
     # @param recipients Array of phone numbers who will receive passes
