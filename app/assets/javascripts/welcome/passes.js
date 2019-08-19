@@ -6,12 +6,11 @@ var PassesComponent = (function() {
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         
     var afterLogin = function() {
-        window.location.reload();    
+        loadPasses();    
     };
     
-    var oninit = function() {
-        contents = m(".text-center.h4", "Loading Passes...");
-        return m.request({
+    var loadPasses = function() {
+        m.request({
             method: "POST",
             url: "api/passes",
             body: {authorization: Credentials.getToken()}
@@ -20,11 +19,24 @@ var PassesComponent = (function() {
             if (passList.length === 0) {
                 contents =  m(".text-center.h4", "Sorry, You don't have any passes.");
             }
+            Credentials.getMissingUserDataFields().then(function(missing) {
+                if (missing.length > 0) {
+                    CreateAccount.setMissing(missing);
+                    Modal.setTitle("Complete Your Profile");
+                    Modal.setBody(CreateAccount);
+                    Modal.show();
+                }
+            });
         }).catch(function(e) {
             Modal.setTitle("Please Login To Access Your Passes");
             Modal.setBody(Login);
             Modal.show(afterLogin);
-        });
+        });        
+    };
+    
+    var oninit = function() {
+        contents = m(".text-center.h4", "Loading Passes...");
+        loadPasses();
     };
     
     var showPass = function(ev) {

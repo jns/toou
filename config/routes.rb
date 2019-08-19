@@ -27,9 +27,9 @@ Rails.application.routes.draw do
   get 'mredeem/not_authorized', to: 'merchants#device_not_authorized'
   
   # API Endpoints
-  patch 'api/account', to: 'api#account'
   get 'api/promotions', to: 'api#promotions'
   get 'api/products', to: 'api#products'
+  patch 'api/account', to: 'api#account'
   post 'api/account', to: 'api#account'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'

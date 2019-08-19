@@ -10,6 +10,7 @@ var OneTimePasscode = (function() {
     
     var authenticate = function() {
         var phone_number = Credentials.getPhoneNumber();
+        Modal.disableOkButton();
         return m.request({
             method: "POST",
             url: "api/authenticate",
@@ -18,6 +19,7 @@ var OneTimePasscode = (function() {
             Credentials.setToken(data["auth_token"]);
             Modal.dismiss();
         }).catch(function(e) {
+            Modal.enableOkButton();
             feedback =  e.response["error"] + ". Please try again.";
             $(".feedback").addClass("invalid-feedback");
             $(".feedback").show();

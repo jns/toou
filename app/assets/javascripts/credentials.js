@@ -48,6 +48,27 @@ var Credentials = (function() {
         return (typeof token !== "undefined" && token !== null);  
     };
     
+    var getMissingUserDataFields = function() {
+        return new Promise(function(resolve, reject) {
+            getUserData().then(function(data) {
+                if (data == undefined) {
+                    resolve(["name", "email"]);
+                } else {
+                    var missingFields = [];
+                    if (data["name"] == undefined) {
+                        missingFields.push("name");
+                    }
+                    if (data["email"] == undefined) {
+                        missingFields.push("email");
+                    }
+                    resolve(missingFields);
+                }
+            }).catch(function(err) {
+                reject(err);
+            }) 
+        });
+    };
+    
     var getUserData = function() {
         return new Promise(function(resolve, reject) {
             if (typeof userData == 'undefined') {
@@ -71,11 +92,17 @@ var Credentials = (function() {
         });
     };
     
+    var refreshUserData = function() {
+        userData = undefined;
+        getUserData();
+    };
+    
     return {setToken: setToken, 
             getToken: getToken,
             setPhoneNumber: setPhoneNumber,
             getPhoneNumber: getPhoneNumber,
             hasToken: hasToken,
             getUserData: getUserData,
+            getMissingUserDataFields: getMissingUserDataFields,
     };
 })();

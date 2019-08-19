@@ -10,7 +10,8 @@ class AuthenticateUser
   def call
     u = Account.find_by_phone_number(@phone)
     if u and u.authenticate(@otp)
-      JsonWebToken.encode({user_id: u.id, user_type: "Customer"}) 
+      u.token = JsonWebToken.encode({user_id: u.id, user_type: "Customer"}) 
+      return u
     else
       errors.add :unauthorized, 'invalid credentials'
     end

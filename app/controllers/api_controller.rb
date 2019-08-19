@@ -7,7 +7,17 @@ class ApiController < ApiBaseController
     
     # Account details for the current user
     def account
-        render json: {name: "Josh", phone: "5555555555"}, status: :ok
+        puts request.method
+        case request.method
+        when "PATCH"
+            data = params.require(:data).permit(:name, :email)
+            @current_user.update(data)
+            render json: {success: "Success"}, status: :ok
+        when "POST"
+            render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
+        else
+            render json: {}, status: :bad_request
+        end
     end
     
     # Returns active promotions
@@ -92,7 +102,8 @@ class ApiController < ApiBaseController
             command = AuthenticateUser.call(phoneNumber, otp)
         
            if command.success?
-             render json: { auth_token: command.result }, status: :ok
+               acct = command.result
+             render json: { auth_token: acct.token, missing_fields: acct.missing_fields}, status: :ok
            else
              render json: { error: "Invalid code"}, status: :unauthorized
            end

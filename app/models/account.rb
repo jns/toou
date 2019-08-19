@@ -6,6 +6,8 @@ class Account < ActiveRecord::Base
     before_save :format_phone_number
     after_create :generate_stripe_customer
     
+    attr_accessor :token
+    
     # Searches accounts by any unformatted string that resembles a phone number
     # Throws an error if the string cannot be formatted into a phone number
     def Account.search_by_phone_number(unformatted_phone_number)
@@ -50,6 +52,14 @@ class Account < ActiveRecord::Base
     
     def test_user?
        return self.phone_number === "+10000000000" 
+    end
+    
+    def missing_fields
+       result = []
+       result << :name unless name
+       result << :email unless email
+       result << :phone_number unless phone_number
+       return result
     end
     
 end
