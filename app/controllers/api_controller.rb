@@ -145,13 +145,7 @@ class ApiController < ApiBaseController
         # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, product)
         if command.success?
-            if command.result.status == Order::OK_STATUS
-                render json: {success: true}, status: :ok
-            elsif command.result.status == Order::PENDING_STATUS
-                render json: {requires_action: true, payment_intent_client_secret: command.result.intent.client_secret}, status: :ok
-            else
-                render json: {success: false}, status: :bad_request
-            end
+            render json: {}, status: :ok
         else
             render json: {error: command.errors}, status: :bad_request
         end
@@ -172,6 +166,42 @@ class ApiController < ApiBaseController
         else
             render json: {error: command.errors}, status: :bad_request
         end
+    end
+
+    def initiate_order
+        purchaser = params.require(:purchaser).permit(:name, :phone, :email)
+        recipients, payment_source = params.require([:recipients, :payment_source])
+        message = params.permit(:message)[:message]
+        
+        # Sanitize and format the phone number
+        phone = PhoneNumber.new(purchaser[:phone]).to_s
+        unless phone
+            render json: {error: "Invalid Phone Number"}, status: :bad_request
+            return
+        end
+        
+        # Find or generate an account
+        acct = Account.search_by_phone_number(phone) || 
+                Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
+        
+        # Update name and email if they are nil
+        acct.update(email: purchaser[:email]) unless acct.email
+        acct.update(name: purchaser[:name]) unless acct.name
+        
+        # Place the order
+        command = InitiateOrder.call(acct, payment_source, recipients, message, product)
+        if command.success?
+            if command.result.status == Order::OK_STATUS
+                render json: {success: true}, status: :ok
+            elsif command.result.status == Order::PENDING_STATUS
+                render json: {requires_action: true, payment_intent_client_secret: command.result.intent.client_secret}, status: :ok
+            else
+                render json: {success: false}, status: :bad_request
+            end
+        else
+            render json: {error: command.errors}, status: :bad_request
+        end
+        
     end
 
     def confirm_payment
