@@ -21,8 +21,8 @@ class ApiController < ApiBaseController
     
     # Retreive 
     def payment_methods
-        methods = [{brand: "visa", last4: "1234", id: "card_asdfawe"}, {brand: "visa", last4: "5677", id: "card_123asd"}]
-        render json: methods, status: :ok
+        methods = Stripe::PaymentMethod.list(customer: @current_user.stripe_customer_id, type: "card")
+        render json: methods[:data], status: :ok
     end 
     
     # Returns active promotions

@@ -2,16 +2,17 @@
 #  Takes an account, and a list of recipients
 #  generates an order with a set of passes
 #  charges the users payment source and schedules notifications to recipients
-class PlaceOrder
+class InitiateOrder
 
     prepend SimpleCommand
     
     FEE = 125
     
-    cattr_accessor :charge_client, :customer_client, :source_client
+    cattr_accessor :charge_client, :customer_client, :source_client, :payment_intent_client
     self.charge_client = Stripe::Charge
     self.customer_client = Stripe::Customer
     self.source_client = Stripe::Source
+    self.payment_intent_client = Stripe::PaymentIntent
     
     # Account is the account placing the order
     # payment_source is a stripe payment source token
@@ -40,6 +41,7 @@ class PlaceOrder
                 
                 
                 Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
+
                 
                 @recipients.each{ |r| 
                   throw "Recipient phone number cannot be empty" unless r
@@ -58,36 +60,57 @@ class PlaceOrder
                 
                 
                 # Amount to keep in reserve to payout merchants
-                commitment_amount_cents = @buyable.price(:cents)*@order.passes.count
+                commitment_amount_cents = @buyable.price(:cents)*@recipients.count
                 # Amount charged to the customer
-                charge_amount_cents = commitment_amount_cents + FEE*@order.passes.count
+                charge_amount_cents = commitment_amount_cents + FEE*@recipients.count
                 
                 # Create the charge on Stripe's servers - this will charge the user's card
-                c =  @@charge_client.create(
-                    :amount => charge_amount_cents, # this number should be in cents
-                    :currency => "usd",
-                    :source => @payment_source,
+                # c =  @@charge_client.create(
+                #     :amount => charge_amount_cents, # this number should be in cents
+                #     :currency => "usd",
+                #     :source => @payment_source,
+                #     :transfer_group => @order.id,
+                #     :description => "TooU Purchase",
+                #     :capture => true, 
+                #     :metadata => {
+                #         :order_id => @order.id,
+                #         :customer_id => @account.id,
+                #         :commitment_amount => commitment_amount_cents
+                #     })
+                intent = @@payment_intent_client.create(
+                    :amount => charge_amount_cents,
+                    :currency => "usd", 
+                    :payment_method => @payment_source,
                     :transfer_group => @order.id,
-                    :description => "TooU Purchase",
-                    :capture => true, 
+                    :customer => @account.stripe_customer_id,
+                    :description => "TooU Purchase", 
                     :metadata => {
-                        :order_id => @order.id,
+                        :order_id => @order.id, 
                         :customer_id => @account.id,
                         :commitment_amount => commitment_amount_cents
                     })
                 Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{@order.id}")
                 
+                status = if intent.status == 'requires_action' && intent.next_action.type == 'use_stripe_sdk'
+                    Order::PENDING_STATUS
+                elsif intent.status == 'succeeded'
+                    Order::OK_STATUS
+                else
+                    Order::FAILED_STATUS
+                end
+      
                 
                 @order.update(charge_amount_cents: charge_amount_cents,
-                            commitment_amount_cents: commitment_amount_cents,
-                            charge_stripe_id: c.id)
+                             commitment_amount_cents: commitment_amount_cents,
+                             charge_stripe_id: intent.id,
+                             status: status)
                 
-                
+                @order.payment_intent = intent
             end # End of transaction
 
-            @order.passes.each do |pass|
-                PassNotificationJob.perform_later(pass.id)
-            end
+            # @order.passes.each do |pass|
+            #     PassNotificationJob.perform_later(pass.id)
+            # end
             
             return @order
         
@@ -134,7 +157,7 @@ class PlaceOrder
         expiry = Date.today + 180.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "PlaceOrder#create_pass", current_user: acct.id, message: "Creating pass for order #{order.id}")
-        Pass.create(message: message, expiration: expiry, account: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
+        PendingPass.create(message: message, account: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
     end
     
 end

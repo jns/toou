@@ -7,6 +7,7 @@ var PaymentForm = {
     stripe: null,
     cardElement: null,
     paymentMethods: null,
+    paymentMethodInput: null,
     
     oninit: function() {
         
@@ -51,53 +52,72 @@ var PaymentForm = {
     
     cardInput: function() {
         if (this.paymentMethods == undefined ) {
+            this.paymentMethodInput = "new";
             return m("[id=card-input]");
         } else if (this.paymentMethods.length > 1) { 
+            this.paymentMethodInput = "select";
             var options = this.paymentMethods.map(function(pm) {
-                return m("option", {value: pm["id"]}, pm.brand + " " + pm.last4);
+                var card = pm["card"];
+                return m("option", {value: pm["id"]}, card["brand"] + " " + card["last4"]);
             });
             return m(".row.form-group[id=card-input]", [m("label.col", "Payment Method"), 
                                          m("select.col.form-control.form-control-sm", options), 
                                          m(".btn.btn-sm", {onclick: PaymentForm.createCardElement}, "New card")]);
         } else if (this.paymentMethods.length == 1) {
+            this.paymentMethodInput = "single";
             var pm = this.paymentMethods[0];
+            var card = pm["card"];
             return m(".row.form-group[id=card-input]", [m("label.col", "Payment Method"), 
-                                                        m("input.col.text-center[type=text][readonly][id="+pm.id+"][value="+pm.brand + " *" + pm.last4+"]"), 
+                                                        m("input.col.text-center[type=text][readonly][id="+pm.id+"][value="+card.brand + " *" + card.last4+"]"), 
                                                         m(".btn.btn-sm", {onclick: PaymentForm.createCardElement}, "New card")]);
         } else {
+            this.paymentMethodInput = "new";
             return m("[id=card-input]");
         }
     },
     
     payerInputs: function() {
-        if (this.userData == undefined) {
-            return [];
+
+        var inputs = [];
+        if (this.userData != undefined && this.userData["name"] != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text][value='+this.userData["name"]+']')]));
         } else {
-            var inputs = [];
-            if (this.userData["name"] != undefined) {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text][value='+this.userData["name"]+']')]));
-            } else {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]));
-            }
-            
-            if (this.userData["phone"] != undefined) {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text][value='+this.userData["phone"]+']')]));
-            } else {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]));
-            }
-            
-            
-            if (this.userData["email"] != undefined) {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text][value='+this.userData["email"]+']')]));
-            } else {
-                inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]));
-            }
-           return inputs;
+            inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]));
         }
+        
+        if (this.userData != undefined && this.userData["phone"] != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text][value='+this.userData["phone"]+']')]));
+        } else {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]));
+        }
+        
+        
+        if (this.userData != undefined && this.userData["email"] != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text][value='+this.userData["email"]+']')]));
+        } else {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]));
+        }
+       return inputs;
+
     },
     
-    createPaymentMethod: function() {        
-      return this.stripe.createPaymentMethod('card', this.card);
+    /**
+     * Determines whether a new card or a saved card was entered, and provides that
+     */
+    createPaymentMethod: function() {    
+        if (this.paymentMethodInput == "stripe") { 
+            return this.stripe.createPaymentMethod('card', this.cardElement);
+        } else if (this.paymentMethodInput == "select") {
+            var method= this.paymentMethods[$("#card-input select").prop("selectedIndex")];
+            return new Promise(function(resolve, reject) {
+                resolve({paymentMethod: method});   
+            });
+        } else {
+            var method = this.paymentMethods[0];
+            return new Promise(function(resolve, reject) {
+                resolve({paymentMethod: method});
+            });
+        }
     },
 
     view: function() {
@@ -212,7 +232,7 @@ var Payment = (function() {
             } else {
                 // Payment API is not supported.  
                 // Fallback to a payment form
-                Modal.setTitle("Your Info");
+                Modal.setTitle("Payment Information");
                 PaymentForm.buyable = buyable;
                 Modal.setBody(PaymentForm);
                 Modal.setCancelButton("Not Now", Modal.dismiss);
@@ -231,7 +251,7 @@ var Payment = (function() {
                           processPayment(buyable, data).then(function(response) {
                                 completePurchase();
                             }).catch(function(err) {
-                                purchaseFailed(err);
+                                purchaseFailed(JSON.stringify(err));
                            });
                         }
                   });
