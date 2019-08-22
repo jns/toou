@@ -35,6 +35,8 @@ Rails.application.routes.draw do
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
+  post 'api/initiate_order', to: 'api#initiate_order'
+  post 'api/confirm_payment', to: 'api#confirm_payment'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'

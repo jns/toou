@@ -2,29 +2,36 @@
 
 var Modal = (function() {
     
+    var _body,okCompletion, cancelCompletion;
     
     var setTitle = function(title) {
         $('.modal-title').html(title);
     };
     
-    var setBody = function(body) {
+    var setBody = function(body, attr) {
         
+        _body = body;    
         m.mount($(".modal-body")[0], null);
         
         if (body.hasOwnProperty('view')) {
             $(".modal-body").html("");
-            m.mount($('.modal-body')[0], body);
+            if (attr == undefined) {
+                attr = {};
+            }
+            m.mount($('.modal-body')[0], {view: function(){ return m(body, attr)}});
         } else {
             $('.modal-body').html(body);
         }
     };
     
     var setOkButton = function(buttonText, completion) {
+        
         var button = $('.modal-footer > .ok-button');
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
+            okCompletion = completion;
             button.html(buttonText);
-            button.click(completion);
+            button.click(okclicked);
             button.show();
             enableOkButton();
         } else {
@@ -44,6 +51,12 @@ var Modal = (function() {
             button.hide();
         }
     };
+    
+    var okclicked = function() {
+        if (typeof okCompletion == 'function') {
+            okCompletion(_body);
+        }    
+    } 
     
     var show = function(completion) {
         

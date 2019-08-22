@@ -1,30 +1,10 @@
 /* global m, Credentials, Modal, CreateAccount $ */
 var OneTimePasscode = (function() {
     
-    var passcode = null;
     var feedback = null;
-    
-    var oninit = function() {
-        Modal.setOkButton("Submit", authenticate);
-    }
-    
-    var authenticate = function() {
-        var phone_number = Credentials.getPhoneNumber();
-        Modal.disableOkButton();
-        return m.request({
-            method: "POST",
-            url: "api/authenticate",
-            body: {phone_number: phone_number, pass_code: passcode},
-        }).then(function(data) {
-            Credentials.setToken(data["auth_token"]);
-            Modal.dismiss();
-        }).catch(function(e) {
-            Modal.enableOkButton();
-            feedback =  e.response["error"] + ". Please try again.";
-            $(".feedback").addClass("invalid-feedback");
-            $(".feedback").show();
-        });
-    }
+
+    var oninit = function(vnode) {
+    };
     
     var view = function() {
         return m(".container .mt-3 .mx-auto", [
@@ -34,8 +14,8 @@ var OneTimePasscode = (function() {
                 m(".row", [
                     m(".col.input-group", [
                         m("input.form-control.text-center[type=text][placeholder=Passcode]", {
-                            value: passcode, 
-                            oninput: function(e) { passcode = e.target.value; }
+                            value: Credentials.passcode, 
+                            oninput: function(e) { Credentials.passcode = e.target.value; }
                             }),
                         // m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),

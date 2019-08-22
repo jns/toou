@@ -63,6 +63,8 @@ class ApiController < ApiBaseController
         
         acct_phone_number = params.require(:phone_number)
         device_id = params.permit(:device_id)[:device_id]
+        name = params.permit(:name)[:name]
+        email = params.permit(:email)[:email]
         
         begin
             phone = PhoneNumber.new(acct_phone_number).to_s
@@ -74,8 +76,17 @@ class ApiController < ApiBaseController
             
             if device_id and !device_id.empty?
                 acct.device_id = device_id
-                acct.save
             end
+            
+            if name and !name.empty? 
+               acct.name = name 
+            end
+            
+            if email and !email.empty?
+                acct.email = email
+            end 
+            
+            acct.save
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
@@ -169,6 +180,10 @@ class ApiController < ApiBaseController
     end
 
     def initiate_order
+        
+        render json: {requires_action: "auth_and_confirm"}, status: :ok
+        return
+        
         purchaser = params.require(:purchaser).permit(:name, :phone, :email)
         recipients, payment_source = params.require([:recipients, :payment_source])
         message = params.permit(:message)[:message]
@@ -205,7 +220,7 @@ class ApiController < ApiBaseController
     end
 
     def confirm_payment
-        
+        render json: {success: true}, status: :ok
     end
     
     # Returns available passes for authenticated user   

@@ -2,18 +2,13 @@
 
 var Credentials = (function() {
     
-    var PHONE_NUMBER = "phone";
     var TOKEN = "token";
     
     var userData = undefined;
     
-    var setPhoneNumber = function(phone_number) {
-        return localStorage.setItem(PHONE_NUMBER, phone_number);
-    };
+    var phone_number = undefined;
+    var passcode = undefined;
     
-    var getPhoneNumber = function() {
-        return localStorage.getItem(PHONE_NUMBER);
-    };
     
     var setToken = function(arg1, arg2) {
         var token, token_name;
@@ -97,12 +92,25 @@ var Credentials = (function() {
         getUserData();
     };
     
+    var authenticate = function(phone_number, passcode) {
+        return m.request({
+            method: "POST",
+            url: "api/authenticate",
+            body: {phone_number: phone_number, pass_code: passcode},
+        }).then(function(data) {
+            setToken(data["auth_token"]);
+        }).catch(function(e) {
+            setToken(null);
+        });
+    };
+    
     return {setToken: setToken, 
             getToken: getToken,
-            setPhoneNumber: setPhoneNumber,
-            getPhoneNumber: getPhoneNumber,
+            phone_number: phone_number,
+            passcode: passcode,
             hasToken: hasToken,
             getUserData: getUserData,
             getMissingUserDataFields: getMissingUserDataFields,
+            authenticate: authenticate,
     };
 })();
