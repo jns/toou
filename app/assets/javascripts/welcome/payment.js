@@ -228,7 +228,7 @@ var Payment = (function() {
                         email: payerData.payerEmail}
             }).then(function(response) {
                 Modal.setTitle("Enter Passcode to Confirm Identity");
-                Modal.setBody(OneTimePasscode);
+                Modal.setBody(OneTimePasscode, {phone_number: payerData.payerPhone});
                 Modal.setOkButton("Submit", passcodeAuthentication);
                 Modal.setCancelButton("Cancel", cancelPurchase);
             }).catch(function(err) {
@@ -238,7 +238,7 @@ var Payment = (function() {
     };
     
     var passcodeAuthentication = function() {
-        Credentials.authenticate(Credentials.phone_number, Credentials.passcode).then(function() {
+        Credentials.authenticate(OneTimePasscode.getPhoneNumber(), OneTimePasscode.getPasscode()).then(function() {
             Modal.dismiss();
         })
         

@@ -2,18 +2,20 @@
 
 var Modal = (function() {
     
-    var _body,okCompletion, cancelCompletion;
+    var _body = null;
     
     var setTitle = function(title) {
         $('.modal-title').html(title);
     };
     
+    var getBody = function() { return _body; };
+    
     var setBody = function(body, attr) {
         
-        _body = body;    
         m.mount($(".modal-body")[0], null);
         
         if (body.hasOwnProperty('view')) {
+            _body = body;
             $(".modal-body").html("");
             if (attr == undefined) {
                 attr = {};
@@ -29,9 +31,8 @@ var Modal = (function() {
         var button = $('.modal-footer > .ok-button');
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
-            okCompletion = completion;
             button.html(buttonText);
-            button.click(okclicked);
+            button.click(function() {completion(_body);}); // invoke completion handler with modal body as argument
             button.show();
             enableOkButton();
         } else {
@@ -45,18 +46,13 @@ var Modal = (function() {
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
-            button.click(completion);
+            button.click(function() {completion(_body);});
             button.show();
         } else {
             button.hide();
         }
     };
     
-    var okclicked = function() {
-        if (typeof okCompletion == 'function') {
-            okCompletion(_body);
-        }    
-    } 
     
     var show = function(completion) {
         
@@ -89,5 +85,7 @@ var Modal = (function() {
             setOkButton: setOkButton, 
             disableOkButton: disableOkButton,
             enableOkButton: enableOkButton,
-           setCancelButton: setCancelButton};
+           setCancelButton: setCancelButton,
+            getBody: getBody,
+    };
 })();

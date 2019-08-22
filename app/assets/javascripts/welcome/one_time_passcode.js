@@ -1,30 +1,40 @@
 /* global m, Credentials, Modal, CreateAccount $ */
 var OneTimePasscode = (function() {
     
-    var feedback = null;
-
+    var passcode = null;
+    var phone_number = null;
+    
     var oninit = function(vnode) {
+        phone_number = vnode.attrs.phone_number;
     };
     
-    var view = function() {
+    var getPasscode = function() {
+        return passcode;
+    };
+    
+    var getPhoneNumber = function() {
+        return phone_number;
+    };
+    
+    var view = function(vnode) {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col", "We texted you a passcode")
+                    m(".col", "We texted a passcode to " + vnode.attrs.phone_number)
                     ]),
                 m(".row", [
                     m(".col.input-group", [
                         m("input.form-control.text-center[type=text][placeholder=Passcode]", {
                             value: Credentials.passcode, 
-                            oninput: function(e) { Credentials.passcode = e.target.value; }
+                            oninput: function(e) { passcode = e.target.value; }
                             }),
                         // m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),
                     ]),
                 m(".row.col.text-center", [
-                    m(".feedback", feedback)
+                    m(".feedback", vnode ? vnode.attrs.feedback : "")
                     ]),
             ]);
     };
     
-    return {view: view, oninit: oninit};
+    return {view: view, oninit: oninit, getPasscode: getPasscode, getPhoneNumber: getPhoneNumber};
 })();
