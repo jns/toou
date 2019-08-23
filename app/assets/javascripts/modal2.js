@@ -8,49 +8,27 @@ var Modal = (function() {
         $('.modal-title').html(title);
     };
     
-    var getBody = function() { return _body; };
-    
-    /**
-     * Body is expected to be a standard mithril component with standard lifecycle
-     * methods such as oninit and view.  
-     * @param attr is passed into body lifecycle calls as vnode.attr
-     * 
-     * If body has an okclicked function, then that is called when the modal ok button is clicked.
-     * Okclicked is expected to return a Promise that resolves to a value that is passed to the 
-     * the completion handler for the ok button.
-     */
-    var setBody = function(body, attr) {
+    var setBody = function(body) {
+        
+        _body = body;
         
         m.mount($(".modal-body")[0], null);
-        _body = body;
         
         if (body.hasOwnProperty('view')) {
             $(".modal-body").html("");
-            if (attr == undefined) {
-                attr = {};
-            }
-            m.mount($('.modal-body')[0], {view: function(){ return m(body, attr)}});
+            m.mount($('.modal-body')[0], body);
         } else {
             $('.modal-body').html(body);
         }
     };
     
+    
     var setOkButton = function(buttonText, completion) {
-        
         var button = $('.modal-footer > .ok-button');
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
-            button.click(function() {
-                disableOkButton();
-                if (_body.hasOwnProperty("okclicked")) {
-                    _body.okclicked().then(function(result){
-                        completion(result); 
-                    });
-                } else {
-                    completion();
-                }
-            }); // invoke completion handler with modal body as argument
+            button.click(completion);
             button.show();
             enableOkButton();
         } else {
@@ -64,13 +42,12 @@ var Modal = (function() {
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
-            button.click(function() {completion(_body);});
+            button.click(completion);
             button.show();
         } else {
             button.hide();
         }
     };
-    
     
     var show = function(completion) {
         
@@ -103,7 +80,5 @@ var Modal = (function() {
             setOkButton: setOkButton, 
             disableOkButton: disableOkButton,
             enableOkButton: enableOkButton,
-           setCancelButton: setCancelButton,
-            getBody: getBody,
-    };
+           setCancelButton: setCancelButton};
 })();

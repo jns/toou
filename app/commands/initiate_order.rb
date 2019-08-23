@@ -8,11 +8,9 @@ class InitiateOrder
     
     FEE = 125
     
-    cattr_accessor :charge_client, :customer_client, :source_client, :payment_intent_client
-    self.charge_client = Stripe::Charge
-    self.customer_client = Stripe::Customer
-    self.source_client = Stripe::Source
+    cattr_accessor :payment_intent_client, :payment_method_client
     self.payment_intent_client = Stripe::PaymentIntent
+    self.payment_method_client = Stripe::PaymentMethod
     
     # Account is the account placing the order
     # payment_source is a stripe payment source token
@@ -84,27 +82,36 @@ class InitiateOrder
                     :transfer_group => @order.id,
                     :customer => @account.stripe_customer_id,
                     :description => "TooU Purchase", 
+                    :confirmation_method => "manual", 
+                    :confirm => true,
+                    :setup_future_usage => 'on_session',
                     :metadata => {
                         :order_id => @order.id, 
                         :customer_id => @account.id,
                         :commitment_amount => commitment_amount_cents
                     })
-                Log.create(log_type: Log::INFO, context: "PlaceOrder#charge", current_user: @account.id, message: "Charged for order #{@order.id}")
-                
-                status = if intent.status == 'requires_action' && intent.next_action.type == 'use_stripe_sdk'
-                    Order::PENDING_STATUS
-                elsif intent.status == 'succeeded'
-                    Order::OK_STATUS
-                else
-                    Order::FAILED_STATUS
-                end
-      
                 
                 @order.update(charge_amount_cents: charge_amount_cents,
                              commitment_amount_cents: commitment_amount_cents,
-                             charge_stripe_id: intent.id,
-                             status: status)
+                             charge_stripe_id: intent.id)
                 
+                if intent.status == 'succeeded'
+                    @order.update(status: Order::OK_STATUS)
+                    # save customer payment method
+                    begin 
+                        @@payment_method_client.attach(intent.payment_method, {customer: intent.customer})
+                    rescue Exception => e
+                        m = "Unable to save payment method for customer" 
+                        Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @order.account.id, message: m)
+                    end
+                elsif intent.status == 'requires_confirmation' 
+                    intent = ConfirmPaymentIntent.call(intent.id).result
+                elsif (intent.status == 'requires_action' && intent.next_action.type == 'use_stripe_sdk')
+                    @order.update(status: Order::PENDING_STATUS)
+                else
+                    @order.update(status: Order::FAILED_STATUS)
+                end
+
                 @order.payment_intent = intent
             end # End of transaction
 

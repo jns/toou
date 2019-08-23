@@ -6,7 +6,7 @@ var Login = (function() {
     var feedback = null;
     
     
-    var oninit = function() {
+    var oninit = function(vnode) {
         Modal.setOkButton("Ok", requestOTP);
         Modal.setCancelButton("Not Now", Routes.goHome);
     };
@@ -18,7 +18,7 @@ var Login = (function() {
             body: {phone_number: phone_number},
         }).then(function(data) {
             Modal.setTitle("Thanks for coming!")
-            Modal.setBody(OneTimePasscode);
+            Modal.setBody(OneTimePasscode, {phone_number: phone_number});
         }).catch(function(e) {
             feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");
@@ -27,7 +27,7 @@ var Login = (function() {
     };
     
     
-    var view = function() {
+    var view = function(vnode) {
         return m(".container-fluid.mt-3.mx-auto", [
                 m(".row", [
                     m(".col-sm.m-1.text-center", [

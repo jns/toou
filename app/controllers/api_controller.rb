@@ -181,35 +181,16 @@ class ApiController < ApiBaseController
 
     def initiate_order
         
-        render json: {requires_action: "auth_and_confirm"}, status: :ok
-        return
-        
-        purchaser = params.require(:purchaser).permit(:name, :phone, :email)
         recipients, payment_source = params.require([:recipients, :payment_source])
         message = params.permit(:message)[:message]
         
-        # Sanitize and format the phone number
-        phone = PhoneNumber.new(purchaser[:phone]).to_s
-        unless phone
-            render json: {error: "Invalid Phone Number"}, status: :bad_request
-            return
-        end
-        
-        # Find or generate an account
-        acct = Account.search_by_phone_number(phone) || 
-                Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
-        
-        # Update name and email if they are nil
-        acct.update(email: purchaser[:email]) unless acct.email
-        acct.update(name: purchaser[:name]) unless acct.name
-        
         # Place the order
-        command = InitiateOrder.call(acct, payment_source, recipients, message, product)
+        command = InitiateOrder.call(@current_user, payment_source, recipients, message, product)
         if command.success?
             if command.result.status == Order::OK_STATUS
                 render json: {success: true}, status: :ok
             elsif command.result.status == Order::PENDING_STATUS
-                render json: {requires_action: true, payment_intent_client_secret: command.result.intent.client_secret}, status: :ok
+                render json: {requires_action: true, payment_intent_client_secret: command.result.payment_intent.client_secret}, status: :ok
             else
                 render json: {success: false}, status: :bad_request
             end
@@ -220,7 +201,14 @@ class ApiController < ApiBaseController
     end
 
     def confirm_payment
-        render json: {success: true}, status: :ok
+        payment_intent_id = params.require(:data).require(:payment_intent_id)
+        cmd = ConfirmPaymentIntent.call(payment_intent_id)
+        intent = cmd.result
+        if intent.status == "succeeded"
+            render json: {success: true}, status: :ok
+        else 
+            render json: {success: false}, status: :ok
+        end
     end
     
     # Returns available passes for authenticated user   

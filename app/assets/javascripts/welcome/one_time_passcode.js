@@ -16,6 +16,10 @@ var OneTimePasscode = (function() {
         return phone_number;
     };
     
+    var passcodeAuthentication = function() {
+        return Credentials.authenticate(phone_number, passcode);
+    };
+    
     var view = function(vnode) {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
@@ -36,5 +40,5 @@ var OneTimePasscode = (function() {
             ]);
     };
     
-    return {view: view, oninit: oninit, getPasscode: getPasscode, getPhoneNumber: getPhoneNumber};
+    return {view: view, oninit: oninit, okclicked: passcodeAuthentication};
 })();
