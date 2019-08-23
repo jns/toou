@@ -38,7 +38,7 @@ class InitiateOrder
                 @order = Order.create(account: @account)
                 
                 
-                Log.create(log_type: Log::INFO, context: PlaceOrder.name, current_user: @account.id, message: "Placing Order")
+                Log.create(log_type: Log::INFO, context: InitiateOrder.name, current_user: @account.id, message: "Initiating Order")
 
                 
                 @recipients.each{ |r| 
@@ -97,18 +97,15 @@ class InitiateOrder
                 
                 if intent.status == 'succeeded'
                     @order.update(status: Order::OK_STATUS)
-                    # save customer payment method
-                    begin 
-                        @@payment_method_client.attach(intent.payment_method, {customer: intent.customer})
-                    rescue Exception => e
-                        m = "Unable to save payment method for customer" 
-                        Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @order.account.id, message: m)
-                    end
+                    CompleteOrder.call(@order)
                 elsif intent.status == 'requires_confirmation' 
+                    # Manual confirmation method means that we have a second chance to confirm how.
                     intent = ConfirmPaymentIntent.call(intent.id).result
+                    CompleteOrder.call(@order) if intent.status == 'succeeded'
                 elsif (intent.status == 'requires_action' && intent.next_action.type == 'use_stripe_sdk')
                     @order.update(status: Order::PENDING_STATUS)
                 else
+                    # Cancel payment intent here
                     @order.update(status: Order::FAILED_STATUS)
                 end
 
@@ -163,7 +160,7 @@ class InitiateOrder
     def create_pass(recipient_phone, message, buyable, order) 
         expiry = Date.today + 180.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
-        Log.create(log_type: Log::INFO, context: "PlaceOrder#create_pass", current_user: acct.id, message: "Creating pass for order #{order.id}")
+        Log.create(log_type: Log::INFO, context: "InitiateOrder#create_pass", current_user: acct.id, message: "Creating pending pass for order #{order.id}")
         PendingPass.create(message: message, account: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
     end
     

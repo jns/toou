@@ -29,6 +29,7 @@ class Pass < ActiveRecord::Base
     # Assign a serial number and a credit card from the pool upon creation
     before_create do
         self.serial_number = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
+        self.expiration = Date.today + 10.years
     end
     
     # Passes must be part of an order
@@ -53,7 +54,7 @@ class Pass < ActiveRecord::Base
     end
     
     def expired? 
-        return not_used? && (Time.new - self.expiration) > 0  
+        return false  
     end
     
     def not_expired? 

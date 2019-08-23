@@ -28,9 +28,16 @@ var PassesComponent = (function() {
                 }
             });
         }).catch(function(e) {
-            Modal.setTitle("Please Login To Access Your Passes");
-            Modal.setBody(Login);
-            Modal.show(afterLogin);
+            if (e.code == 401) {
+                Modal.setTitle("Please Login To Access Your Passes");
+                Modal.setBody(Login);
+                Modal.show(afterLogin);
+            } else {
+                Modal.setTitle("Sorry about this");
+                Modal.setBody("There was a problem.  Please try again");
+                Modal.setCancelButton(null);
+                Modal.setOkButton("Ok", Modal.dismiss);
+            }
         });        
     };
     

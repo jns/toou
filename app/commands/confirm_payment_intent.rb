@@ -16,16 +16,6 @@ class ConfirmPaymentIntent
         if intent.status == "succeeded"
             # update order status
             order.update(status: Order::OK_STATUS)
-            
-            # save customer payment method
-            begin 
-                @@payment_method_client.attach(intent.payment_method, {customer: intent.customer})
-            rescue Exception => e
-                m = "Unable to save payment method for customer" 
-                Log.create(log_type: Log::ERROR, context: "ConfirmPayment", current_user: order.account.id, message: m)
-            end
-            # Convert pending passes to actual passes
-            
         else
             # Log failure
             m = "PaymentIntent #{intent.id} confirmation returned with status #{intent.status}"

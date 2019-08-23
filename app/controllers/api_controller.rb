@@ -205,8 +205,10 @@ class ApiController < ApiBaseController
         cmd = ConfirmPaymentIntent.call(payment_intent_id)
         intent = cmd.result
         if intent.status == "succeeded"
+            CompleteOrder.call(Order.find_by(charge_stripe_id: intent.id))
             render json: {success: true}, status: :ok
-        else 
+        else
+            # Need to cancel payment intent here.
             render json: {success: false}, status: :ok
         end
     end

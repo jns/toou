@@ -33,6 +33,13 @@ var Modal = (function() {
         } else {
             $('.modal-body').html(body);
         }
+        
+        if (body.hasOwnProperty('okText')) {
+            setOkButton(body.okText, function() {});
+        }
+        if (body.hasOwnProperty('cancelText')) {
+            setCancelButton(body.cancelText, function() {});
+        }
     };
     
     var setOkButton = function(buttonText, completion) {
@@ -43,8 +50,8 @@ var Modal = (function() {
             button.html(buttonText);
             button.click(function() {
                 disableOkButton();
-                if (_body.hasOwnProperty("okclicked")) {
-                    _body.okclicked().then(function(result){
+                if (_body.hasOwnProperty("okClicked")) {
+                    _body.okClicked().then(function(result){
                         completion(result); 
                     });
                 } else {
@@ -64,7 +71,15 @@ var Modal = (function() {
         button.off("click");
         if (typeof buttonText !== undefined && buttonText !== null) {
             button.html(buttonText);
-            button.click(function() {completion(_body);});
+            button.click(function() {
+                if (_body.hasOwnProperty("cancelClicked")) {
+                    _body.cancelClicked().then(function(result){
+                        completion(result); 
+                    });
+                } else {
+                    completion();
+                }
+            });
             button.show();
         } else {
             button.hide();

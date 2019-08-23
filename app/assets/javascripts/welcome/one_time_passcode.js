@@ -40,5 +40,5 @@ var OneTimePasscode = (function() {
             ]);
     };
     
-    return {view: view, oninit: oninit, okclicked: passcodeAuthentication};
+    return {view: view, oninit: oninit, okClicked: passcodeAuthentication};
 })();

@@ -141,7 +141,7 @@ var PaymentForm = (function() {
         };
     };
     
-    return {view: view, oninit: oninit, payerData: payerData, okclicked: createPaymentMethod};
+    return {view: view, oninit: oninit, payerData: payerData, okClicked: createPaymentMethod};
     
 })();
 

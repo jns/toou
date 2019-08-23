@@ -9,4 +9,8 @@ class PendingPass < ApplicationRecord
     # What was purchased
     belongs_to :buyable, polymorphic: true
 
+    # Convert this pending pass into a real pass
+    def createPass 
+        Pass.create(account: account, order: order, buyable: buyable, message: message, value_cents: value_cents)
+    end
 end
