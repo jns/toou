@@ -194,7 +194,8 @@ var Payment = (function() {
                     type: buyable.type
                 }
            };
-        Modal.setBody("Processing");
+        Modal.setTitle("Just a sec...");
+        Modal.setBody('<div class=\"purchase-animation\"><img src=\"/assets/purchase_in_progress_small.gif\"/><div>');
         m.request({
             method: "POST",
             url: "/api/initiate_order",
@@ -250,7 +251,7 @@ var Payment = (function() {
     
     var completePurchase = function() {
         Modal.setTitle("Thanks");
-        Modal.setBody("We've sent the TooU to " + document.getElementById('recipient_phone').value);
+        Modal.setBody("<div class=\"purchase-animation\"><img src=\"/assets/purchase_success_small.gif\"/></div><div class=\"text-center\">We've sent the TooU to " + document.getElementById('recipient_phone').value + "</div>");
         Modal.setOkButton("Ok", Routes.goHome);
         Modal.setCancelButton(null);
         Modal.show();

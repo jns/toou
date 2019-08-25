@@ -3,6 +3,7 @@
 var Modal = (function() {
     
     var _body = null;
+    var _afterOk = null;
     
     var setTitle = function(title) {
         $('.modal-title').html(title);
@@ -53,9 +54,15 @@ var Modal = (function() {
                 if (_body.hasOwnProperty("okClicked")) {
                     _body.okClicked().then(function(result){
                         completion(result); 
+                    }).then(function(result) {
+                        if (typeof _afterOk === 'function') { _afterOk(); }
                     });
                 } else {
-                    completion();
+                    new Promise(function(resolve, reject) {
+                        resolve(completion());
+                    }).then(function(result){
+                        if (typeof _afterOk === 'function') { _afterOk(); }
+                    });
                 }
             }); // invoke completion handler with modal body as argument
             button.show();
@@ -112,13 +119,18 @@ var Modal = (function() {
         $('.modal-footer > .ok-button').prop('disabled', false);
     };
     
+    var afterOk = function(completion) {
+        _afterOk = completion;    
+    };
+    
     return {show: show, dismiss: dismiss, 
             setTitle: setTitle, 
             setBody: setBody, 
             setOkButton: setOkButton, 
             disableOkButton: disableOkButton,
             enableOkButton: enableOkButton,
-           setCancelButton: setCancelButton,
+            setCancelButton: setCancelButton,
             getBody: getBody,
+            afterOk: afterOk,
     };
 })();

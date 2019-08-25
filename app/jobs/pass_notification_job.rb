@@ -13,7 +13,7 @@ class PassNotificationJob < ApplicationJob
             message = "#{sender} says #{pass.message}"
             SendDeviceNotification.call(acct, title, message) unless acct.test_user?
         else
-          message = "Hi. #{sender} just sent you a #{product} with the message \"#{pass.message}\". Visit https://toou.gifts/passes to get your #{product}."
+          message = "Hi. #{sender} just sent you a #{product} with the message \"#{pass.message}\". Visit https://www.toou.gifts/passes to get your #{product}."
           SendSmsNotification.call(acct, message) unless acct.test_user?
         end
       rescue ActiveRecord::RecordNotFound

@@ -6,6 +6,7 @@ var PassesComponent = (function() {
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         
     var afterLogin = function() {
+        Modal.dismiss();
         loadPasses();    
     };
     

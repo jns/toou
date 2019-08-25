@@ -20,10 +20,14 @@ var OneTimePasscode = (function() {
         return Credentials.authenticate(phone_number, passcode);
     };
     
+    var cancel = function() {
+        Routes.goHome();
+    };
+    
     var view = function(vnode) {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col", "We texted a passcode to " + vnode.attrs.phone_number)
+                    m(".col", "Please enter the authentication code we texted to " + vnode.attrs.phone_number)
                     ]),
                 m(".row", [
                     m(".col.input-group", [
@@ -40,5 +44,5 @@ var OneTimePasscode = (function() {
             ]);
     };
     
-    return {view: view, oninit: oninit, okClicked: passcodeAuthentication};
+    return {view: view, oninit: oninit, okClicked: passcodeAuthentication, okText: "Submit", cancelText: "Not Now", cancelClicked: cancel};
 })();

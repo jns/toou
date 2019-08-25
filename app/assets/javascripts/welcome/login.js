@@ -16,8 +16,9 @@ var Login = (function() {
             url: "api/requestOneTimePasscode",
             body: {phone_number: phone_number},
         }).then(function(data) {
-            Modal.setTitle("Thanks for coming!")
+            Modal.setTitle("Confirm your identity")
             Modal.setBody(OneTimePasscode, {phone_number: phone_number});
+            Modal.setOkButton("Submit", Modal.dismiss);
         }).catch(function(e) {
             feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");
