@@ -70,15 +70,14 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		assert_nil pass.transfer_amount_cents
 	end
 	
-	test "cannot redeem an expired pass" do
+	test "can redeem an expired pass" do
 		merchant = merchants(:quantum)
 		pass = passes(:expired_beer)
 		refute pass.used?
 		
 		code = get_code(merchant, pass)
 		cmd = CaptureOrder.call(merchant, code)
-		refute cmd.success?
-		assert_not_nil cmd.errors[:unredeemable]
+		assert cmd.success?
 	end
     
     test "cannot redeem a used pass" do
