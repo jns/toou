@@ -27,9 +27,9 @@ class AddPassToMerchantQueueTest < ActiveSupport::TestCase
        assert_equal code, cmd.result
     end
     
-    test "Cannot generate a code for an expired pass" do
+    test "Can generate a code for an expired pass" do
         cmd = AddPassToMerchantQueue.call(merchants(:quantum), passes(:expired_beer))
-        refute cmd.success?
+        assert cmd.success?
     end 
     
     test "Cannot generate a code for a used pass" do

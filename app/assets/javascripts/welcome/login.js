@@ -1,14 +1,13 @@
-/* global m, $, Credentials, Modal, OneTimePasscode */
+/* global m, $, Credentials, Modal, OneTimePasscode, CreateAccount */
 
 var Login = (function() {
     
     var phone_number = null;
     var feedback = null;
+    var cancelText = "Not now";
+    var okText = "Submit";
     
-    
-    var oninit = function() {
-        Modal.setOkButton("Ok", requestOTP);
-        Modal.setCancelButton("Not Now", Routes.goHome);
+    var oninit = function(vnode) {
     };
     
     var requestOTP = function() {
@@ -17,8 +16,9 @@ var Login = (function() {
             url: "api/requestOneTimePasscode",
             body: {phone_number: phone_number},
         }).then(function(data) {
-            Credentials.setPhoneNumber(phone_number);
-            Modal.setBody(OneTimePasscode);
+            Modal.setTitle("Confirm your identity")
+            Modal.setBody(OneTimePasscode, {phone_number: phone_number});
+            Modal.setOkButton("Submit", Modal.dismiss);
         }).catch(function(e) {
             feedback = e.response["error"] + ", please try again.";
             $(".feedback").addClass("invalid-feedback");
@@ -26,8 +26,11 @@ var Login = (function() {
         });
     };
     
+    var cancel = function() {
+        Routes.goHome();
+    };
     
-    var view = function() {
+    var view = function(vnode) {
         return m(".container-fluid.mt-3.mx-auto", [
                 m(".row", [
                     m(".col-sm.m-1.text-center", [
@@ -53,5 +56,5 @@ var Login = (function() {
             ]);
     };
     
-    return {view: view, oninit: oninit};
+    return {view: view, oninit: oninit, okText: okText, okClicked: requestOTP, cancelText: cancelText, cancelClicked: cancel};
 })();

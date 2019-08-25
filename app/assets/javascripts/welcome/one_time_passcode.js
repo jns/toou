@@ -1,48 +1,48 @@
-/* global m, Credentials, Modal, $ */
+/* global m, Credentials, Modal, CreateAccount $ */
 var OneTimePasscode = (function() {
     
     var passcode = null;
-    var feedback = null;
+    var phone_number = null;
     
-    var oninit = function() {
-        Modal.setOkButton("Submit", authenticate);
-    }
+    var oninit = function(vnode) {
+        phone_number = vnode.attrs.phone_number;
+    };
     
-    var authenticate = function() {
-        var phone_number = Credentials.getPhoneNumber();
-        return m.request({
-            method: "POST",
-            url: "api/authenticate",
-            body: {phone_number: phone_number, pass_code: passcode},
-        }).then(function(data) {
-            Credentials.setToken(data["auth_token"]);
-            Modal.dismiss();
-        }).catch(function(e) {
-            feedback =  e.response["error"] + ". Please try again.";
-            $(".feedback").addClass("invalid-feedback");
-            $(".feedback").show();
-        });
-    }
+    var getPasscode = function() {
+        return passcode;
+    };
     
-    var view = function() {
+    var getPhoneNumber = function() {
+        return phone_number;
+    };
+    
+    var passcodeAuthentication = function() {
+        return Credentials.authenticate(phone_number, passcode);
+    };
+    
+    var cancel = function() {
+        Routes.goHome();
+    };
+    
+    var view = function(vnode) {
         return m(".container .mt-3 .mx-auto", [
                 m(".row.text-center", [
-                    m(".col", "We texted you a passcode")
+                    m(".col", "Please enter the authentication code we texted to " + vnode.attrs.phone_number)
                     ]),
                 m(".row", [
                     m(".col.input-group", [
                         m("input.form-control.text-center[type=text][placeholder=Passcode]", {
-                            value: passcode, 
+                            value: Credentials.passcode, 
                             oninput: function(e) { passcode = e.target.value; }
                             }),
                         // m("a.btn.input-group-append.input-group-text", {onclick: authenticate}, "Submit"),
                         ]),
                     ]),
                 m(".row.col.text-center", [
-                    m(".feedback", feedback)
+                    m(".feedback", vnode ? vnode.attrs.feedback : "")
                     ]),
             ]);
     };
     
-    return {view: view, oninit: oninit};
+    return {view: view, oninit: oninit, okClicked: passcodeAuthentication, okText: "Submit", cancelText: "Not Now", cancelClicked: cancel};
 })();

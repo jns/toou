@@ -29,9 +29,14 @@ Rails.application.routes.draw do
   # API Endpoints
   get 'api/promotions', to: 'api#promotions'
   get 'api/products', to: 'api#products'
+  patch 'api/account', to: 'api#account'
+  post 'api/account', to: 'api#account'
+  post 'api/payment_methods', to: 'api#payment_methods'
   post 'api/requestOneTimePasscode', to: 'api#requestOneTimePasscode'
   post 'api/authenticate', to: 'api#authenticate'
   post 'api/passes', to: 'api#passes'
+  post 'api/initiate_order', to: 'api#initiate_order'
+  post 'api/confirm_payment', to: 'api#confirm_payment'
   post 'api/place_order', to: 'api#placeOrder'
   post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
@@ -49,6 +54,8 @@ Rails.application.routes.draw do
   post 'api/merchant/products', to: 'merchant_api#products'
   put 'api/merchant/products', to: 'merchant_api#products'
   
+  # Webhooks
+  post '/webhook/stripe_event', to: 'stripe_webhooks#stripe_event'
   
   # Redemption api endpoints
   post '/api/redemption/redeem', to: 'redemption_api#redeem'

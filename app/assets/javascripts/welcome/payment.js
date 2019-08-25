@@ -1,67 +1,162 @@
 /* global $, m, Stripe, Credentials, Modal, Routes */
 
-var PaymentForm = { 
+var PaymentForm = (function() { 
     
-    buyable: null,
-    stripe: null,
-    card: null,
-    
-    oninit: function() {
- 
-        $.get("/keys/stripe_key", function(data) { 
-            PaymentForm.stripe = Stripe(data["stripe_public_api_key"]);
-           
-            PaymentForm.card = PaymentForm.stripe.elements().create('card');
-            PaymentForm.card.mount('#card-input');
+    var userData = null;
+    var stripe = null;
+    var cardElement = null;
+    var paymentMethods = [];
+     
+    var oninit = function(vnode) {
         
-            PaymentForm.card.addEventListener('change', function(event) {
-              var displayError = document.getElementById('card-errors');
-              if (event.error) {
-                displayError.textContent = event.error.message;
-              } else {
-                displayError.textContent = '';
-              }
-            });
-                 
-        });
-    },
-    
-    createToken: function() {        
-      return this.stripe.createToken(this.card);
-    },
+        stripe = vnode.attrs.stripe;
 
-    view: function() {
+        Credentials.getUserData().then(function(data) {
+            userData = data;
+        });
+        
+        
+        m.request("/api/payment_methods", {
+            method: "POST", 
+            body: {authorization: Credentials.getToken()}
+        }).then(function(data) {
+            if (data.length > 0) {
+                paymentMethods = data;
+            } else {
+                createCardElement();
+            }
+        }).catch(function(data) {
+            createCardElement();
+        });
+    };
+    
+    
+    var createCardElement = function() {
+
+        // Remove other payment methods
+        paymentMethods.length = 0;
+        
+        cardElement = stripe.elements().create('card');
+        cardElement.mount('#card-input');
+
+        cardElement.addEventListener('change', function(event) {
+          var displayError = document.getElementById('card-errors');
+          if (event.error) {
+            displayError.textContent = event.error.message;
+          } else {
+            displayError.textContent = '';
+          }
+        });
+    };
+    
+    var cardInput = function() {
+        if (paymentMethods == undefined ) {
+            return m("[id=card-input]");
+        } else if (paymentMethods.length > 1) { 
+            var options = paymentMethods.map(function(pm) {
+                var card = pm["card"];
+                return m("option", {value: pm["id"]}, card["brand"] + " " + card["last4"]);
+            });
+            return m("[id=card-input]", m(".row.form-group", [
+                                            m("label.col", "Payment Method"), 
+                                            m("select.col.form-control.form-control-sm", options), 
+                                            m(".btn.btn-sm", {onclick: createCardElement}, "New card")]));
+        } else if (paymentMethods.length == 1) {
+            var pm = paymentMethods[0];
+            var card = pm["card"];
+            return m("[id=card-input]", m(".row.form-group", [
+                                            m("label.col", "Payment Method"), 
+                                            m("input.col.text-center[type=text][readonly][id="+pm.id+"][value="+card.brand + " *" + card.last4+"]"), 
+                                            m(".btn.btn-sm", {onclick: createCardElement}, "New card")]));
+        } else {
+            return m("[id=card-input]");
+        }
+    };
+    
+    var payerInputs = function() {
+
+        var inputs = [];
+        if (userData != undefined && userData.name != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text][value='+userData.name+']')]));
+        } else {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]));
+        }
+        
+        if (userData != undefined && userData.phone != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your Mobile Phone"), m('input.col.form-control[id=payer-phone][type=text][value='+userData.phone+']')]));
+        } else {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your Mobile Phone"), m('input.col.form-control[id=payer-phone][type=text]')]));
+        }
+        
+        
+        if (userData != undefined && userData.email != undefined) {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text][value='+userData.email+']')]));
+        } else {
+            inputs.push(m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]));
+        }
+       return inputs;
+
+    };
+    
+    /**
+     * Determines whether a new card or a saved card was entered, and provides that
+     */
+    var createPaymentMethod = function() {    
+        if (paymentMethods.length > 1) {
+            var method= paymentMethods[$("#card-input select").prop("selectedIndex")];
+            return new Promise(function(resolve, reject) {
+                resolve(Object.assign({paymentMethod: method}, payerData()));   
+            });
+        } else if (paymentMethods.length == 1) {
+            var method = paymentMethods[0];
+            return new Promise(function(resolve, reject) {
+                resolve(Object.assign({paymentMethod: method}, payerData()));
+            });
+        } else {
+            return new Promise(function(resolve, reject) {
+                stripe.createPaymentMethod('card', cardElement).then(function(method) {
+                   resolve(Object.assign(method, payerData()));
+                });
+            });
+        }
+    };
+    
+    var view = function(vnode) {
+        var buyable = vnode.attrs.buyable;
         return m('form.container.form', [
-            m('.row.form-group',[m('label.col', this.buyable.name), m('label.col', "$"+this.buyable.max_price_dollars)]),
+            m('.row.form-group',[m('label.col', buyable.name), m('label.col', "$"+ buyable.max_price_dollars)]),
             m('.row.form-group',[m('label.col', "TooU Fee"), m('label.col', "$1.25")]),
-            m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (this.buyable.max_price_dollars + 1.25))]),
-            
-            m('.row.form-group',[ m('label.col', "Your name"), m('input.col.form-control[id=payer-name][type=text]')]),
-            m('.row.form-group',[ m('label.col', "Your phone"), m('input.col.form-control[id=payer-phone][type=text]')]),
-            m('.row.form-group',[ m('label.col', "Your email"), m('input.col.form-control[id=payer-email][type=text]')]),
-            m('[id=card-input]'),
+            m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (buyable.max_price_dollars + 1.25))]),
+            payerInputs(),
+            cardInput(),
             m('.row[id=card-errors]'),
             ]);  
-    },
+    };
     
-    payerData: function() {
+    var payerData =function() {
         return { 
             payerName: $('#payer-name').val(),
             payerPhone: $('#payer-phone').val(),
             payerEmail: $('#payer-email').val(),
         };
-    }
-};
+    };
+    
+    return {view: view, oninit: oninit, payerData: payerData, okClicked: createPaymentMethod};
+    
+})();
 
 var Payment = (function() {
     
+    var buyable;
     var stripe;
     
     $.get("/keys/stripe_key", function(data) { 
         stripe = Stripe(data["stripe_public_api_key"]);
     });
     
-    var createPaymentRequest = function(buyable) {
+    var createPaymentIntent = function() {
+ 
+        
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
@@ -75,8 +170,8 @@ var Payment = (function() {
           requestPayerPhone: true
         });
         
-        pr.on("token", function(event) {
-            processPayment(buyable, event).then(function(response) {
+        pr.on("paymentmethod", function(event) {
+            processPayment(event).then(function(response) {
                     event.complete('success');
                     completePurchase();
                 }).catch(function(err) {
@@ -88,32 +183,75 @@ var Payment = (function() {
         return pr;
     };
     
-    var processPayment = function(buyable, event) {
+    var processPayment = function(payerData) {
        var  payload = {
                 authorization: Credentials.getToken(),
-                purchaser: {
-                    name: event.payerName,
-                    email: event.payerEmail,
-                    phone: event.payerPhone,
-                },
                 recipients: [document.getElementById('recipient_phone').value],
                 message: document.getElementById('message_input').value,
-                payment_source: event.token.id,
+                payment_source: payerData.paymentMethod.id,
                 product: {
                     id: buyable.id,
                     type: buyable.type
                 }
            };
-        return m.request({
+        Modal.setTitle("Just a sec...");
+        Modal.setBody('<div class=\"purchase-animation\"><img src=\"/assets/purchase_in_progress_small.gif\"/><div>');
+        m.request({
             method: "POST",
-            url: "/api/order",
+            url: "/api/initiate_order",
             body: payload
+        }).then(function(response) {
+            handleServerResponse(response);
+        }).catch(function(err) {
+            if (err.code == 401) {
+                Modal.setBody("Authenticating...");
+                authenticate(payerData);
+            } else {
+                purchaseFailed(JSON.stringify(err));
+            }
+       });
+    };
+    
+    var authenticate = function(payerData) {
+        
+        return new Promise(function(resolve, reject) {
+            m.request("/api/requestOneTimePasscode", {
+                method: "POST",
+                body: {phone_number: payerData.payerPhone,
+                        name: payerData.payerName,
+                        email: payerData.payerEmail}
+            }).then(function(response) {
+                Modal.setTitle("Enter Passcode to Confirm Identity");
+                Modal.setBody(OneTimePasscode, {phone_number: payerData.payerPhone});
+                Modal.setOkButton("Submit", function() { processPayment(payerData); });
+                Modal.setCancelButton("Cancel", cancelPurchase);
+            }).catch(function(err) {
+                reject(err);
+            });
         });
+    };
+    
+    
+    var handleServerResponse = function(response) {
+        console.log(response);
+        if (response["requires_action"]) {
+            console.log("confirm");
+            confirmPayment(response["payment_intent_client_secret"]);
+        } else if (response["success"]) {
+            completePurchase();
+        } else {
+            purchaseFailed("Ugh. ");
+        }
+    };
+    
+    
+    var cancelPurchase = function() {
+        console.log("Cancel Purchase");  
     };
     
     var completePurchase = function() {
         Modal.setTitle("Thanks");
-        Modal.setBody("We've sent the TooU to " + document.getElementById('recipient_phone').value);
+        Modal.setBody("<div class=\"purchase-animation\"><img src=\"/assets/purchase_success_small.gif\"/></div><div class=\"text-center\">We've sent the TooU to " + document.getElementById('recipient_phone').value + "</div>");
         Modal.setOkButton("Ok", Routes.goHome);
         Modal.setCancelButton(null);
         Modal.show();
@@ -127,10 +265,38 @@ var Payment = (function() {
         Modal.show();
     };
     
+    var cancelPurchase = function() {
+        Modal.setTitle("Cancelled Purchase");
+        Modal.setBody("Sorry that didn't work out.  Please try again.");
+        Modal.setOkButton("Ok", Routes.goHome);
+        Modal.setCancelButton(null);
+        Modal.show();
+    };
     
     
+    var confirmPayment = function(client_secret) {
+        stripe.handleCardAction(client_secret).then(function(result) {
+            if (result.error) {
+              // Show error in payment form
+              console.log(result.error);
+              purchaseFailed(result.error);
+            } else {
+                // The card action has been handled
+                // The PaymentIntent can be confirmed again on the server
+                m.request('/api/confirm_payment', {
+                    method: 'POST',
+                    body: {authorization: Credentials.getToken(), 
+                            data: {payment_intent_id: result.paymentIntent.id}}
+                }).then(function(confirmResult) {
+                    handleServerResponse(confirmResult);
+                }).catch(function() {
+                   purchaseFailed("Confirm Payment Failed"); 
+                });
+            }
+        });
+    };
     
-    var addPaymentButton = function(paymentRequest, buyable) {
+    var addPaymentButton = function(paymentRequest) {
         var elements = stripe.elements();
         var prButton = elements.create('paymentRequestButton', {
             paymentRequest: paymentRequest, 
@@ -143,30 +309,10 @@ var Payment = (function() {
             } else {
                 // Payment API is not supported.  
                 // Fallback to a payment form
-                Modal.setTitle("Your Info");
-                PaymentForm.buyable = buyable;
-                Modal.setBody(PaymentForm);
+                Modal.setTitle("Payment Information");
+                Modal.setBody(PaymentForm, {stripe: stripe, buyable: buyable});
                 Modal.setCancelButton("Not Now", Modal.dismiss);
-                Modal.setOkButton("Buy", function(){ 
-                    Modal.disableOkButton();
-                    PaymentForm.createToken().then(function(result) {
-                        if (result.error) {
-                          // Inform the customer that there was an error.
-                          var errorElement = document.getElementById('payment-errors');
-                          errorElement.textContent = result.error.message;
-                          Modal.enableOkButton();
-                        } else {
-                          // Send the token to your server.
-                          var data = PaymentForm.payerData();
-                          data.token = result.token;
-                          processPayment(buyable, data).then(function(response) {
-                                completePurchase();
-                            }).catch(function(err) {
-                                purchaseFailed(err);
-                           });
-                        }
-                  });
-                });
+                Modal.setOkButton("Buy", processPayment);
                 var button = $('<button class="btn btn-primary">').text("Send Now").click(function() { 
                     Modal.show();
                 });
@@ -175,9 +321,10 @@ var Payment = (function() {
         });
     };
     
-    var setBuyable = function(buyable) {
-        var paymentRequest = createPaymentRequest(buyable);
-        addPaymentButton(paymentRequest, buyable);
+    var setBuyable = function(b) {
+        buyable = b;
+        var paymentRequest = createPaymentIntent();
+        addPaymentButton(paymentRequest);
     };
     
     return {setBuyable: setBuyable};

@@ -26,7 +26,7 @@ module TestEnvironment
     one_time_passcode = account.generate_otp
     command = AuthenticateUser.call(phone_number, one_time_passcode)
     if command.success?
-      command.result
+      command.result.token
     else
       puts "Error in test harness authenticating account #{account.to_json}"
       nil

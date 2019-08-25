@@ -5,6 +5,8 @@ test:
 
 josh:
   phone_number: '+13109097243'
+  name: Josh
+  email: josh@toou.gifts
 
 pete:
   phone_number: '+15043834228'

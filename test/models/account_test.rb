@@ -44,5 +44,10 @@ class AccountTest < ActiveSupport::TestCase
     assert acct.authenticate("000000")
   end
   
+  test "test missing fields" do
+    assert_equal 0, accounts(:josh).missing_fields.count
+    assert_equal 2, accounts(:test).missing_fields.count
+    assert_equal 1, accounts(:pete).missing_fields.count
+  end
   
 end

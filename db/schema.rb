@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_06_234855) do
+ActiveRecord::Schema.define(version: 2019_08_14_015412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,6 +132,19 @@ ActiveRecord::Schema.define(version: 2019_08_06_234855) do
     t.index ["account_id"], name: "index_passes_on_account_id"
     t.index ["merchant_id"], name: "index_passes_on_merchant_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+  end
+
+  create_table "pending_passes", force: :cascade do |t|
+    t.integer "account_id"
+    t.string "message"
+    t.integer "order_id"
+    t.integer "buyable_id"
+    t.string "buyable_type"
+    t.integer "value_cents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_pending_passes_on_account_id"
+    t.index ["order_id"], name: "index_pending_passes_on_order_id"
   end
 
   create_table "products", force: :cascade do |t|

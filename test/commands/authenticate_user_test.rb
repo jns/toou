@@ -1,4 +1,6 @@
 
+require 'test_helper'
+
 class AuthenticateUserTest < ActiveSupport::TestCase
 
     include ActionView::Helpers::NumberHelper
@@ -14,7 +16,7 @@ class AuthenticateUserTest < ActiveSupport::TestCase
         cmd = AuthenticateUser.new(number_to_phone(acct.phone_number), otp).call
         assert cmd.success?
         
-        token = cmd.result
+        token = cmd.result.token
         assert_not_nil token
         
         body = JsonWebToken.decode(token)
@@ -36,7 +38,7 @@ class AuthenticateUserTest < ActiveSupport::TestCase
         testotp = "000000"
         cmd = AuthenticateUser.call(testnumber, testotp)
         assert cmd.success?
-        assert_not_nil cmd.result
+        assert_not_nil cmd.result.token
    end
    
    

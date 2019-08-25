@@ -56,7 +56,7 @@ class PassPolicyTest < ActiveSupport::TestCase
   end
   
   test "expired pass cannot get code" do
-    refute PassPolicy.new(accounts(:pete), passes(:expired)).get_code?
+    assert PassPolicy.new(accounts(:pete), passes(:expired)).get_code?
   end
   
   test "used pass cannot get code" do

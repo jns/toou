@@ -5,6 +5,26 @@ class ApiController < ApiBaseController
     # autheticates user with JWT
     skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :merchants]
     
+    # Account details for the current user
+    def account
+        case request.method
+        when "PATCH"
+            data = params.require(:data).permit(:name, :email)
+            @current_user.update(data)
+            render json: {success: "Success"}, status: :ok
+        when "POST"
+            render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
+        else
+            render json: {}, status: :bad_request
+        end
+    end
+    
+    # Retreive 
+    def payment_methods
+        methods = Stripe::PaymentMethod.list(customer: @current_user.stripe_customer_id, type: "card")
+        render json: methods[:data], status: :ok
+    end 
+    
     # Returns active promotions
     def promotions
         @promotions = Promotion.where(status: Promotion::ACTIVE)
@@ -43,6 +63,8 @@ class ApiController < ApiBaseController
         
         acct_phone_number = params.require(:phone_number)
         device_id = params.permit(:device_id)[:device_id]
+        name = params.permit(:name)[:name]
+        email = params.permit(:email)[:email]
         
         begin
             phone = PhoneNumber.new(acct_phone_number).to_s
@@ -54,13 +76,22 @@ class ApiController < ApiBaseController
             
             if device_id and !device_id.empty?
                 acct.device_id = device_id
-                acct.save
             end
+            
+            if name and !name.empty? 
+               acct.name = name 
+            end
+            
+            if email and !email.empty?
+                acct.email = email
+            end 
+            
+            acct.save
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
             begin
-                MessageSender.new.send_code(phone.to_s, otp) unless acct.test_user?
+                MessageSender.new.send_code(phone.to_s, "Your T👀U authentication code is #{otp}") unless acct.test_user?
             rescue Exception => err 
                 Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
                 render status: :internal_server_error, json: {error: "Error sending SMS"}
@@ -87,7 +118,8 @@ class ApiController < ApiBaseController
             command = AuthenticateUser.call(phoneNumber, otp)
         
            if command.success?
-             render json: { auth_token: command.result }, status: :ok
+               acct = command.result
+             render json: { auth_token: acct.token, missing_fields: acct.missing_fields}, status: :ok
            else
              render json: { error: "Invalid code"}, status: :unauthorized
            end
@@ -129,7 +161,6 @@ class ApiController < ApiBaseController
             render json: {error: command.errors}, status: :bad_request
         end
     end
-
     
     # Places an order for passes to be delivered to recipients
     # @param recipients Array of phone numbers who will receive passes
@@ -141,12 +172,46 @@ class ApiController < ApiBaseController
         
         command = PlaceOrder.call(@current_user, payment_source, recipients, message, product)
         if command.success?
+            
             render json: {order_id: command.result.id}, status: :ok
         else
             render json: {error: command.errors}, status: :bad_request
         end
     end
 
+    def initiate_order
+        
+        recipients, payment_source = params.require([:recipients, :payment_source])
+        message = params.permit(:message)[:message]
+        
+        # Place the order
+        command = InitiateOrder.call(@current_user, payment_source, recipients, message, product)
+        if command.success?
+            if command.result.status == Order::OK_STATUS
+                render json: {success: true}, status: :ok
+            elsif command.result.status == Order::PENDING_STATUS
+                render json: {requires_action: true, payment_intent_client_secret: command.result.payment_intent.client_secret}, status: :ok
+            else
+                render json: {success: false}, status: :bad_request
+            end
+        else
+            render json: {error: command.errors}, status: :bad_request
+        end
+        
+    end
+
+    def confirm_payment
+        payment_intent_id = params.require(:data).require(:payment_intent_id)
+        cmd = ConfirmPaymentIntent.call(payment_intent_id)
+        intent = cmd.result
+        if intent.status == "succeeded"
+            CompleteOrder.call(Order.find_by(charge_stripe_id: intent.id))
+            render json: {success: true}, status: :ok
+        else
+            # Need to cancel payment intent here.
+            render json: {success: false}, status: :ok
+        end
+    end
     
     # Returns available passes for authenticated user   
     # 

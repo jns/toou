@@ -39,8 +39,11 @@ var Routes = {
 
 var addSignout = function() {
     if (Credentials.hasToken()) {
-        $(".sign-out").html("<div class=\"btn btn-link\">sign out</div>");
-        $(".sign-out").click(function() {Credentials.setToken(); Routes.goHome();});
+        Credentials.getUserData().then(function(data) {
+            console.log(data);
+            $(".sign-out").html("<div class=\"btn btn-link\">sign out</div>");
+            $(".sign-out").click(function() {Credentials.setToken(); Routes.goHome();});
+        });
     }
 };
 

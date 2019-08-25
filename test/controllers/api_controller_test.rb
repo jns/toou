@@ -147,7 +147,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     passes = JSON.parse(@response.body)
     
     assert_equal 2, passes.size
-    assert_equal "EXPIRED", passes.find{|p| p["serialNumber"] == "abc123"}["status"]
+    assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc123"}["status"]
     assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc124"}["status"]
     
   end
