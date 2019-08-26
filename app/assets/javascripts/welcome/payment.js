@@ -154,6 +154,8 @@ var Payment = (function() {
         stripe = Stripe(data["stripe_public_api_key"]);
     });
     
+    
+    // Payment Intent Process
     var createPaymentIntent = function() {
  
         
@@ -170,11 +172,12 @@ var Payment = (function() {
           requestPayerPhone: true
         });
         
-        pr.on("paymentmethod", function(event) {
-            processPayment(event).then(function(response) {
+        pr.on("token", function(event) {
+            console.log(event);
+            submitPayment(event, "order").then(function(response) {
                     event.complete('success');
                     completePurchase();
-                }).catch(function(err) {
+                }).catch(function(response) {
                     event.complete('fail');
                     purchaseFailed(err);
                });
@@ -183,24 +186,41 @@ var Payment = (function() {
         return pr;
     };
     
-    var processPayment = function(payerData) {
-       var  payload = {
+    var submitPayment = function(payerData, api) {
+        var  payload = {
+                purchaser: {
+                    phone: payerData.payerPhone,
+                    name: payerData.payerName,
+                    email: payerData.payerEmail,
+                }, 
                 authorization: Credentials.getToken(),
                 recipients: [document.getElementById('recipient_phone').value],
                 message: document.getElementById('message_input').value,
-                payment_source: payerData.paymentMethod.id,
                 product: {
                     id: buyable.id,
                     type: buyable.type
                 }
            };
-        Modal.setTitle("Just a sec...");
-        Modal.setBody('<div class=\"purchase-animation\"><img src=\"/assets/purchase_in_progress_small.gif\"/><div>');
-        m.request({
+
+        if (payerData.hasOwnProperty('paymentMethod')) {
+            payload.payment_source = payerData.paymentMethod.id;
+        } else {
+            payload.payment_source = payerData.token.id;
+        }
+
+        return m.request({
             method: "POST",
-            url: "/api/initiate_order",
+            url: "/api/" + api,
             body: payload
-        }).then(function(response) {
+        });  
+    };
+    
+    var processPayment = function(payerData) {
+
+        Modal.setTitle("Just a sec...");
+        Modal.setBody('<div class=\"purchase-animation\"><img /><div>');
+        $('.purchase-animation img')[0].src = window.toouAssets.purchase_in_progress_img;
+        submitPayment(payerData, "initiate_order").then(function(response) {
             handleServerResponse(response);
         }).catch(function(err) {
             if (err.code == 401) {
@@ -251,7 +271,8 @@ var Payment = (function() {
     
     var completePurchase = function() {
         Modal.setTitle("Thanks");
-        Modal.setBody("<div class=\"purchase-animation\"><img src=\"/assets/purchase_success_small.gif\"/></div><div class=\"text-center\">We've sent the TooU to " + document.getElementById('recipient_phone').value + "</div>");
+        Modal.setBody("<div class=\"purchase-animation\"><img /></div><div class=\"text-center\">We've sent the TooU to " + document.getElementById('recipient_phone').value + "</div>");
+        $(".purchase-animation img")[0].src = window.toouAssets.purchase_success_img;
         Modal.setOkButton("Ok", Routes.goHome);
         Modal.setCancelButton(null);
         Modal.show();
@@ -306,19 +327,19 @@ var Payment = (function() {
         paymentRequest.canMakePayment().then(function(result) {
            if (typeof result !== "undefined" && result !== null) {
                 prButton.mount('#payment-request-button') ;
-            } else {
-                // Payment API is not supported.  
-                // Fallback to a payment form
-                Modal.setTitle("Payment Information");
-                Modal.setBody(PaymentForm, {stripe: stripe, buyable: buyable});
-                Modal.setCancelButton("Not Now", Modal.dismiss);
-                Modal.setOkButton("Buy", processPayment);
-                var button = $('<button class="btn btn-primary">').text("Send Now").click(function() { 
-                    Modal.show();
-                });
-                $('#payment-request-button').html(button);
             }
         });
+
+        // Payment API is not supported.  
+        // Fallback to a payment form
+        Modal.setTitle("Payment Information");
+        Modal.setBody(PaymentForm, {stripe: stripe, buyable: buyable});
+        Modal.setCancelButton("Not Now", Modal.dismiss);
+        Modal.setOkButton("Buy", processPayment);
+        var button = $('<button class="btn btn-primary">').text("Pay with Credit Card").click(function() { 
+            Modal.show();
+        });
+        $('#alternate-payment-button').html(button);
     };
     
     var setBuyable = function(b) {
