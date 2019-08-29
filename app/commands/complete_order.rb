@@ -15,9 +15,9 @@ class CompleteOrder
         intent = @@payment_intent_client.retrieve(@order.charge_stripe_id)
         customer = @order.account.stripe_customer_id
         begin 
-            pm_fingerprint = @@payment_method_client.retrieve(intent.payment_method)
+            pm_fingerprint = @@payment_method_client.retrieve(intent.payment_method).card.fingerprint
             methods = Stripe::PaymentMethod.list(customer: customer, type: "card")
-            unless methods.find {|m| m.type == "card" && m.card.fingerprint == pm_fingerprint}
+            unless methods.find {|m| m.card.fingerprint == pm_fingerprint}
                 @@payment_method_client.attach(intent.payment_method, {customer: customer})
             end
         rescue Exception => e

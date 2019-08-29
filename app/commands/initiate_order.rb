@@ -124,36 +124,36 @@ class InitiateOrder
             err  = body[:error]
             m = "Stripe Card Error: #{err}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_card_error, m)
+            errors.add(:message, m)
         rescue Stripe::RateLimitError => e
             # Too many requests made to the API too quickly
             m = "Stripe Rate Limit Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_rate_limit_error, e.message)
+            errors.add(:message, e.message)
         rescue Stripe::InvalidRequestError => e
             # Invalid parameters were supplied to Stripe's API
             m = "Stripe Invalid Request Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_invalid_request_error, m)
+            errors.add(:message, m)
         rescue Stripe::AuthenticationError => e
             # Authentication with Stripe's API failed
             # (maybe you changed API keys recently)
             m = "Stripe Authentication Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_authentication_error, m)
+            errors.add(:message, m)
         rescue Stripe::APIConnectionError => e
             # Network communication with Stripe failed
             m = "Stripe API Connection Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_connect_error, m)
+            errors.add(:message, m)
         rescue Stripe::StripeError => e
             m = "Error creating charge: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:stripe_error, m)
+            errors.add(:message, m)
         rescue Exception => e
-            message = "Error creating order: #{e.message}"
+            message = e.message
             Log.create(log_type: Log::ERROR, context: PlaceOrder.name, current_user: @account.id, message: message)
-            errors.add(:internal_server_error, message)
+            errors.add(:message, message)
         end
     end
     

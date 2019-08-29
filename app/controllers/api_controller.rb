@@ -175,7 +175,7 @@ class ApiController < ApiBaseController
             
             render json: {order_id: command.result.id}, status: :ok
         else
-            render json: {error: command.errors}, status: :bad_request
+            render json: {error: command.errors.first.message}, status: :bad_request
         end
     end
 

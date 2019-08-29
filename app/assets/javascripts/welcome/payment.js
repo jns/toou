@@ -173,7 +173,6 @@ var Payment = (function() {
         });
         
         pr.on("token", function(event) {
-            console.log(event);
             submitPayment(event, "order").then(function(response) {
                     event.complete('success');
                     completePurchase();
@@ -204,8 +203,12 @@ var Payment = (function() {
 
         if (payerData.hasOwnProperty('paymentMethod')) {
             payload.payment_source = payerData.paymentMethod.id;
-        } else {
+        } else if (payerData.hasOwnProperty('token')) {
             payload.payment_source = payerData.token.id;
+        } else {
+            return new Promise(function(resolve, reject) {
+                reject({response: {error: {message: "Missing Payment Method"}}});
+            });
         }
 
         return m.request({
@@ -227,7 +230,7 @@ var Payment = (function() {
                 Modal.setBody("Authenticating...");
                 authenticate(payerData);
             } else {
-                purchaseFailed(JSON.stringify(err));
+                purchaseFailed(err.response.error.message);
             }
        });
     };
@@ -246,16 +249,14 @@ var Payment = (function() {
                 Modal.setOkButton("Submit", function() { processPayment(payerData); });
                 Modal.setCancelButton("Cancel", cancelPurchase);
             }).catch(function(err) {
-                reject(err);
+                reject(err.response.error);
             });
         });
     };
     
     
     var handleServerResponse = function(response) {
-        console.log(response);
         if (response["requires_action"]) {
-            console.log("confirm");
             confirmPayment(response["payment_intent_client_secret"]);
         } else if (response["success"]) {
             completePurchase();
@@ -280,7 +281,8 @@ var Payment = (function() {
     
     var purchaseFailed = function(err) {
         Modal.setTitle("Whoops");
-        Modal.setBody("Looks like there was a problem with the purchase.\n" + err);
+        Modal.setBody("<div class=\"purchase-animation\"><img /></div><div class=\"text-center\">There was a problem with the purchase.<p/>" + err + "</div>");
+        $(".purchase-animation img")[0].src = window.toouAssets.purchase_failed_img;
         Modal.setOkButton("Ok", Routes.goHome);
         Modal.setCancelButton(null);
         Modal.show();
@@ -299,7 +301,6 @@ var Payment = (function() {
         stripe.handleCardAction(client_secret).then(function(result) {
             if (result.error) {
               // Show error in payment form
-              console.log(result.error);
               purchaseFailed(result.error);
             } else {
                 // The card action has been handled
@@ -311,7 +312,7 @@ var Payment = (function() {
                 }).then(function(confirmResult) {
                     handleServerResponse(confirmResult);
                 }).catch(function() {
-                   purchaseFailed("Confirm Payment Failed"); 
+                   purchaseFailed("Payment Failed"); 
                 });
             }
         });
