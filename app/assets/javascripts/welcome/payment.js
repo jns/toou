@@ -230,7 +230,7 @@ var Payment = (function() {
                 Modal.setBody("Authenticating...");
                 authenticate(payerData);
             } else {
-                purchaseFailed(err.response.error.message);
+                purchaseFailed(err.response.error);
             }
        });
     };

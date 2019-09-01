@@ -8,10 +8,9 @@ class InitiateOrder
     
     FEE = 125
     
-    cattr_accessor :payment_intent_client, :payment_method_client
+    cattr_accessor :payment_intent_client
     self.payment_intent_client = Stripe::PaymentIntent
-    self.payment_method_client = Stripe::PaymentMethod
-    
+
     # Account is the account placing the order
     # payment_source is a stripe payment source token
     # Recipients are specified as an array of phone numbers to receive passes
@@ -29,9 +28,9 @@ class InitiateOrder
     def call
 
         begin
-            throw "Invalid Acount" unless @account.is_a? Account
-            throw "No Product Specified" unless @buyable
-            throw "No Recipients" unless @recipients.count > 0
+            raise "Invalid Acount" unless @account.is_a? Account
+            raise "No Product Specified" unless @buyable
+            raise "No Recipients" unless @recipients.count > 0
 
             Order.transaction do # Wrap everything in a transaction
                 # Create an order 
@@ -62,19 +61,7 @@ class InitiateOrder
                 # Amount charged to the customer
                 charge_amount_cents = commitment_amount_cents + FEE*@recipients.count
                 
-                # Create the charge on Stripe's servers - this will charge the user's card
-                # c =  @@charge_client.create(
-                #     :amount => charge_amount_cents, # this number should be in cents
-                #     :currency => "usd",
-                #     :source => @payment_source,
-                #     :transfer_group => @order.id,
-                #     :description => "TooU Purchase",
-                #     :capture => true, 
-                #     :metadata => {
-                #         :order_id => @order.id,
-                #         :customer_id => @account.id,
-                #         :commitment_amount => commitment_amount_cents
-                #     })
+                # Create a payment intent. 
                 intent = @@payment_intent_client.create(
                     :amount => charge_amount_cents,
                     :currency => "usd", 
@@ -120,11 +107,9 @@ class InitiateOrder
         
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
-            body = e.json_body
-            err  = body[:error]
-            m = "Stripe Card Error: #{err}"
+            m = "Stripe Card Error: #{e.message}"
             Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @account.id, message: m)
-            errors.add(:message, err.message)
+            errors.add(:message, e.message)
         rescue Stripe::RateLimitError => e
             # Too many requests made to the API too quickly
             m = "Stripe Rate Limit Error: #{e.message}"

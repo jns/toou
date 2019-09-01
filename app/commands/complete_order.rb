@@ -16,7 +16,7 @@ class CompleteOrder
         customer = @order.account.stripe_customer_id
         begin 
             pm_fingerprint = @@payment_method_client.retrieve(intent.payment_method).card.fingerprint
-            methods = Stripe::PaymentMethod.list(customer: customer, type: "card")
+            methods = @@payment_method_client.list(customer: customer, type: "card")
             unless methods.find {|m| m.card.fingerprint == pm_fingerprint}
                 @@payment_method_client.attach(intent.payment_method, {customer: customer})
             end

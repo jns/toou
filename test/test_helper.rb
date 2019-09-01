@@ -50,5 +50,7 @@ class ActiveSupport::TestCase
   PlaceOrder.customer_client = MockStripeCustomer
   PlaceOrder.source_client = MockStripeSource
   CaptureOrder.transfer_client = MockStripeTransfer
-  
+  InitiateOrder.payment_intent_client = MockStripePaymentIntent
+  CompleteOrder.payment_intent_client = MockStripePaymentIntent
+  CompleteOrder.payment_method_client = MockStripePaymentMethod
 end
