@@ -165,7 +165,7 @@ class InitiateOrder
     end
     
     def errorDescription
-       errors.collect{|e, m| return m}.join(",")
+       errors.collect{|e, m| return m.join(",")}.join(",")
     end
     
 end
