@@ -248,6 +248,7 @@ var Payment = (function() {
                 Modal.setBody(OneTimePasscode, {phone_number: payerData.payerPhone});
                 Modal.setOkButton("Submit", function() { processPayment(payerData); });
                 Modal.setCancelButton("Cancel", cancelPurchase);
+                resolve();
             }).catch(function(err) {
                 reject(err.response.error);
             });

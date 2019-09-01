@@ -195,7 +195,7 @@ class ApiController < ApiBaseController
                 render json: {success: false}, status: :bad_request
             end
         else
-            render json: {error: command.errors}, status: :bad_request
+            render json: {error: command.errorDescription}, status: :bad_request
         end
         
     end
