@@ -22,7 +22,43 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     FakeSMS.throw_error = nil
   end
 
+  test "Get account data" do
+    acct = accounts(:josh)
+    token = forceAuthenticate(acct)
+    
+    post "/api/account", params: {authorization: token}
+    assert_response :ok
+    data = JSON.parse(response.body)
+    assert_equal acct.name, data["name"]
+    assert_equal acct.email, data["email"]
+    assert_equal acct.phone_number, data["phone"]
+  end 
+  
+  test "Update device_id with post" do
+    acct = accounts(:josh)
+    token = forceAuthenticate(acct)
+    
+    devid = "newdeviceid"
+    assert_not_equal devid, acct.device_id
+    post "/api/account", params: {authorization: token, data: {device_id: devid}}
+    assert_response :ok
+    acct.reload
+    assert_equal devid, acct.device_id
+  end
 
+  test "Unset device_id with post" do
+    acct = accounts(:josh)
+    token = forceAuthenticate(acct)
+    
+    acct.update(device_id: "Not Nil")
+    assert_not_nil acct.device_id
+    devid = "nil"
+    post "/api/account", params: {authorization: token, data: {device_id: devid}}
+    assert_response :ok
+    acct.reload
+    assert_nil acct.device_id
+  end
+  
   test "Fetch products" do 
     get "/api/products"
     assert_response :success
