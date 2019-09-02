@@ -10,9 +10,13 @@ class ApiController < ApiBaseController
         case request.method
         when "PATCH"
             data = params.require(:data).permit(:name, :email, :device_id)
+            data[:device_id] = nil if data[:device_id] == "nil"
             @current_user.update(data)
             render json: {success: "Success"}, status: :ok
         when "POST"
+            data = params.permit(:data).permit(:name, :email, :device_id)
+            data[:device_id] = nil if data[:device_id] == "nil"
+            @current_user.update(data)
             render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
         else
             render json: {}, status: :bad_request
