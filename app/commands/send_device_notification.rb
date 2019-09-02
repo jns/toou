@@ -34,7 +34,7 @@ class SendDeviceNotification
         notification.expiration = (Time.now + 1.day).to_i.to_s
         notification.priority = 10
         notification.topic = "gifts.toou.TooU"
-        notification.sound = "clink"
+        notification.sound = "clink.caf"
         # notification.authorization = generate_token
         
         # send (this is a blocking call)
