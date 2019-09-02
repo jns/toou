@@ -9,7 +9,7 @@ class ApiController < ApiBaseController
     def account
         case request.method
         when "PATCH"
-            data = params.require(:data).permit(:name, :email)
+            data = params.require(:data).permit(:name, :email, :device_id)
             @current_user.update(data)
             render json: {success: "Success"}, status: :ok
         when "POST"
