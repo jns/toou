@@ -17,13 +17,13 @@
 .product {
   width: 100px;
   height: 100px;
+  border-radius: 30% 30%;
   padding: 8px 8px 8px 8px;
   margin: 8px 8px 8px 8px;
   display: inline-block;
   text-align: center;
-  border-radius: 50% 50%;
-  background: darkgray;
-  color: white;
+  background: white;
+  color: black;
 }
 
 .product.selected {
@@ -39,41 +39,44 @@
 }
 
 .product-price {
-  color: white;
+  color: black;
   font-size: 8pt;
 }
 
 .product-icon {
   width: 50px;
   height: 50px;
-  background-color: white;
   margin: 0 auto;
   
 }
 
 .product-icon.beer {
-  mask: url(<%= asset_path 'product_images/beer-icon.png' %>);
-  mask-position: center;
-  mask-repeat: no-repeat;
+  background-image: url(<%= asset_path 'product_images/beer-icon.png' %>);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 50px;
 }
 
 .product-icon.wine {
-  mask: url(<%= asset_path 'product_images/wine-icon.png' %>);
-  mask-position: center;
-  mask-repeat: no-repeat;
+  background-image: url(<%= asset_path 'product_images/wine-icon.png' %>);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 50px;
 }
 
 
 .product-icon.coffee {
-  mask: url(<%= asset_path 'product_images/coffee-icon.png' %>);
-  mask-position: center;
-  mask-repeat: no-repeat;
+  background-image: url(<%= asset_path 'product_images/coffee-icon.png' %>);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 50px auto;
 }
 
 .product-icon.treat {
-  mask: url(<%= asset_path 'product_images/ice-cream-icon.png' %>);
-  mask-position: center;
-  mask-repeat: no-repeat;
+  background-image: url(<%= asset_path 'product_images/ice-cream-icon.png' %>);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto 50px;
 }
 
 
