@@ -48,7 +48,7 @@ class InitiateOrder
                   
                   # Only permit test users to place an order to themselve
                   if @account.test_user? and pn != @account.phone_number.to_s
-                    throw "Test user can only place order for self"
+                    raise "Test user can only place order for self"
                   end
                   
                   # generate the pass
