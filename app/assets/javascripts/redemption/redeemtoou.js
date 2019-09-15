@@ -29,6 +29,8 @@ var MerchantInfo = (function() {
 
 var RedeemToou = (function() {
     
+    var inputIndex = 1;
+    
     var shake = function(element) {
         element.animate({paddingLeft: "-=10px"}, 100)
             .animate({paddingLeft: "+=20px"}, 100)
@@ -39,39 +41,45 @@ var RedeemToou = (function() {
     };
     
     var clear = function() {
-        $("#code-1").val("");
-        $("#code-2").val("");
-        $("#code-3").val("");
-        $("#code-4").val("");
-        $("#code-1").focus();
-    }
+        $("#code-1").val("").removeClass("focus");
+        $("#code-2").val("").removeClass("focus");
+        $("#code-3").val("").removeClass("focus");
+        $("#code-4").val("").removeClass("focus");
+        
+        inputIndex = 1;
+        $("#code-1").addClass("focus");
+    };
     
     var showPending = function() {
         var pending = $("<div>Pending</div>").addClass("overlay").addClass("pending");
         $("#redemption").prepend(pending);
-    }
+    };
     
     var showOverlay = function(text, state) {
         $(".pending").detach();
         var overlay = $('<div></div>').addClass("overlay").addClass(state).html(text);
         overlay.click(hideOverlay);
         $("#redemption").prepend(overlay);
-    }
+    };
     
     var hideOverlay = function() {
-        $(".overlay").detach()
-        clear()
-    }
+        $(".overlay").detach();
+        clear();
+    };
     
-    var submit = function() {
-        var code = ""
+    var submitIfNeeded = function() {
+         var code = "";
         code += $("#code-1").val();
         code += $("#code-2").val();
         code += $("#code-3").val();
         code += $("#code-4").val();
-        
-        $("#code-4").blur();
-        
+        if (code.length == 4) {
+            submit(code);
+        }      
+    };
+    
+    var submit = function(code) {
+
         showPending();
         
         return m.request({
@@ -98,33 +106,46 @@ var RedeemToou = (function() {
 
     };
     
-    var next = function(index) {
-        var input = $("#code-"+index);
-        var value = input.val();
-        if ($.isNumeric(value) && value.length == 1) {
-            if (index === 4) {
-                submit();
-            } else {
-                var incr = index+1;
-                $("#code-"+incr).focus();
-            }
-        } else {
-            input.val("");
-        }
-    };
-    
-    var prev = function(ev, index) {
-        if (ev.keyCode === 8) {
-            var decr = index-1;
-            var box = $("#code-"+decr);
-            box.val("");
-            box.focus();
-        }
-    };
     
     var clearInput = function(index) {
         var input = $("#code-"+index);
         input.val("");
+    };
+    
+    var decrInputIndex = function() {
+        var currentIndex = inputIndex;
+        if (currentIndex > 1) {
+            var currentInput = $("#code-" + currentIndex);
+            inputIndex = currentIndex - 1;
+            var prevInput = $("#code-" + inputIndex);
+            currentInput.toggleClass("focus");
+            prevInput.toggleClass("focus");
+        }
+    };
+    
+    var incrInputIndex = function() {
+        if (inputIndex < 4) {
+            var index = inputIndex + 1;
+            var previousInput = $("#code-" + inputIndex);
+            inputIndex = index;
+            var nextInput = $("#code-" + inputIndex);
+            previousInput.toggleClass("focus");
+            nextInput.toggleClass("focus");
+        }
+    };
+    
+    var numberpadPress = function(ev) {
+        var number = $(ev.target).closest(".number").data("value");
+        console.log($(ev.target).closest(".number"));
+        if (number == "bs") {
+            decrInputIndex();
+            clearInput(inputIndex);
+        } else if ($.isNumeric(number)) {
+            var input = $("#code-"+inputIndex);
+            input.val(number);
+            incrInputIndex();
+            submitIfNeeded();
+        }
     };
     
     var mount = function() {
@@ -133,24 +154,18 @@ var RedeemToou = (function() {
             return;
         }
         
+        $("td.number-pad.number").click(numberpadPress);
+        
         m.mount($(".merchant-info")[0], MerchantInfo);
         
-        $("#code-1").focus(function() {clearInput(1)});
-        $("#code-2").focus(function() {clearInput(2)});
-        $("#code-3").focus(function() {clearInput(3)});
-        $("#code-4").focus(function() {clearInput(4)});
+        clear();
+        $("#code-1").prop("disabled", true);
+        $("#code-2").prop("disabled", true);
+        $("#code-3").prop("disabled", true);
+        $("#code-4").prop("disabled", true);
         
-        $("#code-2").keydown(function(ev) {prev(ev, 2)});
-        $("#code-3").keydown(function(ev) {prev(ev, 3)});
-        $("#code-4").keydown(function(ev) {prev(ev, 4)});
-        
-        $("#code-1").keyup(function() {next(1)});
-        $("#code-2").keyup(function() {next(2)});
-        $("#code-3").keyup(function() {next(3)});
-        $("#code-4").keyup(function() {next(4)});
-        
-        $("#code-1").focus();
     };
+    
     
     return {mount: mount};
 })();

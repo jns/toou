@@ -20,6 +20,16 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+#code-input input:disabled {
+    background-color: white;    
+}
+
+#code-input input.focus {
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+}
+
 .overlay {
     position: absolute;
     width: 90%;
@@ -57,3 +67,21 @@ input[type=number] {
   border-top-right-radius: 0px !important;
   border-top-left-radius: 0px !important;
 }
+
+td.number-pad.number {
+    width: 65px;
+    height: 65px;
+    font-size: 35px;
+    background-color: aliceblue;
+    border: 1px solid lightgray;
+    text-align: center;
+    border-radius: 6px;
+}
+
+table.number-pad {
+    border-collapse: separate;
+    border-spacing: 8px;
+    margin: 0 auto 
+}
+
+
