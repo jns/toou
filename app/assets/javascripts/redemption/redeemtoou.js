@@ -27,6 +27,40 @@ var MerchantInfo = (function() {
     return {view: view, oninit: oninit};    
 })();
 
+var Overlay = (function() {
+    
+    var detach = function(domElement) {
+        m.mount($(domElement)[0], null);
+    };
+    
+    var approved = function(amount, dom) {
+        return [m("div", "Approved"), 
+                m(".small", amount),
+                m("input[value='Ok']", {class: "form-group btn btn-lg btn-outline-light", onclick: function(){detach(dom);}})];
+    };
+    
+    var denied = function(text, dom) {
+        return [m("div", "Denied"), 
+                m(".small", text),
+                m("input[value='Ok']", {class: "form-group btn btn-lg btn-outline-light", onclick: function(){detach(dom);}})];
+
+    };
+    
+    var view = function(vnode) {
+        console.log(vnode.dom);
+        if (vnode.attrs.state == "denied") {
+            return m(".overlay", {class: "denied"}, denied(vnode.attrs.reason, vnode.attrs.element));
+        } else if (vnode.attrs.state == "approved") {
+            return m(".overlay", {class: "approved"}, approved(vnode.attrs.amount, vnode.attrs.element));
+        } else {
+            return m(".overlay", {class: "pending"}, "Processing");
+        }
+        
+    };
+    
+    return {view: view};
+})();
+
 var RedeemToou = (function() {
     
     var inputIndex = 1;
@@ -51,15 +85,11 @@ var RedeemToou = (function() {
     };
     
     var showPending = function() {
-        var pending = $("<div>Pending</div>").addClass("overlay").addClass("pending");
-        $("#redemption").prepend(pending);
+        m.mount($("#overlay")[0], {view: function() {return m(Overlay, {element: "#overlay", state: "pending"})}});
     };
     
-    var showOverlay = function(text, state) {
-        $(".pending").detach();
-        var overlay = $('<div></div>').addClass("overlay").addClass(state).html(text);
-        overlay.click(hideOverlay);
-        $("#redemption").prepend(overlay);
+    var showOverlay = function(state, attrs) {
+        m.mount($("#overlay")[0], {view: function() {return m(Overlay, $.extend({element: "#overlay", state: state}, attrs))}});
     };
     
     var hideOverlay = function() {
@@ -80,6 +110,7 @@ var RedeemToou = (function() {
     
     var submit = function(code) {
 
+        clear();
         showPending();
         
         return m.request({
@@ -87,18 +118,18 @@ var RedeemToou = (function() {
             url: "/api/redemption/redeem",
             body: {authorization: Credentials.getToken("REDEMPTION_TOKEN"), data: {code: code}}
         }).then(function(data) {
-            showOverlay("<div>Approved</div><div>"+data.amount+"</div>", "approved");
+            showOverlay("approved", {amount: data.amount});
         }).catch(function(error) {
             if (error.code === 401) {
                 Routes.goRedeemLogin();
             } else {
-                var message = "<div>Denied</div>";
+                var message = "";
                 if (error.response.hasOwnProperty("unredeemable") ) {
                     error.response.unredeemable.forEach(function(e) {
-                        message += "<div class=\"small\">"+e+"</div>";
+                        message += e;
                     });
                 }
-                showOverlay(message, "denied");
+                showOverlay("denied", {reason: message});
                 shake($(".overlay"));
             }
         });

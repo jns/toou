@@ -32,9 +32,10 @@ input[type=number] {
 
 .overlay {
     position: absolute;
-    width: 90%;
-    height: 80%;
-    margin: auto;
+    left: 50px;
+    right: 50px;
+    bottom: 50px;
+    top: 50px;
     border-radius: 30px 30px 30px 30px;
     font-size: 50px;
     line-height: 75px;
@@ -45,6 +46,7 @@ input[type=number] {
 
 .pending {
     background-color: white;
+    border: 1px solid black;
     color: black;
 }
 
@@ -84,4 +86,6 @@ table.number-pad {
     margin: 0 auto 
 }
 
-
+.overlay .btn {
+    margin-top: 75px;
+}
