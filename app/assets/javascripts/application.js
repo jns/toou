@@ -28,7 +28,6 @@ var Routes = {
     
     deviceNotAuthorized: function() {
         window.location.pathname = "/mredeem/not_authorized";
-        // Turbolinks.visit("/mredeem/not_authorized", {action: "replace"})
     },
     
     goRedeem: function() {

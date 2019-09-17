@@ -9,6 +9,11 @@ cupcake_store:
   name: Cupcake Store
   stripe_id: stripeid54321
   user: cupcake_user
+
+cupcake_store2:
+  name: Cupcakes Too
+  stripe_id: stripeid13589
+  user: cupcake_user
   
 test_store:
   name: Test Store

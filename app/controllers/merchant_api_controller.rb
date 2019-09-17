@@ -3,7 +3,7 @@ class MerchantApiController < ApiBaseController
 	include MerchantsHelper
 	
 
-	skip_before_action :authorize_request, only: [:authenticate_merchant]
+	skip_before_action :authorize_request, only: [:authenticate_merchant, :authorize_device]
 
     # Authenticate a merchant user
     # @param [String] username The merchant's username
@@ -59,18 +59,49 @@ class MerchantApiController < ApiBaseController
     end
 
     
-    
     # Authorize a device to redeem Toou Vouchers on behalf of a merchant
     # @param authorization a merchant user auth token
     # @param [merchant_id] the merchant id
     # @param [device_id] the device id
     # @return [json] an authentication token {auth_token: token}
     def authorize_device
-        merchant = merchant_params
-        authorize merchant
-        
+        cmd = AuthorizeApiRequest.call(request.params)
+        if cmd.success?
+            @current_user = cmd.result
+            @merchant = merchant_params
+        else
+            begin
+                auth = params.require(:authorization).permit(:email, :password, :secret)
+                if u= User.find_by(email: auth["email"]) and u.authenticate(auth["password"])
+                    @current_user = u
+                    merchants = @current_user.merchants
+                    if merchants.count == 1
+                        @merchant = merchants.first
+                    else
+                        render json: {secret: Secret.create(@current_user), merchants: merchants.collect{|m| {id: m.id, name: m.name}}}, status: :ok
+                        return
+                    end
+                elsif secret = auth["secret"] and Secret.exists?(secret)
+                    @current_user = Secret.find(secret)
+                    @merchant = merchant_params
+                else
+                    raise "Unauthorized"
+                end
+            rescue Exception => e
+                render json: {error: "Unauthorized"}, status: :unauthorized
+                return
+            end
+        end
+
+        unless @merchant 
+            render json: {error: "merchant not found"}, status: :bad_request
+            return
+        end
+
+        authorize @merchant
+
         device_id = params.require(:data).require(:device_id)
-        device = merchant.authorize_device(device_id)
+        device = @merchant.authorize_device(device_id)
         command = CreateRedemptionAuthToken.call(device)
         if command.success?
            render json: {auth_token: command.result}, status: :ok

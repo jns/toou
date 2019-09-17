@@ -63,7 +63,7 @@ Rails.application.routes.draw do
   post '/api/redemption/merchant_info', to: 'redemption_api#merchant_info'
   post '/api/redemption/get_code', to: 'redemption_api#get_code'
   post '/api/redemption/cancel_code', to: 'redemption_api#cancel_code'
-  
+  post '/api/redemption/redeemed', to: 'redemption_api#redeemed'
   # User Routes
   get 'login', to: 'user#login'
   post 'login', to: 'user#login'

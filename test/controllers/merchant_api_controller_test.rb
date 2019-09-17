@@ -95,6 +95,55 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		end
 	end
 	
+	test "authorize a device with email and password" do
+		merchant = merchants(:quantum)
+		user = merchant.user
+		user.password = "a password"
+		user.save
+		device = "Device555"
+		
+		assert_difference "merchant.devices.count", 1 do
+			post "/api/merchant/authorize_device", params: {authorization: {email: user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			assert_response :ok
+		    json = JSON.parse(@response.body) 
+		    token = json["auth_token"]
+		    assert_not_nil token
+		end
+	end
+	
+	test "authorize a device with email and password for a user with multiple merchants" do
+		merchant = merchants(:cupcake_store2)
+		user = merchant.user
+		user.password = "a password"
+		user.save
+		device = "CupcakeTooDevice"
+		
+		assert_difference "merchant.devices.count", 1 do
+			post "/api/merchant/authorize_device", params: {authorization: {email: user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			assert_response :ok
+		    json = JSON.parse(@response.body) 
+		    secret = json["secret"]
+		    assert_not_nil secret
+		    
+		    post "/api/merchant/authorize_device", params: {authorization: {secret: secret}, data: {merchant_id: merchant.id, device_id: device}}, as: :json
+			assert_response :ok
+		    json = JSON.parse(@response.body)
+		    token = json["auth_token"]
+		    assert_not_nil token
+		    
+		end
+		
+	end
+	
+	test "authorize without authorization fails" do
+		merchant = merchants(:quantum)
+		device = "A Device"
+		assert_no_difference "merchant.devices.count" do
+			post "/api/merchant/authorize_device", params: {data: {merchant_id: merchant.id, device_id: device}}, as: :json
+			assert_response :unauthorized
+		end
+	end
+	
 	test "authorize multiple devices simultaneously" do
 		
 		merchant = merchants(:quantum)

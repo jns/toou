@@ -75,6 +75,12 @@ class RedemptionApiController < ApiBaseController
         end
     end
     
+    def redeemed
+       authorize Device
+       @currenet_user.merchant.credits
+       render 'charges.json.jbuilder', status: :ok
+    end
+    
     private
     
     def paramsMerchant

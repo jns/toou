@@ -46,10 +46,14 @@ class User < ApplicationRecord
     
     def merchant
        if merchant?
-           Merchant.find_by(user: self)
+           merchants.first
        else
            nil
        end
+    end
+    
+    def merchants
+       Merchant.where(user: self) 
     end
     
     def create_reset_digest
