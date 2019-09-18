@@ -72,18 +72,20 @@ class MerchantApiController < ApiBaseController
         else
             begin
                 auth = params.require(:authorization).permit(:email, :password, :secret)
-                if u= User.find_by(email: auth["email"]) and u.authenticate(auth["password"])
+
+                if secret = auth["secret"] and Secret.exists?(secret)
+                    @current_user = Secret.find(secret)
+                    @merchant = merchant_params
+                elsif u= User.find_by(email: auth["email"].downcase) and u.authenticate(auth["password"])
                     @current_user = u
                     merchants = @current_user.merchants
                     if merchants.count == 1
-                        @merchant = merchants.first
+                        render json: {secret: Secret.create(@current_user), merchants: [merchants.first]}, status: :ok
+                        return
                     else
                         render json: {secret: Secret.create(@current_user), merchants: merchants.collect{|m| {id: m.id, name: m.name}}}, status: :ok
                         return
                     end
-                elsif secret = auth["secret"] and Secret.exists?(secret)
-                    @current_user = Secret.find(secret)
-                    @merchant = merchant_params
                 else
                     raise "Unauthorized"
                 end

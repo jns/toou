@@ -1,30 +1,133 @@
 /* global $, Credentials , m, Routes */
 var MerchantInfo = (function() {
-    var merchantName = "";
-    var merchantAddress = "";
-    
-    var oninit = function() {
-        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
-            m.request({
-                method: "POST",
-                body: {authorization: Credentials.getToken("REDEMPTION_TOKEN")},
-                url: "/api/redemption/merchant_info"
-            }).then(function(merchantData) {
-               merchantName = merchantData.name;
-               merchantAddress = merchantData.address;
-            }).catch(function(error) {
-                if (error.code === 401) {
-                    Credentials.setToken();
-                }
-            });
+
+    var view = function(vnode) {
+        if (vnode.attrs.name != undefined && vnode.attrs.address != undefined) {
+            return m(".text-center", [m(".h3", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
+        } else {
+            return m(".text-center", m(".h3", "Merchant Not Found"));
         }
     };
     
-    var view = function() {
-        return m(".text-center", [m(".h3", merchantName), m(".h6", merchantAddress)]);    
+    return {view: view};    
+})();
+
+var DeviceAuthorizationName = (function() {
+    var secret = null;
+    var errors = null;
+    
+    var oninit = function(vnode) {
+        secret = vnode.attrs.secret;  
     };
     
-    return {view: view, oninit: oninit};    
+    var authorize = function() {
+        var merchant_id = $("[name*='merchant_id']").val();
+        var device_id = $("[name*='device_id']").val();
+        
+        if (device_id.length === 0) {
+            errors = "You must provide a device name";
+            m.redraw();
+            Modal.enableOkButton();
+            return;
+        }
+        
+        var body = {authorization: {secret: secret},
+                    data: {merchant_id: merchant_id, device_id: device_id}};
+                    
+        return new Promise(function(resolve, reject) {
+            m.request({method: "POST", 
+                url: "/api/merchant/authorize_device",
+                body: body}
+            ).then(function(result) {
+                resolve(result);
+            }).catch(function(err) {
+                if (err.code == 401) {
+                    reject({error: "Timeout entering data. Please reload page."});
+                } else if (err.code == 400) {
+                    reject({error: "You must name the device"}); 
+                }
+            });
+        });  
+    };
+    
+    var view = function(vnode) {
+        var merchants = vnode.attrs.merchants;
+        var merchant_input;
+        if (merchants.length == 1) {
+            merchant_input = m("input[type=hidden]", {name: "merchant_id", value: merchants[0].id});
+        } else {
+            var options = merchants.map(function(x) {return m("option", {value: x.id}, x.name) });
+            merchant_input = m(".form-group", [
+                                m("label.label", "Merchant"),
+                                m("select.form-control", {name: "merchant_id"}, options)
+                                ]);
+        }
+        
+        if (vnode.attrs.errors != undefined) {
+            errors += vnode.attrs.errors;    
+        }
+        
+        return [m(".error.text-center", errors),
+                m(".form-group", [
+                    m("label.label", "Name This Device"),
+                    m("input.form-control[type='text'][name='device_id']", {placeholder: "e.g. Counter iPad 1"})
+                    ]),
+                merchant_input];
+    };
+    
+    return {view: view, oninit: oninit, okClicked: authorize};
+})();
+
+var DeviceAuthorizationLogin = (function() {
+    
+    var email = null;
+    var password = null;
+
+    var authenticate = function() {
+        
+        body = {authorization: {email: email, password: password}};
+        return new Promise(function(resolve, reject) {
+            m.request({method: "POST", 
+                url: "/api/merchant/authorize_device",
+                body: body}
+            ).then(function(data) {
+                resolve(data);      
+            }).catch(function(err) {
+                if (err.code == 401) {
+                    reject({error: "Invalid email or password", email: email});
+                } else {
+                    reject(err);
+                }
+            })
+        })
+    };
+    
+    var view = function(vnode) {
+        return m(".container-fluid.mt-3.mx-auto", 
+                    [
+                    m(".row",
+                        m(".col.text-center",
+                            m("span.error", vnode.attrs.error))),
+                    m(".row", 
+                        m(".col", 
+                            m(".form-group", [
+                                m("label.label","Email"), 
+                                m("input.form-control[type='text']", 
+                                    {value: email, 
+                                    oninput: function(e) { email = e.target.value }})
+                        ]))),
+                    m(".row", 
+                        m(".col",
+                            m(".form-group", [
+                                m("label.label","Password"), 
+                                m("input.form-control[type='password']",
+                                    {oninput: function(e) {password = e.target.value}}
+                                    )
+                        ])))
+                    ]);
+    };
+    
+    return {view: view, okClicked: authenticate};
 })();
 
 var Overlay = (function() {
@@ -36,18 +139,17 @@ var Overlay = (function() {
     var approved = function(amount, dom) {
         return [m("div", "Approved"), 
                 m(".small", amount),
-                m("input[value='Ok']", {class: "form-group btn btn-lg btn-outline-light", onclick: function(){detach(dom);}})];
+                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){detach(dom);}})];
     };
     
     var denied = function(text, dom) {
         return [m("div", "Denied"), 
                 m(".small", text),
-                m("input[value='Ok']", {class: "form-group btn btn-lg btn-outline-light", onclick: function(){detach(dom);}})];
+                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){detach(dom);}})];
 
     };
     
     var view = function(vnode) {
-        console.log(vnode.dom);
         if (vnode.attrs.state == "denied") {
             return m(".overlay", {class: "denied"}, denied(vnode.attrs.reason, vnode.attrs.element));
         } else if (vnode.attrs.state == "approved") {
@@ -58,12 +160,48 @@ var Overlay = (function() {
         
     };
     
-    return {view: view};
+    return {view: view, detach: detach};
 })();
 
 var RedeemToou = (function() {
     
+    // Which code input to highlight first
     var inputIndex = 1;
+    
+    var loadMerchantData = function() {
+        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
+            m.request({
+                method: "POST",
+                body: {authorization: Credentials.getToken("REDEMPTION_TOKEN")},
+                url: "/api/redemption/merchant_info"
+            }).then(function(merchantData) {
+                m.mount($(".merchant-info")[0],{view: function() { return m(MerchantInfo, merchantData)}});
+            }).catch(function(error) {
+                if (error.code === 401) {
+                    Credentials.setToken();
+                    authenticate();
+                }
+            });
+        }
+    };
+    
+    var authzSuccess = function(result) {
+        Credentials.setToken("REDEMPTION_TOKEN", result.auth_token);
+        Modal.setBody("Device Authorization Successful");
+        Modal.setOkButton("Ok", Modal.dismiss);
+    } ;
+    
+    var authxSuccess = function(result) {
+        Modal.setBody(DeviceAuthorizationName, result);
+        Modal.setOkButton("Authorize", authzSuccess);
+    };
+    
+    var authenticate = function() {
+        Modal.setTitle("Authorize This Device");
+        Modal.setBody(DeviceAuthorizationLogin);
+        Modal.setOkButton("Submit", authxSuccess);
+        Modal.show(loadMerchantData);
+    }
     
     var shake = function(element) {
         element.animate({paddingLeft: "-=10px"}, 100)
@@ -121,7 +259,8 @@ var RedeemToou = (function() {
             showOverlay("approved", {amount: data.amount});
         }).catch(function(error) {
             if (error.code === 401) {
-                Routes.goRedeemLogin();
+                authenticate();
+                hideOverlay();
             } else {
                 var message = "";
                 if (error.response.hasOwnProperty("unredeemable") ) {
@@ -181,19 +320,18 @@ var RedeemToou = (function() {
     
     var mount = function() {
         if (!Credentials.hasToken("REDEMPTION_TOKEN")) {
-            Routes.deviceNotAuthorized();
-            return;
+            authenticate();
         }
         
         $("td.number-pad.number").click(numberpadPress);
-        
-        m.mount($(".merchant-info")[0], MerchantInfo);
-        
+    
         clear();
         $("#code-1").prop("disabled", true);
         $("#code-2").prop("disabled", true);
         $("#code-3").prop("disabled", true);
         $("#code-4").prop("disabled", true);
+        
+        loadMerchantData();
         
     };
     

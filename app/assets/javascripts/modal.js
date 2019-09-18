@@ -3,6 +3,7 @@
 var Modal = (function() {
     
     var _body = null;
+    var _bodyAttr = null;
     var _afterOk = null;
     
     var setTitle = function(title) {
@@ -28,9 +29,12 @@ var Modal = (function() {
         if (body.hasOwnProperty('view')) {
             $(".modal-body").html("");
             if (attr == undefined) {
-                attr = {};
+                _bodyAttr = {};
+            } else {
+                _bodyAttr = attr;
             }
-            m.mount($('.modal-body')[0], {view: function(){ return m(body, attr)}});
+            
+            m.mount($('.modal-body')[0], {view: function(){ return m(body, _bodyAttr)}});
         } else {
             $('.modal-body').html(body);
         }
@@ -56,6 +60,9 @@ var Modal = (function() {
                         completion(result); 
                     }).then(function(result) {
                         if (typeof _afterOk === 'function') { _afterOk(); }
+                    }).catch(function(error) {
+                        setBody(_body, $.extend(_bodyAttr, error));
+                        enableOkButton();
                     });
                 } else {
                     new Promise(function(resolve, reject) {

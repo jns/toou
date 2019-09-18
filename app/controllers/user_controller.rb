@@ -11,7 +11,7 @@ class UserController < ApplicationController
             @new_user = User.new
         elsif request.post? 
             user_params = params.require(:user).permit(:username, :password)
-            user_params[:email] = user_params[:username]
+            user_params[:email] = user_params[:username].downcase
             if User.find_by(email: user_params[:email])
                 flash[:notice] = "Account already exists"
                 redirect_to :login

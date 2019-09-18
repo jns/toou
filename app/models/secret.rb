@@ -23,7 +23,7 @@ class Secret
    
   @@secrets = {}
 
-   def Secret.removeSoon(secret, delay=10)
+   def Secret.removeSoon(secret, delay=60)
         Thread.new {
             sleep delay
             @@secrets.delete secret
