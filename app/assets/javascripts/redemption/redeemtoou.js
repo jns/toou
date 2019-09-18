@@ -3,7 +3,9 @@ var MerchantInfo = (function() {
 
     var view = function(vnode) {
         if (vnode.attrs.name != undefined && vnode.attrs.address != undefined) {
-            return m(".text-center", [m(".h3", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
+            return m(".text-center", [m(".h5", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
+        } else if (vnode.attrs.error != undefined) {
+            return m(".text-center.error", m(".h6", vnode.attrs.error));
         } else {
             return m(".text-center", m(".h3", "Merchant Not Found"));
         }
@@ -180,6 +182,9 @@ var RedeemToou = (function() {
                 if (error.code === 401) {
                     Credentials.setToken();
                     authenticate();
+                } else {
+                    Credentials.setToken("REDEMPTION_TOKEN", null);
+                    m.render($(".merchant-info")[0], m(".h6.error", "Unknown Error. Please reload page"));
                 }
             });
         }
@@ -306,7 +311,6 @@ var RedeemToou = (function() {
     
     var numberpadPress = function(ev) {
         var number = $(ev.target).closest(".number").data("value");
-        console.log($(ev.target).closest(".number"));
         if (number == "bs") {
             decrInputIndex();
             clearInput(inputIndex);
