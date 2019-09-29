@@ -7,7 +7,7 @@ var Home = (function() {
             m(".row", [
                 m(".col.text-center.mt-3", [
                     m("a[href='/send_gifts']", [
-                        m(".buy-graphic"),
+                        m(".buy-graphic", m(".free-trial", "Try it Free")),
                         m("span.regular-20pt.darkgray", "Send TooU")
                         ])
                     ])
