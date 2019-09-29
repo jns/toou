@@ -36,6 +36,12 @@ var Routes = {
     }
 };
 
+var uuidv4 = function() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
 var addSignout = function() {
     if (Credentials.hasToken()) {
         Credentials.getUserData().then(function(data) {
@@ -72,6 +78,9 @@ $(function() {
         Passes.mount();
         Breadcrumb.home();
         addSignout();
+    } else if (path == "/merchants/onboard1") {
+        MerchantOnboard.mount();
+        Breadcrumb.home();
     } else if (path === "/merchants") {
         Breadcrumb.home();
     } else if (path.match(/\/merchants\/\d+/)) {

@@ -1,3 +1,6 @@
+//= require ./merchant/merchant_autocomplete
+//= require ./merchant/merchant_onboard
+
 /* global m, $, Breadcrumb, Credentials */
 
 var MERCHANT_ID = 0;

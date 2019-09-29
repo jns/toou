@@ -25,19 +25,23 @@ var PaymentForm = (function() {
             } else {
                 createCardElement();
             }
-        }).catch(function(data) {
+        }).catch(function() {
             createCardElement();
         });
     };
     
+    var onupdate = function() {
+        if (document.getElementById("card-input") && cardElement) {
+            cardElement.mount('#card-input');
+        }
+    };
     
     var createCardElement = function() {
 
         // Remove other payment methods
-        paymentMethods.length = 0;
+        // paymentMethods.length = 0;
         
         cardElement = stripe.elements().create('card');
-        cardElement.mount('#card-input');
 
         cardElement.addEventListener('change', function(event) {
           var displayError = document.getElementById('card-errors');
@@ -101,36 +105,49 @@ var PaymentForm = (function() {
     /**
      * Determines whether a new card or a saved card was entered, and provides that
      */
-    var createPaymentMethod = function() {    
-        if (paymentMethods.length > 1) {
-            var method= paymentMethods[$("#card-input select").prop("selectedIndex")];
-            return new Promise(function(resolve, reject) {
-                resolve(Object.assign({paymentMethod: method}, payerData()));   
-            });
-        } else if (paymentMethods.length == 1) {
-            var method = paymentMethods[0];
-            return new Promise(function(resolve, reject) {
-                resolve(Object.assign({paymentMethod: method}, payerData()));
-            });
+    var createPaymentMethod = function() {
+        if (document.getElementById("card-input")) {
+            if (paymentMethods.length > 1) {
+                var method= paymentMethods[$("#card-input select").prop("selectedIndex")];
+                return new Promise(function(resolve, reject) {
+                    resolve(Object.assign({paymentMethod: method}, payerData()));   
+                });
+            } else if (paymentMethods.length == 1) {
+                var method = paymentMethods[0];
+                return new Promise(function(resolve, reject) {
+                    resolve(Object.assign({paymentMethod: method}, payerData()));
+                });
+            } else {
+                return new Promise(function(resolve, reject) {
+                    stripe.createPaymentMethod('card', cardElement).then(function(method) {
+                       resolve(Object.assign(method, payerData()));
+                    }).catch(function() {
+                       resolve(payerData()); 
+                    });
+                });
+            }
         } else {
             return new Promise(function(resolve, reject) {
-                stripe.createPaymentMethod('card', cardElement).then(function(method) {
-                   resolve(Object.assign(method, payerData()));
-                });
+                resolve(payerData());
             });
         }
     };
     
     var view = function(vnode) {
         var buyable = vnode.attrs.buyable;
-        return m('form.container.form', [
-            m('.row.form-group',[m('label.col', buyable.name), m('label.col', "$"+ buyable.max_price_dollars)]),
-            m('.row.form-group',[m('label.col', "TooU Fee"), m('label.col', "$1.25")]),
-            m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (buyable.max_price_dollars + 1.25))]),
-            payerInputs(),
-            cardInput(),
-            m('.row[id=card-errors]'),
-            ]);  
+    
+        var formElements =  [
+                m('.row.form-group',[m('label.col', buyable.name), m('label.col', "$"+ buyable.max_price_dollars)]),
+                m('.row.form-group',[m('label.col', "TooU Fee"), m('label.col', "$" + buyable.fee_dollars)]),
+                m('.row.form-group',[m('label.col', "Total"), m('label.col', "$"+ (buyable.max_price_dollars + buyable.fee_dollars))]),
+                payerInputs(),
+            ];
+        
+        if ((buyable.max_price_dollars + buyable.fee_dollars) > 0) {
+            formElements.push(cardInput(), m('.row[id=card-errors]'));  
+        } 
+        
+        return m('form.container.form', formElements);
     };
     
     var payerData =function() {
@@ -141,7 +158,7 @@ var PaymentForm = (function() {
         };
     };
     
-    return {view: view, oninit: oninit, payerData: payerData, okClicked: createPaymentMethod};
+    return {view: view, oninit: oninit, onupdate: onupdate, payerData: payerData, okClicked: createPaymentMethod};
     
 })();
 
@@ -162,10 +179,10 @@ var Payment = (function() {
         var pr = stripe.paymentRequest({
           country: 'US',
           currency: 'usd',
-          total: {label: "Total", amount: buyable.max_price_cents + 125, pending: false},
+          total: {label: "Total", amount: buyable.max_price_cents + buyable.fee_cents, pending: false},
           displayItems: [
               {label: buyable.name, amount: buyable.max_price_cents,pending: false},
-              {label: "Sending Fee", amount: 125, pending: false}
+              {label: "Sending Fee", amount: buyable.fee_cents, pending: false}
           ],
           requestPayerName: true,
           requestPayerEmail: true,
@@ -205,9 +222,11 @@ var Payment = (function() {
             payload.payment_source = payerData.paymentMethod.id;
         } else if (payerData.hasOwnProperty('token')) {
             payload.payment_source = payerData.token.id;
+        } else if ((buyable.fee_cents + buyable.max_price_cents) == 0) {
+            payload.payment_source = "none";
         } else {
             return new Promise(function(resolve, reject) {
-                reject({response: {error: {message: "Missing Payment Method"}}});
+                reject({response: {error:  "Missing Payment Method"}});
             });
         }
 
@@ -319,6 +338,15 @@ var Payment = (function() {
         });
     };
     
+    var createPaymentForm = function(buttonText) {
+        // Payment API is not supported.  
+        // Fallback to a payment form
+        Modal.setTitle("Payment Information");
+        Modal.setBody(PaymentForm, {stripe: stripe, buyable: buyable});
+        Modal.setCancelButton("Not Now", Modal.dismiss);
+        Modal.setOkButton(buttonText, processPayment);
+    };
+    
     var addPaymentButton = function(paymentRequest) {
         var elements = stripe.elements();
         var prButton = elements.create('paymentRequestButton', {
@@ -331,23 +359,31 @@ var Payment = (function() {
                 prButton.mount('#payment-request-button') ;
             }
         });
-
-        // Payment API is not supported.  
-        // Fallback to a payment form
-        Modal.setTitle("Payment Information");
-        Modal.setBody(PaymentForm, {stripe: stripe, buyable: buyable});
-        Modal.setCancelButton("Not Now", Modal.dismiss);
-        Modal.setOkButton("Buy", processPayment);
+        
+        createPaymentForm("Buy");
         var button = $('<button class="btn btn-primary">').text("Pay with Credit Card").click(function() { 
             Modal.show();
         });
         $('#alternate-payment-button').html(button);
     };
     
+    var addFreePaymentButton = function() {
+        createPaymentForm("Send for Free");
+        var button = $('<button class="btn btn-primary">').text("Send for free").click(function() {
+            Modal.show();
+        });
+        $('#payment-request-button').empty();
+        $("#alternate-payment-button").html(button);
+    };
+    
     var setBuyable = function(b) {
         buyable = b;
-        var paymentRequest = createPaymentIntent();
-        addPaymentButton(paymentRequest);
+        if ((buyable.max_price_cents + buyable.fee_cents) > 0) {
+            var paymentRequest = createPaymentIntent();
+            addPaymentButton(paymentRequest);
+        } else {
+            addFreePaymentButton();
+        }
     };
     
     return {setBuyable: setBuyable};

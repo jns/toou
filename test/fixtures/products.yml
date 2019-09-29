@@ -4,8 +4,16 @@ beer:
   name: Beer 
   max_price_cents: 1000 
   icon: beer
+  fee_cents: 125
 
 cupcake:
   name: Cupcake 
   max_price_cents: 500 
-  icon: cupcake
+  icon: treat
+  fee_cents: 100
+  
+zero_product: 
+  name: Zero
+  max_price_cents: 0
+  icon: treat
+  fee_cents: 0

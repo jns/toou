@@ -5,5 +5,7 @@ json.array! @products do |product|
     json.max_price_dollars product.price(:dollars)
     json.icon product.icon
     json.icon_url image_url("product_images/#{product.icon}-icon.png")
-    json.type product.class.name                                                                             
+    json.type product.class.name 
+    json.fee_cents product.fee(:cents)
+    json.fee_dollars product.fee(:dollars)
 end

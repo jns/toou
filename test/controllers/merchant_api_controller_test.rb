@@ -106,6 +106,11 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 			post "/api/merchant/authorize_device", params: {authorization: {email: user.email, password: "a password"}, data: {device_id: device}}, as: :json
 			assert_response :ok
 		    json = JSON.parse(@response.body) 
+			secret = json["secret"]
+	
+			post "/api/merchant/authorize_device", params: {authorization: {secret: secret}, data: {device_id: device, merchant_id: merchant.id}}, as: :json
+			assert_response :ok
+			json = JSON.parse(@response.body)
 		    token = json["auth_token"]
 		    assert_not_nil token
 		end

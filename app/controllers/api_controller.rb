@@ -143,6 +143,7 @@ class ApiController < ApiBaseController
         purchaser = params.require(:purchaser).permit(:name, :phone, :email)
         recipients, payment_source = params.require([:recipients, :payment_source])
         message = params.permit(:message)[:message]
+        product = buyable_params
         
         # Sanitize and format the phone number
         phone = PhoneNumber.new(purchaser[:phone]).to_s
@@ -175,6 +176,7 @@ class ApiController < ApiBaseController
     # @param promotion_id String an id of the item being purchased (optional)
     def placeOrder
         recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
+        product = buyable_params
         
         command = PlaceOrder.call(@current_user, payment_source, recipients, message, product)
         if command.success?
@@ -189,9 +191,11 @@ class ApiController < ApiBaseController
         
         recipients, payment_source = params.require([:recipients, :payment_source])
         message = params.permit(:message)[:message]
+        product = buyable_params
+        fee = product.fee(:cents)
         
         # Place the order
-        command = InitiateOrder.call(@current_user, payment_source, recipients, message, product)
+        command = InitiateOrder.call(@current_user, payment_source, recipients, message, product, fee)
         if command.success?
             if command.result.status == Order::OK_STATUS
                 render json: {success: true}, status: :ok
@@ -309,7 +313,7 @@ class ApiController < ApiBaseController
        end
     end
     
-    def product
+    def buyable_params
         buyable = params.require(:product).permit(:id, :type)
         
         case buyable["type"]

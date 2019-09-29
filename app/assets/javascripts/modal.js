@@ -17,8 +17,8 @@ var Modal = (function() {
      * methods such as oninit and view.  
      * @param attr is passed into body lifecycle calls as vnode.attr
      * 
-     * If body has an okclicked function, then that is called when the modal ok button is clicked.
-     * Okclicked is expected to return a Promise that resolves to a value that is passed to the 
+     * If body has an okClicked function, then that is called when the modal ok button is clicked.
+     * okClicked is expected to return a Promise that resolves to a value that is passed to the 
      * the completion handler for the ok button.
      */
     var setBody = function(body, attr) {

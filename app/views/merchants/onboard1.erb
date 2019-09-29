@@ -1,38 +1,4 @@
 
 <div class="content-width container">
-<h5>Step 1 of 3</h5>
-<%= form_with url: 'onboard_merchant' do |form| %>
-
-    
-  <div class="row">
-    <div class="col">
-      <div class="form-group">
-        <%= form.label :merchant_name, "Business Name" %>
-        <%= form.text_field :merchant_name, class: "form-control" %>
-      </div>  
-    </div>
-  </div>
-      
-  <div class="row">
-    <div class="col">
-      <div class="form-group">
-        <%= form.label :merchant_email, "Business Email" %>
-        <%= form.text_field :merchant_email, class: "form-control" %>
-      </div>  
-    </div>
-  </div>
-  
-    <div class="row">
-    <div class="col">
-      <div class="form-group">
-        <%= form.label :merchant_phone, "Phone Number" %>
-        <%= form.password_field :merchant_phone, class: "form-control" %>
-      </div>  
-    </div>
-  </div>
-  
-  <div class="row col justify-content-end mr-0 pr-0 ml-0">
-      <%= form.submit "Next", class: "btn btn-primary" %>
-  </div>
-<% end %>    
+<div id="merchant_onboard"></div>
 </div>

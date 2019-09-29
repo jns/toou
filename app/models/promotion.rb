@@ -62,4 +62,8 @@ class Promotion < ApplicationRecord
        status == ACTIVE and !expired? 
     end
     
+    # The purchase fee
+    def fee_cents
+       125
+    end
 end

@@ -6,8 +6,6 @@ class InitiateOrder
 
     prepend SimpleCommand
     
-    FEE = 125
-    
     cattr_accessor :payment_intent_client
     self.payment_intent_client = Stripe::PaymentIntent
 
@@ -17,12 +15,13 @@ class InitiateOrder
     # payment_source is a stripe payment source token
     # message is a message to deliver with the pass
     # buyable is a product or promotion
-    def initialize(account, payment_source, recipients, message, buyable)
+    def initialize(account, payment_source, recipients, message, buyable, fee)
         @account = account
         @payment_source = payment_source
         @recipients = recipients
         @message = message
         @buyable = buyable
+        @fee = fee
     end
     
     def call
@@ -59,24 +58,32 @@ class InitiateOrder
                 # Amount to keep in reserve to payout merchants
                 commitment_amount_cents = @buyable.price(:cents)*@recipients.count
                 # Amount charged to the customer
-                charge_amount_cents = commitment_amount_cents + FEE*@recipients.count
-                
-                # Create a payment intent. 
-                intent = @@payment_intent_client.create(
-                    :amount => charge_amount_cents,
-                    :currency => "usd", 
-                    :payment_method => @payment_source,
-                    :transfer_group => @order.id,
-                    :customer => @account.stripe_customer_id,
-                    :description => "TooU Purchase", 
-                    :confirmation_method => "manual", 
-                    :confirm => true,
-                    :setup_future_usage => 'on_session',
-                    :metadata => {
-                        :order_id => @order.id, 
-                        :customer_id => @account.id,
-                        :commitment_amount => commitment_amount_cents
-                    })
+                charge_amount_cents = commitment_amount_cents + @fee*@recipients.count
+            
+                intent = if charge_amount_cents > 0
+                    # Create a payment intent. 
+                    @@payment_intent_client.create(
+                        :amount => charge_amount_cents,
+                        :currency => "usd", 
+                        :payment_method => @payment_source,
+                        :transfer_group => @order.id,
+                        :customer => @account.stripe_customer_id,
+                        :description => "TooU Purchase", 
+                        :confirmation_method => "manual", 
+                        :confirm => true,
+                        :setup_future_usage => 'on_session',
+                        :metadata => {
+                            :order_id => @order.id, 
+                            :customer_id => @account.id,
+                            :commitment_amount => commitment_amount_cents
+                        })
+                else
+                    Log.create(log_type: Log::INFO, context: InitiateOrder.name, current_user: @account.id, message: "Bypassing Payment Intent for order #{@order.id}")
+                    Class.new do 
+                        def status; "succeeded"; end
+                        def id; nil; end
+                    end.new
+                end
                 
                 @order.update(charge_amount_cents: charge_amount_cents,
                              commitment_amount_cents: commitment_amount_cents,
@@ -84,7 +91,8 @@ class InitiateOrder
                 
                 if intent.status == 'succeeded'
                     @order.update(status: Order::OK_STATUS)
-                    CompleteOrder.call(@order)
+                    result = CompleteOrder.call(@order)
+                    errors.add(result.errors) unless result.success?
                 elsif intent.status == 'requires_confirmation' 
                     # Manual confirmation method means that we have a second chance to confirm how.
                     intent = ConfirmPaymentIntent.call(intent.id).result
@@ -94,14 +102,11 @@ class InitiateOrder
                 else
                     # Cancel payment intent here
                     @order.update(status: Order::FAILED_STATUS)
+                    errors.add(:error, "Payment Failed")
                 end
 
                 @order.payment_intent = intent
             end # End of transaction
-
-            # @order.passes.each do |pass|
-            #     PassNotificationJob.perform_later(pass.id)
-            # end
             
             return @order
         
@@ -143,7 +148,6 @@ class InitiateOrder
     end
     
     def create_pass(recipient_phone, message, buyable, order) 
-        expiry = Date.today + 180.days
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "InitiateOrder#create_pass", current_user: acct.id, message: "Creating pending pass for order #{order.id}")
         PendingPass.create(message: message, account: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))

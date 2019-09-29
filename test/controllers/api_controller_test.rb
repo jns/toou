@@ -69,9 +69,12 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
       assert p.key? "id"
       assert p.key? "name"
       assert p.key? "max_price_cents"
+      assert p.key? "max_price_dollars"
       assert p.key? "icon"
       assert p.key? "icon_url"
       assert p.key? "type"
+      assert p.key? "fee_dollars"
+      assert p.key? "fee_cents"
     }
   end
 

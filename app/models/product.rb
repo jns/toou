@@ -8,6 +8,7 @@ class Product < ApplicationRecord
     
    validates_presence_of :max_price_cents, :name
    
+   
     def price_cents(merchant = nil)
         if merchant and can_redeem?(merchant)
             merchant_price_cents(merchant)
