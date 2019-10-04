@@ -45,4 +45,16 @@ class  MerchantPolicyTest < ActiveSupport::TestCase
 	test "Unknown users cannot access dashboard link" do
 		refute MerchantPolicy.new(nil, nil).stripe_dashboard_link?	
 	end
+	
+	test "Merchant User can access credits" do
+		assert MerchantPolicy.new(users(:quantum_user), merchants(:quantum)).credits?	
+	end 
+	
+	test "Device can access credits" do
+		assert MerchantPolicy.new(devices(:quantum_device), merchants(:quantum)).credits?	
+	end
+	
+	test "Device cannot access other merchants credits" do
+		refute MerchantPolicy.new(devices(:quantum_device), merchants(:cupcake_store)).credits?	
+	end
 end

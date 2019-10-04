@@ -143,7 +143,11 @@ class MerchantApiController < ApiBaseController
     
     # Returns all credits for a merchant
     def credits
-        merchant = merchant_params
+        merchant = if @current_user.is_a? Device
+            @current_user.merchant
+        else
+            merchant_params
+        end
         authorize merchant
         @charges = merchant.charges
         render 'charges.json.jbuilder', status: :ok
@@ -155,5 +159,5 @@ class MerchantApiController < ApiBaseController
        merchant_id = params.require(:data).require(:merchant_id) 
        Merchant.find(merchant_id)
     end
-    
+   
 end

@@ -56,5 +56,10 @@ class MerchantTest < ActiveSupport::TestCase
     refute merchants(:cupcake_store).deauthorize_device("test_device")
     assert_not_nil Device.find_by(merchant: m, device_id: "test_device")
   end 
+  
+  test "Redeem merchant credits" do
+    m = merchants(:quantum)
+    assert_equal 1, m.charges.count
+  end
 
 end

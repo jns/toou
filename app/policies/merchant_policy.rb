@@ -69,7 +69,13 @@ class MerchantPolicy < ApplicationPolicy
 	end 
 	
 	def credits?
-		user.merchant? and record.user === user
+		if user.is_a? User
+			user.merchant? and record.user === user
+		elsif user.is_a? Device
+			user.merchant === record
+		else
+			false
+		end
 	end
 
 	def stripe_link?

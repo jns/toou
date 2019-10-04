@@ -3,12 +3,36 @@ var MerchantInfo = (function() {
 
     var view = function(vnode) {
         if (vnode.attrs.name != undefined && vnode.attrs.address != undefined) {
-            return m(".text-center", [m(".h5", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
+            return m(".col-md.text-center", [m(".h5", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
         } else if (vnode.attrs.error != undefined) {
-            return m(".text-center.error", m(".h6", vnode.attrs.error));
+            return m(".col-md.text-center.error", m(".h6", vnode.attrs.error));
         } else {
             return m(".text-center", m(".h3", "Merchant Not Found"));
         }
+    };
+    
+    return {view: view};    
+})();
+
+var RecentCredits = (function(){
+
+    var currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    var tableRows = function(transactions) {
+        return transactions.map(function(t) {
+            return m("tr", [
+                m("td", new Date(t.created_at).toDateString()),
+                m("td", currencyFormatter.format(t.amount_cents/100.0))
+            ]);
+        })
+    };
+    
+    var view = function(vnode) {
+        console.log(vnode.attrs.transactions);
+        var table = m("table.table.table-sm", [
+                        m("thead", m("tr", m("th[colspan=2]", "Last Transactions"))),
+                        m("tbody", tableRows(vnode.attrs.transactions))
+            ]);
+        return m(".text-center", table);    
     };
     
     return {view: view};    
@@ -172,9 +196,10 @@ var RedeemToou = (function() {
     
     var loadMerchantData = function() {
         if (Credentials.hasToken("REDEMPTION_TOKEN")) {
+            var tok = Credentials.getToken("REDEMPTION_TOKEN");
             m.request({
                 method: "POST",
-                body: {authorization: Credentials.getToken("REDEMPTION_TOKEN")},
+                body: {authorization: tok},
                 url: "/api/redemption/merchant_info"
             }).then(function(merchantData) {
                 m.mount($(".merchant-info")[0],{view: function() { return m(MerchantInfo, merchantData)}});
@@ -187,6 +212,15 @@ var RedeemToou = (function() {
                     m.render($(".merchant-info")[0], m(".h6.error", "Unknown Error. Please reload page"));
                 }
             });
+            m.request({
+                method: "POST",
+                body: {authorization: tok},
+                url: "/api/merchant/credits"
+            }).then(function(credits) {
+               if (credits.length > 1) {
+                   m.mount($(".last-redemption")[0], {view: function() {return m(RecentCredits, {transactions: credits})}})
+               }
+            }); 
         }
     };
     
