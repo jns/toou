@@ -23,7 +23,7 @@ class MerchantsController < ApplicationController
             @merchants = policy_scope(Merchant)
             render 'dashboard'
         else
-            redirect_to controller: 'user', action: 'login'
+            render 'new_user'
         end
     end
     

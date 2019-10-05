@@ -1,7 +1,7 @@
 
 <div class="content-width container">
 <div class="text-center h4">
-	Merchant Portal	
+	For Merchants	
 </div>
 
 <% if @current_user %>
@@ -9,16 +9,57 @@
 	<%= link_to "Merchant Dashboard", merchants_path, {class: "btn btn-primary btn-sm w-50", style: "white-space: normal"} %>
 </div>
 <% else %>
-<div class="text-center m-4">
-	<%= link_to "Create an Account", user_new_merchant_url, {class: "btn btn-primary btn-sm w-50"} %>
+<div>
+	<ul class="list-unstyled ml-5">
+		<li>Redeeming TooU's is easy and costs you nothing.</li>
+		<li>There are <u>NO FEES</u> for merchants.</li>
+		<li>TooU will pay you a premium for your products</li>
+		<ul >
+			<li>$10.00 for a Beer</li>
+			<li>$6.00 for a Coffee</li>
+			<li>$6.00 for a baked good or ice cream</li>
+			<li>$12.00 for a glass of wine</li>
+		</ul>
+		<li>TooU makes money by charging $1.25 convenience fee to the sender</li>
+		<li>All you need is a web browser</li>
+	</ul>
 </div>
+
 <div class="text-center m-4">
-	<%= link_to "Login", login_url, {class: "btn btn-primary btn-sm w-50"} %>
+	<%= link_to "Create an Account to Get Started", user_new_merchant_url, {class: "btn btn-outline-primary btn-sm"} %>
+</div>
+
+<div class="container w-75">
+	<dl class="row m-2">
+		<dt class="col-sm-3">Step 1</dt>
+		<dd class="col-sm-9"><%= link_to "Create an account and add your business.", user_new_merchant_url %>
+		</dd>
+		<dt class="col-sm-3">Step 2</dt>
+		<dd class="col-sm-9">Choose which products you will redeem</dd>
+		<dt class="col-sm-3">Step 3</dt>
+		<dd class="col-sm-9">
+			Setup your payouts.  We use <a href="https://stripe.com">Stripe</a>
+			to pay you for your products.  Stripe is a trusted payment processer for millions of companies.
+			You will need some business and bank information when enrolling with stripe.
+		</dd>
+		<dt class="col-sm-3">Step 4</dt>
+		<dd class="col-sm-9">
+			Authorize your POS terminal or Phone to redeem TooU's
+		</dd>
+	</dl>
 </div>
 <% end %>
 
-<div class="text-center m-4">
-	<%= link_to "Redeem A TooU", "/mredeem/toou", {class: "btn btn-primary btn-sm w-50"} %>
+<div class="card">
+	<div class="card-body">
+		<div class="h6 card-title text-center">Already Enrolled?</div>
+		<div class="text-center m-3">
+			<%= link_to "Login", login_url, {class: "btn btn-primary btn-sm w-50"} %>
+		</div>
+		<div class="text-center m-3">
+			<%= link_to "Redeem A TooU", "/mredeem/toou", {class: "btn btn-primary btn-sm w-50"} %>
+		</div>
+	</div>
 </div>
 
 </div>
