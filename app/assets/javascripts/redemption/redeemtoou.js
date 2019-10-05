@@ -28,7 +28,6 @@ var RecentCredits = (function(){
     };
     
     var view = function(vnode) {
-        console.log(vnode.attrs.transactions);
         var table = m("table.table.table-sm", m("tbody", tableRows(vnode.attrs.transactions)));
         return m(".text-center", [m(".h5.text-center", "Recent Transactions"), table]);    
     };
@@ -215,8 +214,8 @@ var RedeemToou = (function() {
                 body: {authorization: tok},
                 url: "/api/merchant/credits"
             }).then(function(credits) {
-               if (credits.length > 1) {
-                   m.mount($(".last-redemption")[0], {view: function() {return m(RecentCredits, {transactions: credits})}})
+               if (credits.length > 0) {
+                   m.mount($(".last-redemption")[0], {view: function() {return m(RecentCredits, {transactions: credits})}});
                }
             }); 
         }
@@ -294,6 +293,7 @@ var RedeemToou = (function() {
             body: {authorization: Credentials.getToken("REDEMPTION_TOKEN"), data: {code: code}}
         }).then(function(data) {
             showOverlay("approved", {amount: data.amount});
+            loadMerchantData();
         }).catch(function(error) {
             if (error.code === 401) {
                 authenticate();
