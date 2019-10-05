@@ -30,8 +30,9 @@ var Home = (function() {
                 ]),
             m(".row", merchant_logos.map(function(m) {return m("img.col", {src: m})})),
             m(".row.mt-5.border-top", [
-                m(".col-md-6.text-center.pt-3", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
-                 m(".col-md-6.text-center.pt-3", m("a[href='/about']", "About TooU")),
+                m(".col-md-4.text-center.pt-3", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
+                 m(".col-md-4.text-center.pt-3", m("a[href='/about']", "About TooU")),
+                 m(".col-md-4.text-center.pt-3", m("a[href='/support']", "Contact Us")),
                 ])
             ]);
     };
