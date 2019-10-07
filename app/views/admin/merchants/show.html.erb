@@ -1,0 +1,44 @@
+<div class="container content-width">
+    <div class="h5"><%= @merchant.name %></div>
+
+    <% if @merchant.logo.attached? %>
+    <div >
+        <%= image_tag @merchant.logo %>
+    </div>
+    <% end %>
+        <%= form_for @merchant, url: admin_merchant_url do |form| %>
+        <div class="input-group mb-3">
+          <div class="custom-file">
+            <%= form.file_field :logo, {class: "custom-file-input"} %>
+            <label class="custom-file-label" for="inputGroupFile02">Choose Logo</label>
+          </div>
+        </div>
+        <script>
+            $("#merchant_logo").change(function (ev){
+               var t = ev.target;
+               t.closest("form").submit();
+            });
+        </script>
+        <% end %> 
+
+    <dl class="row">
+        <dt class="col-sm-3">Website</dt>
+        <dd class="col-sm-9"><%= @merchant.website %></dd>
+        <dt class="col-sm-3">Phone Number</dt>
+        <dd class="col-sm-9"><%= @merchant.phone_number %></dd>
+        <dt class="col-sm-3">Address 1</dt>
+        <dd class="col-sm-9"><%= @merchant.address1 %></dd>
+        <dt class="col-sm-3">Address 2</dt>
+        <dd class="col-sm-9"><%= @merchant.address2 %></dd>
+        <dt class="col-sm-3">City</dt>
+        <dd class="col-sm-9"><%= @merchant.city %></dd>
+        <dt class="col-sm-3">State</dt>
+        <dd class="col-sm-9"><%= @merchant.state %></dd>
+        <dt class="col-sm-3">Zip</dt>
+        <dd class="col-sm-9"><%= @merchant.zip %></dd>
+        <dt class="col-sm-3">latitude</dt>
+        <dd class="col-sm-9"><%= @merchant.latitude %></dd>
+        <dt class="col-sm-3">longitude</dt>
+        <dd class="col-sm-9"><%= @merchant.longitude %></dd>
+    </dl>
+</div>

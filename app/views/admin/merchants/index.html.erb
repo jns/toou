@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+
+<div class="card card-body mx-auto">
+
+<h4>Orders</h4>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Enrolled</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @merchants.each do |merchant| %>
+      <tr>
+        <td><%= merchant.id %></td>
+        <td><%= link_to merchant.name, admin_merchant_url(merchant) %></td>
+        <td><%= merchant.enrolled %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+</div>

@@ -148,6 +148,6 @@ Rails.application.routes.draw do
     resources :orders
     resources :accounts
     resources :logs
-    resources :cards
+    resources :merchants
   end
 end

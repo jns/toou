@@ -30,5 +30,8 @@ module Workspace
     
     # Set the stripe configuration
     Stripe.api_key = Rails.application.secrets.stripe_api_key
+    
+    # Use Vips for processing variants.
+    config.active_storage.variant_processor = :vips
   end
 end

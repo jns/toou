@@ -59,6 +59,9 @@ gem 'pundit', '~> 2.0.1'
 # Use barby for barcode generation
 gem 'barby'
 
+# For image resizing
+gem 'image_processing', '~> 1.2'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

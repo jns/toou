@@ -2,10 +2,6 @@ require 'test_helper'
 
 class MerchantsControllerTest < ActionDispatch::IntegrationTest
 
-   test "redirect get merchants if unauthorized" do
-        get merchants_url
-        assert_redirected_to login_url
-    end
     
     test "redirect post merchants if unauthorized" do
         post merchants_url

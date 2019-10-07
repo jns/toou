@@ -1,6 +1,7 @@
 class Merchant < ApplicationRecord
     
     belongs_to :user
+    has_one_attached :logo
     has_many :merchant_products
     has_many :products, through: :merchant_products
     has_many :merchant_pass_queues
