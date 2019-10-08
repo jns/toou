@@ -1,9 +1,62 @@
 /* global $, m, Breadcrumb */
 
+var MerchantLogos = (function() {
+    
+    var merchants = [];
+    var idx = 0;
+    
+    var shuffle = function(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    };
+    
+    var nextIndex = function() {
+        if (++idx >= merchants.length) {
+            idx = 0;
+        }
+        return idx;
+    }
+    
+    var replace = function(logo_num) {
+        setTimeout(function() {
+            var im = $("img.logo-"+logo_num);
+            im.fadeOut(500, function() {
+                im.attr("src", merchants[nextIndex()]["logo"]);
+                im.on("load", function(ev) {$(this).fadeIn(500);})
+            });
+            replace((logo_num + 1) % (window.screen.width < 576 ? 1 : 3));
+        }, 3000);
+    };
+    
+    var oninit = function(vnode) {
+        m.request({url: "/api/merchants",
+                    method: "POST", 
+                    body: {}})
+        .then(function(data) {
+                        merchants = shuffle(data);
+                        replace(0);
+                    });
+    };
+    
+    var view = function(vnode) {
+        if (merchants.length > 1) {
+        return m(".row.hidden-sm-down", [
+                m(".col-sm-4.text-right.hidden-sm", m("img.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-sm-4.text-center", m("img.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-sm-4.text-left.hidden-sm", m("img.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
+                ]);
+        }
+    };
+    
+    return {view: view, oninit: oninit};
+})();
+
 var Home = (function() {
     
-    var merchant_logos = [];
-    
+
     var oninit = function() {
     };
     
@@ -28,11 +81,11 @@ var Home = (function() {
             m(".row", [
                 m(".col.text-center.mt-5.h5", m("a[href='merchant_map']", "Map of Participating Merchants"))
                 ]),
-            m(".row", merchant_logos.map(function(m) {return m("img.col", {src: m})})),
+            m(MerchantLogos),
             m(".row.mt-5.border-top", [
-                m(".col-md-4.text-center.pt-3", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
-                 m(".col-md-4.text-center.pt-3", m("a[href='/about']", "About TooU")),
-                 m(".col-md-4.text-center.pt-3", m("a[href='/support']", "Contact Us")),
+                m(".col-sm-4.text-center.pt-3", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
+                 m(".col-sm-4.text-center.pt-3", m("a[href='/about']", "About TooU")),
+                 m(".col-sm-4.text-center.pt-3", m("a[href='/support']", "Contact Us")),
                 ])
             ]);
     };

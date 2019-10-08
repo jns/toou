@@ -2,13 +2,9 @@ class AdminController < ApplicationController
 
     layout 'admin'
     
+    before_action :authorize_admin
+    
     def index
-        begin
-            authorize :admin
-        rescue
-            flash[:notice] = "Administrative access prohibitied"
-            redirect_to(root_path)
-        end
         
         today = Date.today
         @new_accounts = Account.select("date(created_at)").group("date(created_at)").count
@@ -39,4 +35,14 @@ class AdminController < ApplicationController
 
     end
 
+    private 
+    
+    def authorize_admin
+        begin
+            authorize :admin
+        rescue
+            flash[:notice] = "Administrative access prohibitied"
+            redirect_to(login_path)
+        end
+    end
 end
