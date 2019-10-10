@@ -27,7 +27,7 @@ var MerchantLogos = (function() {
                 im.attr("src", merchants[nextIndex()]["logo"]);
                 im.on("load", function(ev) {$(this).fadeIn(500);})
             });
-            replace((logo_num + 1) % (window.screen.width < 576 ? 1 : 3));
+            replace((logo_num + 1) % 3);
         }, 3000);
     };
     
@@ -43,10 +43,11 @@ var MerchantLogos = (function() {
     
     var view = function(vnode) {
         if (merchants.length > 1) {
-        return m(".row.hidden-sm-down", [
-                m(".col-sm-4.text-right.hidden-sm", m("img.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
-                m(".col-sm-4.text-center", m("img.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
-                m(".col-sm-4.text-left.hidden-sm", m("img.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
+        return m(".row", [
+                m("div", {style: "height: 75px"}),
+                m(".col-4.text-right", m("img.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-4.text-center", m("img.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-4.text-left", m("img.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
                 ]);
         }
     };
@@ -83,7 +84,7 @@ var Home = (function() {
                 ]),
             m(MerchantLogos),
             m(".row.mt-5.border-top", [
-                m(".col-sm-4.text-center.pt-3", m("a[href='/merchants/new_user']", "Are you a merchant? Join the TooU Marketplace!")),
+                m(".col-sm-4.text-center.pt-3", m("a[href='/merchants/new_user']", "Merchant Signup")),
                  m(".col-sm-4.text-center.pt-3", m("a[href='/about']", "About TooU")),
                  m(".col-sm-4.text-center.pt-3", m("a[href='/support']", "Contact Us")),
                 ])
