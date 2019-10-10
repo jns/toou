@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+army:
+  name: Army
+
+navy:
+  name: Navy
+  
+marines:
+  name: Marines
+  
+airforce:
+  name: Air Force

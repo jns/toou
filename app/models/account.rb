@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-    has_many :passes
+    has_many :passes, as: :recipient
     has_many :orders
     has_many :charges
     

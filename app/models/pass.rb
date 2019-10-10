@@ -1,13 +1,13 @@
 class Pass < ActiveRecord::Base
     
-    attr_readonly :serial_number, :expiration, :created_at, :account, :order, :buyable, :value
+    attr_readonly :serial_number, :expiration, :created_at, :recipient, :order, :buyable, :value
     
     USED = "USED"
     EXPIRED = "EXPIRED"
     VALID = "VALID"
     
     # The Account is the owner of the pass, i.e. the person the pass was purchased for
-    belongs_to :account
+    # belongs_to :account
     
     # The Pass belongs to an Order.  Traverse pass.order.account to find the person who purchased the pass
     belongs_to :order
@@ -22,7 +22,7 @@ class Pass < ActiveRecord::Base
     # A pass is redeemed by a merchant
     belongs_to :merchant
     
-    alias :recipient :account
+    belongs_to :recipient, polymorphic: true
     
     scope :valid_passes, ->{where("transfer_stripe_id is null and expiration > '#{Time.now.to_formatted_s(:db)}'")}
     
@@ -33,7 +33,7 @@ class Pass < ActiveRecord::Base
     end
     
     # Passes must be part of an order
-    validates_presence_of :order, :buyable, :account
+    validates_presence_of :order, :buyable, :recipient
     
     def purchaser
        order.account 

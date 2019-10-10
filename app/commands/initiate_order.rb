@@ -150,7 +150,7 @@ class InitiateOrder
     def create_pass(recipient_phone, message, buyable, order) 
         acct = Account.find_or_create_by(phone_number: recipient_phone) 
         Log.create(log_type: Log::INFO, context: "InitiateOrder#create_pass", current_user: acct.id, message: "Creating pending pass for order #{order.id}")
-        PendingPass.create(message: message, account: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
+        PendingPass.create(message: message, recipient: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
     end
     
     def errorDescription
