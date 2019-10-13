@@ -16,7 +16,16 @@ var MerchantInfo = (function() {
 
 var RecentCredits = (function(){
 
-    var currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    var currencyFormatter;
+    
+    if (typeof Intl == 'object') {
+        currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    } else {
+        currencyFormatter = {format: function(value) {
+            return "$" + value.toFixed(2);   
+        }};
+    }
+    
     var tableRows = function(transactions) {
         return transactions.map(function(t) {
             var d = new Date(t.created_at);

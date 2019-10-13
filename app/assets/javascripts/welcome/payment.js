@@ -193,9 +193,9 @@ var Payment = (function() {
             submitPayment(event, "order").then(function(response) {
                     event.complete('success');
                     completePurchase();
-                }).catch(function(response) {
+                }).catch(function(err) {
                     event.complete('fail');
-                    purchaseFailed(err);
+                    purchaseFailed(err.response.error);
                });
             });
     
