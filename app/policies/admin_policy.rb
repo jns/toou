@@ -18,7 +18,7 @@ class AdminPolicy < ApplicationPolicy
   end
   
   def update?
-    user and user.admin?
+    false
   end
   
   def new?

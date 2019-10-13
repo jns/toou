@@ -31,7 +31,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
     end 
     
     def get_code(merchant, pass)
-        customer = pass.account
+        customer = pass.recipient
         customer_token = forceAuthenticate(customer)
         # Get a valid code
         post "/api/redemption/get_code", params: {authorization: customer_token, data: {merchant_id: merchant.id, pass_sn: pass.serial_number}}, as: :json
@@ -50,7 +50,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
     test "User can get a code for own pass" do
         merchant = merchants(:quantum)
         pass = passes(:redeemable_pass)
-        customer = pass.account
+        customer = pass.recipient
         token = forceAuthenticate(customer)
         
         post "/api/redemption/get_code", params: {authorization: token, data: {merchant_id: merchant.id, pass_sn: pass.serial_number}}, as: :json
@@ -65,7 +65,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
         merchant = merchants(:quantum)
         pass = passes(:redeemable_pass)
         customer = accounts(:pete)
-        assert_not_equal customer, pass.account
+        assert_not_equal customer, pass.recipient
         
         token = forceAuthenticate(customer)
         
@@ -137,7 +137,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
         pass = passes(:redeemable_pass)
         code = get_code(merchant, pass)
         
-        token = forceAuthenticate(pass.account)
+        token = forceAuthenticate(pass.recipient)
 
         post "/api/redemption/cancel_code", params: {authorization: token, data: {merchant_id: merchant.id, pass_sn: pass.serial_number}}, as: :json
 	    assert_response :ok

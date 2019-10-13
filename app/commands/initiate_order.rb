@@ -50,8 +50,11 @@ class InitiateOrder
                     raise "Test user can only place order for self"
                   end
                   
+                  recipient = Account.find_or_create_by(phone_number: pn) 
+        
+                  
                   # generate the pass
-                  create_pass(pn, @message, @buyable, @order)
+                  create_pass(recipient, @message, @buyable, @order)
                 }
                 
                 
@@ -147,10 +150,9 @@ class InitiateOrder
         end
     end
     
-    def create_pass(recipient_phone, message, buyable, order) 
-        acct = Account.find_or_create_by(phone_number: recipient_phone) 
-        Log.create(log_type: Log::INFO, context: "InitiateOrder#create_pass", current_user: acct.id, message: "Creating pending pass for order #{order.id}")
-        PendingPass.create(message: message, recipient: acct, order: order, buyable: buyable, value_cents: buyable.price(:cents))
+    def create_pass(recipient, message, buyable, order) 
+        Log.create(log_type: Log::INFO, context: "InitiateOrder#create_pass", current_user: order.account.id, message: "Creating pending pass for order #{order.id}")
+        PendingPass.create(message: message, recipient: recipient, order: order, buyable: buyable, value_cents: buyable.price(:cents))
     end
     
     def errorDescription

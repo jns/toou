@@ -24,7 +24,7 @@ class RequestPasses
         end
         
         @account.passes.order(created_at: :desc).collect{|p| p}.concat( @passes.map { |sn| 
-            found_pass = Pass.find_by(serial_number: sn, account_id: @account.id)
+            found_pass = Pass.find_by(serial_number: sn, recipient: @account)
             if found_pass then
                 found_pass
             else

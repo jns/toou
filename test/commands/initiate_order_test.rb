@@ -17,6 +17,7 @@ class InitiateOrderTest < ActiveSupport::TestCase
 
         assert_no_difference 'MockStripePaymentIntent.intents.count' do
             cmd = InitiateOrder.call(acct, source, recipients, message, product, product.fee(:cents))
+            puts cmd.errors
            assert cmd.success?
            order = cmd.result
            assert_equal 1, order.passes.count
@@ -24,7 +25,7 @@ class InitiateOrderTest < ActiveSupport::TestCase
            assert_equal Order::OK_STATUS, order.status
            assert_equal 1, order.passes.count
            
-           assert_equal accounts(:pete), pass.account
+           assert_equal accounts(:pete), pass.recipient
            assert_equal product, pass.buyable
            assert_equal 0, pass.value_cents
            assert_equal message, pass.message
@@ -49,7 +50,7 @@ class InitiateOrderTest < ActiveSupport::TestCase
            assert_equal intent, order.payment_intent
            assert_equal 1, order.passes.count
            pass = order.passes.first
-           assert_equal accounts(:pete), pass.account
+           assert_equal accounts(:pete), pass.recipient
            assert_equal product, pass.buyable
            assert_equal product.max_price_cents, pass.value_cents
            assert_equal message, pass.message

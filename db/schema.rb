@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_07_011556) do
+ActiveRecord::Schema.define(version: 2019_10_10_235419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,12 @@ ActiveRecord::Schema.define(version: 2019_10_07_011556) do
     t.index ["merchant_id"], name: "index_devices_on_merchant_id"
   end
 
+  create_table "groups", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "logs", force: :cascade do |t|
     t.string "log_type"
     t.string "message"
@@ -140,7 +146,6 @@ ActiveRecord::Schema.define(version: 2019_10_07_011556) do
     t.datetime "expiration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "account_id"
     t.string "message"
     t.integer "order_id"
     t.integer "buyable_id"
@@ -150,13 +155,14 @@ ActiveRecord::Schema.define(version: 2019_10_07_011556) do
     t.integer "transfer_amount_cents"
     t.datetime "transfer_created_at"
     t.integer "value_cents"
-    t.index ["account_id"], name: "index_passes_on_account_id"
+    t.string "recipient_type"
+    t.bigint "recipient_id"
     t.index ["merchant_id"], name: "index_passes_on_merchant_id"
     t.index ["order_id"], name: "index_passes_on_order_id"
+    t.index ["recipient_type", "recipient_id"], name: "index_passes_on_recipient_type_and_recipient_id"
   end
 
   create_table "pending_passes", force: :cascade do |t|
-    t.integer "account_id"
     t.string "message"
     t.integer "order_id"
     t.integer "buyable_id"
@@ -164,8 +170,10 @@ ActiveRecord::Schema.define(version: 2019_10_07_011556) do
     t.integer "value_cents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_pending_passes_on_account_id"
+    t.string "recipient_type"
+    t.bigint "recipient_id"
     t.index ["order_id"], name: "index_pending_passes_on_order_id"
+    t.index ["recipient_type", "recipient_id"], name: "index_pending_passes_on_recipient_type_and_recipient_id"
   end
 
   create_table "products", force: :cascade do |t|

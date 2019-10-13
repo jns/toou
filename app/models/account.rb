@@ -62,4 +62,12 @@ class Account < ActiveRecord::Base
        return result
     end
     
+    
+    def to_s
+        if @name
+           @name
+        else
+            @phone_number
+        end
+    end
 end
