@@ -1,6 +1,8 @@
 module Admin
 class MerchantsController < AdminController
 
+  skip_before_action :authorize_admin, only: [:update]
+  
   def index
     @merchants = Merchant.all
   end
@@ -11,6 +13,7 @@ class MerchantsController < AdminController
   
   def update
       @merchant = Merchant.find(params[:id])
+      authorize @merchant, policy_class: AdminMerchantPolicy
       @merchant.logo.attach merchant_params["logo"]
       redirect_to :admin_merchant
   end
