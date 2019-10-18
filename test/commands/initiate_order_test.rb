@@ -17,7 +17,6 @@ class InitiateOrderTest < ActiveSupport::TestCase
 
         assert_no_difference 'MockStripePaymentIntent.intents.count' do
             cmd = InitiateOrder.call(acct, source, recipients, message, product, product.fee(:cents))
-            puts cmd.errors
            assert cmd.success?
            order = cmd.result
            assert_equal 1, order.passes.count
@@ -73,6 +72,18 @@ class InitiateOrderTest < ActiveSupport::TestCase
             assert_equal "Card Declined", cmd.errorDescription
         end
    end
+   
+   test "Recipient is group" do
+        acct = accounts(:josh)
+        recipient = [{"group" => groups(:army).id}]
+        source = "pm_12345"
+        message = "Group Purchase Test"
+        product = products(:beer)
+        assert_difference 'MockStripePaymentIntent.intents.count' do 
+            cmd = InitiateOrder.call(acct, source, recipient, message, product, product.fee(:cents))
+            assert cmd.success?
+        end 
+   end 
    
    test "Invalid Recipient" do
         acct = accounts(:josh)

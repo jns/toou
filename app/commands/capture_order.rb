@@ -5,10 +5,9 @@ class CaptureOrder
     cattr_accessor :transfer_client
     self.transfer_client = Stripe::Transfer
     
-    def initialize(merchant, code, account = nil)
+    def initialize(merchant, code)
        @merchant = merchant
        @code = code
-       @account = account
     end
     
     def call
@@ -28,9 +27,10 @@ class CaptureOrder
         receiver = @pass.recipient
         order = @pass.order
         amount = @pass.value_cents
+        account = @mpq.account
         
-        if receiver.is_a? Group and (@account == nil or !receiver.accounts.member?(@account))
-            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Pass #{@pass.id} not redeemable by Account #{@account.id}" )
+        if receiver.is_a? Group and (account == nil or not @pass.recipient.accounts.member?(account))
+            Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Group Pass #{@pass.id} not redeemable by Account" )
             errors.add(:unredeemable, "Pass not redeemable by user")
             @mpq.destroy
             return

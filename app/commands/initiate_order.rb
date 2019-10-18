@@ -40,18 +40,22 @@ class InitiateOrder
 
                 
                 @recipients.each{ |r| 
-                  throw "Recipient phone number cannot be empty" unless r
-                  
-                  # This will format the phone number 
-                  pn = PhoneNumber.new(r).to_s
-                  
-                  # Only permit test users to place an order to themselve
-                  if @account.test_user? and pn != @account.phone_number.to_s
-                    raise "Test user can only place order for self"
-                  end
-                  
-                  recipient = Account.find_or_create_by(phone_number: pn) 
-        
+                    throw "Recipient cannot be empty" unless r
+                    recipient = if r.respond_to? :has_key? and r.has_key? "group"
+                      Group.find(r["group"])
+                    elsif r.is_a? String 
+                      # This will format the phone number 
+                      pn = PhoneNumber.new(r).to_s
+                      
+                      # Only permit test users to place an order to themselve
+                      if @account.test_user? and pn != @account.phone_number.to_s
+                        raise "Test user can only place order for self"
+                      end
+                      
+                      Account.find_or_create_by(phone_number: pn) 
+                    else
+                        raise "Invalid recipient"
+                    end
                   
                   # generate the pass
                   create_pass(recipient, @message, @buyable, @order)

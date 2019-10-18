@@ -6,9 +6,9 @@ class CaptureOrderTest < ActiveSupport::TestCase
     	MockStripeCharge.charges.clear
     end
 	
-	def get_code(merchant, pass)
+	def get_code(merchant, pass, account=nil)
 		code = Random.new.rand(10000)
-		mpq = MerchantPassQueue.create(merchant: merchant, pass: pass, code: code)
+		mpq = MerchantPassQueue.create(merchant: merchant, pass: pass, code: code, account: account)
 		return "%04d" % code
 	end
 	
@@ -112,6 +112,36 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		cmd = CaptureOrder.call(merchant, code)
 		assert cmd.success?
 		assert_nil MerchantPassQueue.find_by(merchant: merchant, code: code)	
+    end
+    
+    test "Group member can capture" do
+    	merchant = merchants(:quantum)
+		pass = passes(:redeemable_by_army)
+		assert_nil pass.transfer_stripe_id
+		assert_nil pass.transfer_amount_cents
+		
+		code = get_code(merchant, pass, accounts(:active_duty))
+		cmd = CaptureOrder.call(merchant, code)
+		assert cmd.success?
+		
+		pass.reload
+		assert_not_nil pass.transfer_stripe_id
+		assert_equal pass.buyable.price(:cents), pass.transfer_amount_cents
+    end
+    
+    test "Non group member cannot capture" do
+    	merchant = merchants(:quantum)
+		pass = passes(:redeemable_by_army)
+		assert_nil pass.transfer_stripe_id
+		assert_nil pass.transfer_amount_cents
+		
+		code = get_code(merchant, pass, accounts(:beer_lover))
+		cmd = CaptureOrder.call(merchant, code)
+		refute cmd.success?
+		
+		pass.reload
+		assert_nil pass.transfer_stripe_id
+		assert_nil pass.transfer_amount_cents
     end
     
 end

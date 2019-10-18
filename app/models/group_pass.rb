@@ -1,0 +1,2 @@
+class GroupPass < Pass
+end

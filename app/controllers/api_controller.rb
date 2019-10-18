@@ -188,7 +188,6 @@ class ApiController < ApiBaseController
     end
 
     def initiate_order
-        
         recipients, payment_source = params.require([:recipients, :payment_source])
         message = params.permit(:message)[:message]
         product = buyable_params

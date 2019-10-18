@@ -232,6 +232,51 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "Can initiate order for group" do 
+    
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    
+    assert_difference 'Order.count', 1 do 
+      # Posting with an array of serial numbers will return those serial numbers
+      post "/api/initiate_order",  
+      params: {authorization: token,
+               recipients: [{group: groups(:army).id}],
+               message: "Go Army",
+               payment_source: "mock_payment_source_token",
+               product: {id: products(:beer).id, type: "Product"}}
+    
+      assert_response :success
+      result = JSON.parse(@response.body)
+      assert result["success"]
+    end   
+    
+  end 
+  
+  test "Can initiate order for individual" do
+    
+    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
+    json = JSON.parse(@response.body) 
+    token = json["auth_token"]
+  
+    
+    assert_difference 'Order.count', 1 do 
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/initiate_order",  
+      params: {authorization: token,
+               recipients: [@acct1.phone_number.to_s],
+               message: "So Long and Thanks for all the Fish",
+               payment_source: "mock_payment_source_token",
+               product: {id: products(:beer).id, type: "Product"}}
+    
+      assert_response :success
+      result = JSON.parse(@response.body)
+      assert result["success"]
+    end
+  end
+  
   test "Place Order Succeeds" do
     
     post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  

@@ -2,9 +2,10 @@ class AddPassToMerchantQueue
     
     prepend SimpleCommand
 
-    def initialize(merchant, pass)
+    def initialize(merchant, pass, account = nil)
         @merchant = merchant
         @pass = pass
+        @account = account
     end
 
     def call
@@ -12,12 +13,12 @@ class AddPassToMerchantQueue
         if @pass.can_redeem?
             
             # If MPQ already exists, return existing
-            mpq = MerchantPassQueue.find_by(merchant: @merchant, pass: @pass)
+            mpq = MerchantPassQueue.find_by(merchant: @merchant, pass: @pass, account: @account)
             return "%04d" % mpq.code if mpq 
     
             # otherwise create one
             code = Random.new.rand(10000)
-            mpq = MerchantPassQueue.create(merchant: @merchant, pass: @pass, code: code)
+            mpq = MerchantPassQueue.create(merchant: @merchant, pass: @pass, code: code, account: @account)
             RemovePassFromQueue.set(wait: 10.minutes).perform_later(mpq.id)
             return "%04d" % code
         elsif @pass.expired?

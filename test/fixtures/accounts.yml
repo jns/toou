@@ -47,3 +47,7 @@ beer_lover:
 beer_lovers_friend:
   phone_number: "+15555551216"
   stripe_customer_id: np_6
+
+active_duty:
+  phone_number: "+15555551217"
+  stripe_customer_id: np_7

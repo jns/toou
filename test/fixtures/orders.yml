@@ -55,3 +55,10 @@ used_order_for_beer_lover:
   charge_stripe_id: charge1234
   charge_amount_cents: 700
   commitment_amount_cents: 650
+  
+order_for_army:
+  account: new_person_2
+  created_at: 2019-10-15 09:00:00
+  charge_stripe_id: ch_20191015
+  charge_amount_cents: 1125
+  commitment_amount_cents: 1000

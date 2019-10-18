@@ -51,9 +51,11 @@ class PassPolicyTest < ActiveSupport::TestCase
     assert PassPolicy.new(accounts(:new_person_2), passes(:redeemable_pass)).get_code?
   end
   
+  
   test "deny thief to get code" do
     refute PassPolicy.new(accounts(:beer_lover), passes(:redeemable_pass)).get_code?
   end
+  
   
   test "expired pass cannot get code" do
     assert PassPolicy.new(accounts(:pete), passes(:expired)).get_code?

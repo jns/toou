@@ -1,5 +1,7 @@
 class PendingPass < ApplicationRecord
 
+    validates :recipient, presence: true
+    
     # The Account is the owner of the pass, i.e. the person the pass was purchased for
     belongs_to :recipient, polymorphic: true
     

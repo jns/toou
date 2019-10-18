@@ -101,3 +101,13 @@ used_beer_pass:
   transfer_amount_cents: 650
   transfer_created_at: 2019-01-02 00:00:00
   value_cents: 650
+
+redeemable_by_army:
+  serial_number: redeemablebyarmy
+  recipient: army (Group)
+  order: order_for_army
+  created_at: 2019-10-15 00:00:00
+  expiration: 2029-10-15 00:00:00
+  message: thank you for your service
+  buyable: beer (Product)
+  value_cents: 1000

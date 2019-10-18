@@ -28,7 +28,7 @@ class RedemptionApiController < ApiBaseController
         begin
             authorize pass
         
-            cmd = AddPassToMerchantQueue.call(merchant, pass)
+            cmd = AddPassToMerchantQueue.call(merchant, pass, @current_user)
             if cmd.success? 
                 render json: {code: cmd.result}, status: :ok
             else
@@ -91,8 +91,14 @@ class RedemptionApiController < ApiBaseController
     
     def paramsPass
         data = params.require(:data).permit(:pass_sn)
+
         if SerialNumber.isValid? data[:pass_sn]
-            Pass.find_by(serial_number: data[:pass_sn])
+            pass = Pass.find_by(serial_number: data[:pass_sn])
+            if pass.recipient.is_a? Group
+                return GroupPass.find(pass.id)
+            else
+                return pass
+            end
         end
     end 
     

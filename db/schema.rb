@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_10_235419) do
+ActiveRecord::Schema.define(version: 2019_10_18_223919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -92,12 +92,23 @@ ActiveRecord::Schema.define(version: 2019_10_10_235419) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "account_id"
+    t.bigint "group_id"
+    t.index ["account_id"], name: "index_memberships_on_account_id"
+    t.index ["group_id"], name: "index_memberships_on_group_id"
+  end
+
   create_table "merchant_pass_queues", force: :cascade do |t|
     t.bigint "merchant_id", null: false
     t.bigint "pass_id", null: false
     t.integer "code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_merchant_pass_queues_on_account_id"
     t.index ["merchant_id", "code"], name: "index_merchant_pass_queues_on_merchant_id_and_code"
     t.index ["merchant_id"], name: "index_merchant_pass_queues_on_merchant_id"
     t.index ["pass_id"], name: "index_merchant_pass_queues_on_pass_id"
