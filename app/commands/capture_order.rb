@@ -63,7 +63,8 @@ class CaptureOrder
             @pass.update(merchant: @merchant, 
                          transfer_stripe_id: tx.id, 
                          transfer_amount_cents: amount, 
-                         transfer_created_at: Time.new)
+                         transfer_created_at: Time.new, 
+                         redeemed_by: account)
 
             @mpq.destroy
             

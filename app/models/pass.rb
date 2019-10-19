@@ -22,8 +22,12 @@ class Pass < ActiveRecord::Base
     # A pass is redeemed by a merchant
     belongs_to :merchant
     
+    # A recipient may be an Account or a Group
     belongs_to :recipient, polymorphic: true
     
+    # Redeemed by is always an account
+    belongs_to :redeemed_by, class_name: "Account", foreign_key: "redeemed_by_id"
+
     scope :valid_passes, ->{where("transfer_stripe_id is null and expiration > '#{Time.now.to_formatted_s(:db)}'")}
     
     # Assign a serial number and a credit card from the pool upon creation

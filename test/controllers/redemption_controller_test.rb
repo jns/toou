@@ -23,6 +23,8 @@ class RedemptionControllerTest < ActionDispatch::IntegrationTest
     post api_redemption_redeem_url, params: {authorization: token, data: { code: code}}
     assert_response :ok
     
+    pass.reload
+    assert_equal account, pass.redeemed_by
     
   end 
   

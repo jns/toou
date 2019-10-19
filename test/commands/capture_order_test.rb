@@ -119,6 +119,7 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:redeemable_by_army)
 		assert_nil pass.transfer_stripe_id
 		assert_nil pass.transfer_amount_cents
+		assert_nil pass.redeemed_by
 		
 		code = get_code(merchant, pass, accounts(:active_duty))
 		cmd = CaptureOrder.call(merchant, code)
@@ -127,6 +128,7 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass.reload
 		assert_not_nil pass.transfer_stripe_id
 		assert_equal pass.buyable.price(:cents), pass.transfer_amount_cents
+		assert_equal accounts(:active_duty), pass.redeemed_by
     end
     
     test "Non group member cannot capture" do
@@ -134,6 +136,7 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass = passes(:redeemable_by_army)
 		assert_nil pass.transfer_stripe_id
 		assert_nil pass.transfer_amount_cents
+		assert_nil pass.redeemed_by
 		
 		code = get_code(merchant, pass, accounts(:beer_lover))
 		cmd = CaptureOrder.call(merchant, code)
@@ -142,6 +145,7 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		pass.reload
 		assert_nil pass.transfer_stripe_id
 		assert_nil pass.transfer_amount_cents
+		assert_nil pass.redeemed_by
     end
     
 end
