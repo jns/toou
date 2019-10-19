@@ -8,7 +8,18 @@
   <%= javascript_include_tag "mithril.2.0.0.js" %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag params[:controller] %>
-<%= csrf_meta_tags %>
+  <%= csrf_meta_tags %>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WXN44KCK0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-2WXN44KCK0');
+  </script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <%= content_for?(:head) ? yield(:head) : "" %>
 </head>

@@ -90,7 +90,10 @@ $(function() {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
         addSignout();
-    }else if (path === "/mredeem") {
+    } else if (path === "/goArmy") { 
+        Breadcrumb.home()
+        GoArmy.mount();
+    } else if (path === "/mredeem") {
         RedeemLogin.mount();
         Breadcrumb.hide();
     } else if (path === "/mredeem/toou") {

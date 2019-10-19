@@ -34,6 +34,12 @@ class WelcomeController < ApplicationController
     #View a specific pass
     def pass
     end
+    
+    # Purchase an army pass
+    def go_army
+        @group = Group.find_by(name: "Army")
+        render 'group_beer_purchase'
+    end
 
 
 end

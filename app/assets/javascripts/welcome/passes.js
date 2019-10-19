@@ -69,11 +69,33 @@ var PassesComponent = (function() {
                 m(".card-body.card-text", cardBody)]);
     };
     
+    var validPasses = function() {
+        return passList.filter(function(p) {return p.status === "VALID"});
+    };
+    
+    var usedPasses = function() {
+        return passList.filter(function(p) {return p.status === "USED"});
+    }
+    
     var view = function() {
-        if (passList.length > 0) {
-            contents = passList.map(function(p) {return addPassCard(p);});
+        var validContents, usedContents;
+        var valid = validPasses();
+        var used = usedPasses();
+        if (valid.length > 0) {
+            validContents = valid.map(function(p) {return addPassCard(p);});
         }
-        return m(".container", contents);
+         
+        if (used.length > 0) {
+            usedContents = used.map(function(p) {return addPassCard(p);});
+        }
+        return m(".container.accordian[id='PassAccordian']", [
+                m(".card", [m(".card-header[id='ValidPassesHeading']", m(".h2.mb-0", m("button.btn.btn-link", {type: "button", "data-toggle": "collapse", "data-target": "#validPasses", "aria-expanded": "true", "aria-controls": "validPasses"}, "Valid Passes"))),
+                            m(".collpase.show", {id: "validPasses", "aria-labelledby": "ValidPassesHeading", "data-parent": "#PassAccordian"}, m(".pass-container", validContents)),
+                            ]),
+                m(".card", [m(".card-header[id='UsedPassesHeading']", m(".h2.mb-0", m("button.btn.btn-link", {type: "button", "data-toggle": "collapse", "data-target": "#usedPasses", "aria-expanded": "false", "aria-controls": "usedPasses"}, "Used Passes"))),
+                            m(".collpase", {id: "usedPasses", "aria-labelledby": "UsedPassesHeading", "data-parent": "#PassAccordian"}, m(".pass-container", usedContents)),
+                            ]),
+            ]);
     };
     
     return {view: view, oninit: oninit};
