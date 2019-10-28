@@ -134,6 +134,13 @@ class ApiController < ApiBaseController
        end
     end
     
+    # get groups a user belongs and the number of valid passes for
+    # buyables in that group
+    def groups
+        @groups = @current_user.groups
+        render 'groups.json.jbuilder', status: :ok
+    end
+    
     # Alternate order that doesn't require auth
     # @param a purchaser name, phone, and email
     # @param recipients a list of phone numbers

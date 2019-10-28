@@ -43,6 +43,7 @@ Rails.application.routes.draw do
   post 'api/history', to: 'api#history'
   post  'api/pass/:serial_number', to: 'api#pass'
   post 'api/merchants', to: 'api#merchants'
+  post 'api/groups', to: 'api#groups'
   
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
   post 'api/merchant/authenticate', to: 'merchant_api#authenticate_merchant'

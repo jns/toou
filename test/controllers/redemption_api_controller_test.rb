@@ -147,4 +147,23 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 	    
 	    assert pass.can_redeem?
     end
+    
+    test "Redeem a group pass"  do
+       
+       group = groups(:army)
+       token = forceAuthenticate(accounts(:active_duty))
+       merchant = merchants(:quantum)
+       
+       first_pass = group.group_passes.valid_passes.order(created_at: :asc).first
+       assert first_pass.can_redeem?
+       
+       assert_difference "group.group_passes.valid_passes.count", -1 do
+          post "/api/redemption/get_code", params: {authorization: token, data: {merchant_id: merchant.id, group_id: group.id}}
+          code = JSON.parse(response.body)["code"]
+          perform_redemption(merchant, code)
+       end
+       first_pass.reload
+       refute first_pass.can_redeem?
+        
+    end
 end

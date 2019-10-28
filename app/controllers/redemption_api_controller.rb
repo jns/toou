@@ -90,7 +90,7 @@ class RedemptionApiController < ApiBaseController
     end 
     
     def paramsPass
-        data = params.require(:data).permit(:pass_sn)
+        data = params.require(:data).permit(:pass_sn, :group_id)
 
         if SerialNumber.isValid? data[:pass_sn]
             pass = Pass.find_by(serial_number: data[:pass_sn])
@@ -99,6 +99,8 @@ class RedemptionApiController < ApiBaseController
             else
                 return pass
             end
+        elsif g = Group.find(data[:group_id])
+            pass = g.group_passes.valid_passes.order(created_at: :asc).first
         end
     end 
     

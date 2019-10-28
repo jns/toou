@@ -11,4 +11,5 @@ class GroupPassPolicyTest < ActiveSupport::TestCase
     refute GroupPassPolicy.new(accounts(:beer_lover), passes(:redeemable_by_army)).get_code?
   end 
 
+  
 end

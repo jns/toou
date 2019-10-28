@@ -8,5 +8,7 @@ one:
     account: active_duty
     group: army
     
-two: {}
-# column: value
+two: 
+    account: active_duty
+    group: book_club
+    

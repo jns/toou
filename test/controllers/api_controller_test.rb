@@ -402,4 +402,21 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_equal 1, JSON.parse(response.body).count
   end
+  
+  test "Fetch groups with passes" do
+    acct = accounts(:active_duty)
+    token = forceAuthenticate(acct)
+    post "/api/groups", params: {authorization: token}
+    assert_response :ok
+    groups = JSON.parse(response.body)
+    assert_equal acct.groups.count, groups.count
+    
+    groups.each do |g|
+      g["passes"].each do |passes|
+        assert_equal Group.find(g["id"]).group_passes.valid_passes.where(buyable_id: passes["buyable_id"]).count, passes["pass_count"]
+      end
+    end
+    
+  end
+  
 end

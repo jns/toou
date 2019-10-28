@@ -4,5 +4,7 @@ class GroupPassPolicy < PassPolicy
     def get_code?
        record.recipient.accounts.member?(user) && record.can_redeem?
     end
+    
+    
 
 end

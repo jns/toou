@@ -2,12 +2,20 @@
 
 army:
   name: Army
+  private: false
 
 navy:
   name: Navy
+  private: false
   
 marines:
   name: Marines
+  private: false
   
 airforce:
   name: Air Force
+  private: false
+  
+book_club:
+  name: Book Club
+  private: true
