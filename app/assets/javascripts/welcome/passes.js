@@ -1,7 +1,8 @@
 /* global m, $, Credentials, Modal, Routes, Login */
 var PassesComponent = (function() { 
     
-    var passList = []
+    var passList = [];
+    var groupPasses = [];
     
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         

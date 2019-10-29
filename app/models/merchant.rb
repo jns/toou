@@ -43,7 +43,7 @@ class Merchant < ApplicationRecord
     end
     
     def charges
-        Pass.where(merchant: self).order(created_at: :desc).collect{|p| 
+        Pass.where(merchant: self).order(transfer_created_at: :desc).collect{|p| 
             {id: p.id, created_at: p.transfer_created_at, amount_cents: p.transfer_amount_cents}
         }
     end
