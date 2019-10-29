@@ -45,9 +45,9 @@ var MerchantLogos = (function() {
         if (merchants.length > 1) {
         return m(".row", [
                 m("div", {style: "height: 75px"}),
-                m(".col-4.text-right", m("img.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
-                m(".col-4.text-center", m("img.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
-                m(".col-4.text-left", m("img.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-4.text-right", m("img.logo.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-4.text-center", m("img.logo.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
+                m(".col-4.text-left", m("img.logo.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
                 ]);
         }
     };
