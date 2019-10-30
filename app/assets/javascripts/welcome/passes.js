@@ -46,7 +46,7 @@ var PassesComponent = (function() {
                     url: "/api/groups",
                     body: {authorization: Credentials.getToken()}
         }).then(function(data){
-            
+           groupPasses = data; 
         });
     };
     
