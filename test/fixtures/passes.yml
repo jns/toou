@@ -111,3 +111,33 @@ redeemable_by_army:
   message: thank you for your service
   buyable: beer (Product)
   value_cents: 1000
+  
+notifiable_purchaser:
+  serial_number: notifiablepurchaser
+  recipient: josh (Account)
+  order: purchased_by_notifiable
+  created_at: 2019-10-28 00:00:00
+  expiration: 2029-10-28 00:00:00
+  message: testing
+  buyable: beer (Product)
+  value_cents: 1000
+  merchant: quantum
+  transfer_stripe_id: transfer8888
+  transfer_amount_cents: 1000
+  transfer_created_at: 2019-10-29 00:00:00
+  value_cents: 1000
+
+not_notifiable_purchaser:
+  serial_number: notnotifiablepurchaser
+  recipient: josh (Account)
+  order: purchaned_by_not_notifiable
+  created_at: 2019-10-28 00:00:00
+  expiration: 2029-10-28 00:00:00
+  message: testing
+  buyable: beer (Product)
+  value_cents: 1000
+  merchant: quantum
+  transfer_stripe_id: transfer8889
+  transfer_amount_cents: 1000
+  transfer_created_at: 2019-10-29 00:00:00
+  value_cents: 1000

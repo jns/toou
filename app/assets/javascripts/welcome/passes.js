@@ -41,6 +41,13 @@ var PassesComponent = (function() {
                 Modal.setOkButton("Ok", Modal.dismiss);
             }
         });        
+        
+        m.request({method: "POST", 
+                    url: "/api/groups",
+                    body: {authorization: Credentials.getToken()}
+        }).then(function(data){
+            
+        });
     };
     
     var oninit = function() {
@@ -84,6 +91,8 @@ var PassesComponent = (function() {
         var used = usedPasses();
         if (valid.length > 0) {
             validContents = valid.map(function(p) {return addPassCard(p);});
+        } else {
+            validContents = m(".text-center.h4", "Sorry, You don't have any valid passes")
         }
          
         if (used.length > 0) {
