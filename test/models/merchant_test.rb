@@ -59,7 +59,7 @@ class MerchantTest < ActiveSupport::TestCase
   
   test "Redeem merchant credits" do
     m = merchants(:quantum)
-    assert_equal 1, m.charges.count
+    assert_equal 3, m.charges.count
   end
 
 end

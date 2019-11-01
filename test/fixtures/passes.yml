@@ -57,7 +57,28 @@ redeemable_pass:
   message: This pass has an emoji 👍
   buyable: beer (Product)
   value_cents: 1000
+
+notifiable_recipient:
+  serial_number: notifiablerecipient
+  recipient: notifiable (Account)
+  order: redeemable_order
+  created_at: 2019-01-01 00:00:00
+  expiration: 2025-01-01 00:00:00
+  message: This pass has an emoji 👍
+  buyable: beer (Product)
+  value_cents: 1000
   
+
+not_notifiable_recipient:
+  serial_number: notnotifiablerecipient
+  recipient: not_notifiable (Account)
+  order: redeemable_order
+  created_at: 2019-01-01 00:00:00
+  expiration: 2025-01-01 00:00:00
+  message: This pass has an emoji 👍
+  buyable: beer (Product)
+  value_cents: 1000
+    
 redeemable_cupcake:
   serial_number: redeemablecupcake
   recipient: cupcake_lover (Account)

@@ -9,6 +9,9 @@ class Group < ApplicationRecord
         group_passes.valid_passes.group_by{ |p| p.buyable }
     end
 
+    def can_receive_notifications?
+        false
+    end 
     
     def to_s
         @name

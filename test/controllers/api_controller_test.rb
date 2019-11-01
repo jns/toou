@@ -185,7 +185,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/passes", params: {authorization: token, serialNumbers: ["abc123", "abc124"]}
     passes = JSON.parse(@response.body)
     
-    assert_equal 2, passes.size
+    assert_equal @acct1.passes.count, passes.size
     assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc123"}["status"]
     assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc124"}["status"]
     
