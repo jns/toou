@@ -1,7 +1,14 @@
 class PassPolicy < AdminPolicy
     
     def pass?
-        record.recipient == user
+        case record.recipient.class.name
+        when "Group"
+            record.recipient.accounts.member? user
+        when "Account"
+            record.recipient == user
+        else
+            false
+        end
     end
     
     # Pass must belong to current user and be redeemable to get a code

@@ -261,12 +261,20 @@ class ApiController < ApiBaseController
             return
         end
         
-        @pass = @current_user.passes.find{|p| p.serial_number == serialNumber}
-        unless @pass
-            render json: {}, status: :not_found
-            return
-        end
+        @pass = Pass.find{|p| p.serial_number == serialNumber}
+        authorize @pass
+
         render 'pass.json.jbuilder', status: :ok
+    end
+    
+    def request_group_pass
+       data = params.require(:data).permit(:group_id, :buyable_id, :buyable_type)
+       group = Group.find(data["group_id"])
+       @pass = GroupPass.valid_passes.where(recipient: group, buyable_id: data["buyable_id"], buyable_type: data["buyable_type"]).first
+    
+        authorize @pass
+        render 'pass.json.jbuilder', status: :ok
+                
     end
     
     # Returns the specific pkpass if the user is authorized

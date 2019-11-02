@@ -5,6 +5,9 @@ class GroupPassPolicy < PassPolicy
        record.recipient.accounts.member?(user) && record.can_redeem?
     end
     
-    
+    # Pass must belong to current user and be redeemable to be requested
+    def request_group_pass?
+        record.recipient.accounts.member?(user) && record.can_redeem?
+    end
 
 end

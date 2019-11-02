@@ -55,9 +55,33 @@ var PassesComponent = (function() {
         loadPasses();
     };
     
+    var showGroupPass = function(ev) {
+        var group_id = $(ev.target.closest(".pass")).data('pass-group-id');
+        var buyable_id = $(ev.target).data('buyable-id');
+        var buyable_type = $(ev.target).data('buyable-type');
+        m.request({
+            method: "POST",
+            url: "/api/request_group_pass",
+            body: {authorization: Credentials.getToken(), 
+                    data: {group_id: group_id, buyable_id: buyable_id, buyable_type: buyable_type}}
+        }).then(function(data) {
+            var pass_sn = data.serialNumber;
+            window.location.pathname = "/pass/"+pass_sn;
+        }).catch(function(err) {
+            alert(err);
+        })
+    };
+    
     var showPass = function(ev) {
         var pass_sn = $(ev.target.closest(".pass")).data('pass-serial-number');
         window.location.pathname = "/pass/"+pass_sn;  
+    };
+    
+    var passCardForGroup = function(group) {
+        var products = group.passes.map(function(p) {
+            return m(".btn.btn-primary", {"data-buyable-id": p.buyable_id, "data-buyable-type": p.buyable_type, onclick: showGroupPass}, p.buyable_name + " " + p.pass_count + " available");
+        });
+        return m(".card.pass", {"data-pass-group-id": group.id}, [m(".card-header", group.name), m(".card-body.card-text", products)]);
     };
     
     var addPassCard = function(pass) { 
@@ -89,12 +113,15 @@ var PassesComponent = (function() {
         var validContents, usedContents;
         var valid = validPasses();
         var used = usedPasses();
-        if (valid.length > 0) {
-            validContents = valid.map(function(p) {return addPassCard(p);});
-        } else {
-            validContents = m(".text-center.h4", "Sorry, You don't have any valid passes")
+
+        
+        validContents = groupPasses.map(function(g) {return passCardForGroup(g);});
+        validContents.push(valid.map(function(p) {return addPassCard(p);}));
+        
+        if (validContents.length == 0) {
+            validContents = m(".text-center.h4", "Sorry, You don't have any group passes.");
         }
-         
+        
         if (used.length > 0) {
             usedContents = used.map(function(p) {return addPassCard(p);});
         }
