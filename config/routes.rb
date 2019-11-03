@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   get 'goArmy', to: 'welcome#go_army'
   get 'goarmy', to: 'welcome#go_army'
   get 'oorah', to: 'welcome#oorah'
+  get 'gonavy', to: 'welcome#go_navy'
+  get 'goNavy', to: 'welcome#go_navy'
+  get 'flyfightwin', to: 'welcome#flyfightwin'
+  get 'bornready', to: 'welcome#bornready'
 
   get 'passes', to: 'welcome#passes'
   get 'pass/:serial_number', to: 'welcome#pass'
