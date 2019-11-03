@@ -5,10 +5,12 @@ class WelcomeController < ApplicationController
     
     # presents the welcome screen
     def index
+        @title = "TooU"
     end
     
     # presents the about screen
     def about
+        @title = "About"
     end
     
     # Slideshow for primary use cases
@@ -17,14 +19,17 @@ class WelcomeController < ApplicationController
     
     # Send Gifts
     def send_gifts
+        @title = "Send a TooU"
     end
     
     # View passes
     def passes
+        @title = "My TooUs"
     end
     
     # Support page
     def support
+        @title = "Support"
     end
     
     # Pass not Found
@@ -33,10 +38,12 @@ class WelcomeController < ApplicationController
     
     #View a specific pass
     def pass
+        @title = "Redeem a TooU"
     end
     
     # Purchase an army pass
     def go_army
+        @title = "Go Army"
         @group = Group.find_by(name: "Army")
         @group_member = "Soldier"
         @group_phrase = "Go Army"
@@ -44,6 +51,7 @@ class WelcomeController < ApplicationController
     end
 
     def oorah
+        @title = "Oorah!"
         @group = Group.find_by(name: "Marines")
         @group_member = "Marine"
         @group_phrase = "Oorah!"
@@ -51,6 +59,7 @@ class WelcomeController < ApplicationController
     end
     
     def go_navy
+        @title = "Go Navy!"
         @group = Group.find_by(name: "Navy")
         @group_member = "Sailor"
         @group_phrase = "Hooyah!"
@@ -58,6 +67,7 @@ class WelcomeController < ApplicationController
     end
 
     def flyfightwin
+        @title = "Fly, Fight, Win!"
         @group = Group.find_by(name: "Air Force")
         @group_member = "Airman"
         @group_phrase = "Fly, Fight, Win!"
@@ -65,6 +75,7 @@ class WelcomeController < ApplicationController
     end
     
     def bornready
+        @title = "Born Ready"
         @group = Group.find_by(name: "Coast Guard")
         @group_member = "Coastie"
         @group_phrase = "Born Ready"

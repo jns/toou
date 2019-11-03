@@ -14,15 +14,18 @@ class MerchantsController < ApplicationController
     
     # Info message for now
     def new_user
+        @title = "Merchant Enrollment"
     end
     
     # presents the welcome screen
     def index
-        if @current_user
+        if @current_user    
+            @title = "Merchant Dashboard"
             authorize Merchant
             @merchants = policy_scope(Merchant)
             render 'dashboard'
         else
+            @title = "Merchant Enrollment"
             render 'new_user'
         end
     end
