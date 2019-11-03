@@ -19,7 +19,7 @@
         <% order.passes.each do |pass| %>
             <tr>
               <td><%= pass.status %></td>
-              <td><%= link_to "#{pass.recipient.phone_number}", admin_account_path(pass.recipient)  %></td>
+              <td><%= link_to pass.recipient.to_s, admin_account_path(pass.recipient)  %></td>
               <td><%= pass.expiration.to_formatted_s(:db) %></td>
               <td><%= pass.serial_number %></td>
             </tr>

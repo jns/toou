@@ -42,7 +42,7 @@ class AdminController < ApplicationController
             authorize :admin
         rescue
             flash[:notice] = "Administrative access prohibitied"
-            redirect_to(login_path)
+            redirect_to(request.referer)
         end
     end
 end

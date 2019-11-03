@@ -1,6 +1,6 @@
 /* global $, m,  Payment, GroupBeerPurchase */
 
-var GoArmy = (function() {
+var GroupBeerPayment = (function() {
     
     var mount = function() {
         m.request({

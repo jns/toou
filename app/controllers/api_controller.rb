@@ -261,10 +261,17 @@ class ApiController < ApiBaseController
             return
         end
         
-        @pass = Pass.find{|p| p.serial_number == serialNumber}
-        authorize @pass
-
-        render 'pass.json.jbuilder', status: :ok
+        begin 
+            @pass = Pass.find{|p| p.serial_number == serialNumber}
+            authorize @pass
+        rescue Pundit::NotAuthorizedError
+            render json: {}, status: :not_found
+        rescue ActiveRecord::RecordNotFound
+            render json: {}, status: :not_found
+        else
+            render 'pass.json.jbuilder', status: :ok
+        end
+        
     end
     
     def request_group_pass

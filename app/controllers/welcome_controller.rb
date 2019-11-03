@@ -38,8 +38,16 @@ class WelcomeController < ApplicationController
     # Purchase an army pass
     def go_army
         @group = Group.find_by(name: "Army")
+        @group_member = "soldier"
+        @group_phrase = "Go Army"
         render 'group_beer_purchase'
     end
 
+    def oorah
+        @group = Group.find_by(name: "Marines")
+        @group_member = "marine"
+        @group_phrase = "Oorah!"
+        render 'group_beer_purchase'
+    end
 
 end

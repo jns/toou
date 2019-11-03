@@ -349,10 +349,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch another users pass data returns 404" do
     
-    post "/api/authenticate", params: {phone_number: @acct2.phone_number.to_s, pass_code: @acct2_passcode, device_id: @devId}, as: :json  
-    json = JSON.parse(@response.body) 
-    token = json["auth_token"]
-  
+    acct = accounts(:pete)
+    token = forceAuthenticate(acct)
+
     pass = passes(:distant_future)
   
     post "/api/pass/#{pass.serial_number}", params: {authorization: token}

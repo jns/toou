@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   get 'howitworks', to: 'welcome#howitworks'
   get 'send_gifts', to: 'welcome#send_gifts'
   get 'goArmy', to: 'welcome#go_army'
+  get 'goarmy', to: 'welcome#go_army'
+  get 'oorah', to: 'welcome#oorah'
+
   get 'passes', to: 'welcome#passes'
   get 'pass/:serial_number', to: 'welcome#pass'
   get 'pass', to: 'welcome#pass_not_found'

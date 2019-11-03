@@ -14,6 +14,6 @@ class Group < ApplicationRecord
     end 
     
     def to_s
-        @name
+        name
     end
 end

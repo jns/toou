@@ -78,10 +78,14 @@ var PassesComponent = (function() {
     };
     
     var passCardForGroup = function(group) {
-        var products = group.passes.map(function(p) {
-            return m(".btn.btn-primary", {"data-buyable-id": p.buyable_id, "data-buyable-type": p.buyable_type, onclick: showGroupPass}, p.buyable_name + " " + p.pass_count + " available");
-        });
-        return m(".card.pass", {"data-pass-group-id": group.id}, [m(".card-header", group.name), m(".card-body.card-text", products)]);
+        if (group.passes.length > 0) {
+            var products = group.passes.map(function(p) {
+                return m(".btn.btn-primary", {"data-buyable-id": p.buyable_id, "data-buyable-type": p.buyable_type, onclick: showGroupPass}, p.buyable_name + " " + p.pass_count + " available");
+            });
+            return m(".card.pass", {"data-pass-group-id": group.id}, [m(".card-header", group.name), m(".card-body.card-text", products)]);
+        } else {
+            return null;
+        }
     };
     
     var addPassCard = function(pass) { 

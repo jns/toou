@@ -1,8 +1,9 @@
 module Admin
 class AccountsController < AdminController
   
-  before_action :set_account, only: [:show]
-  
+  before_action :set_account, except: [:index]
+    skip_before_action :authorize_admin, only: [:update]
+
   # GET /accounts
   # GET /accounts.json
   def index
@@ -14,8 +15,19 @@ class AccountsController < AdminController
   # GET /accounts/1.json
   def show
     authorize(@account)
+    @groups = Group.all
   end
 
+  def update
+    authorize @account, policy_class: AdminMerchantPolicy
+    groups = params[:group_ids]
+    puts groups
+    @account.groups.clear
+    groups.each do |group_id|
+      @account.groups << Group.find(group_id)
+    end
+    redirect_to action: :show
+  end
  
 
   private
