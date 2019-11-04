@@ -9,7 +9,7 @@
   <thead>
     <tr>
       <th>Serialnumber</th>
-      <th>Account</th>
+      <th>Recipient</th>
       <th>Expiration</th>
       <th>Status</th>
     </tr>
@@ -19,7 +19,7 @@
     <% @passes.each do |pass| %>
       <tr>
         <td><%= link_to pass.serial_number, admin_pass_path(pass) %></td>
-        <td><%= link_to pass.account.phone_number, admin_account_path(pass.account) %></td>
+        <td><%= link_to pass.recipient.to_s, admin_account_path(pass.recipient) %></td>
         <td><%= pass.expiration %></td>
         <td><%= pass.status %></td>
       </tr>

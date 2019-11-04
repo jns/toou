@@ -20,8 +20,7 @@ class AccountsController < AdminController
 
   def update
     authorize @account, policy_class: AdminMerchantPolicy
-    groups = params[:group_ids]
-    puts groups
+    groups = params[:group_ids] || []
     @account.groups.clear
     groups.each do |group_id|
       @account.groups << Group.find(group_id)
