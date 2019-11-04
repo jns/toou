@@ -185,7 +185,7 @@ var Overlay = (function() {
         if (vnode.attrs.state == "denied") {
             return m(".overlay", {class: "denied"}, denied(vnode.attrs.reason, vnode.attrs.element));
         } else if (vnode.attrs.state == "approved") {
-            return m(".overlay", {class: "approved"}, approved(vnode.attrs.amount, vnode.attrs.element));
+            return m(".overlay", {class: "approved"}, approved(vnode.attrs.amount + " " + vnode.attrs.buyable_name, vnode.attrs.element));
         } else {
             return m(".overlay", {class: "pending"}, "Processing");
         }
@@ -301,7 +301,7 @@ var RedeemToou = (function() {
             url: "/api/redemption/redeem",
             body: {authorization: Credentials.getToken("REDEMPTION_TOKEN"), data: {code: code}}
         }).then(function(data) {
-            showOverlay("approved", {amount: data.amount});
+            showOverlay("approved", data);
             loadMerchantData();
         }).catch(function(error) {
             if (error.code === 401) {

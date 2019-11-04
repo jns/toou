@@ -5,6 +5,11 @@ quantum_beer:
   product: beer 
   price_cents: 675 
 
+quantum_zero:
+  merchant: quantum
+  product: zero_product
+  price_cents: 0
+  
 tester_beer:
   merchant: test_store
   product: beer

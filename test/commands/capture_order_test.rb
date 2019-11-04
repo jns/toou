@@ -148,4 +148,12 @@ class CaptureOrderTest < ActiveSupport::TestCase
 		assert_nil pass.redeemed_by
     end
     
+    test "redeem a zero value product" do
+    	merchant = merchants(:quantum)
+    	pass = passes(:zero_value_pass)
+    	
+    	code = get_code(merchant, pass, accounts(:trying_it_out))
+    	cmd = CaptureOrder.call(merchant, code)
+    	assert cmd.success?
+    end
 end

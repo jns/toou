@@ -162,3 +162,13 @@ not_notifiable_purchaser:
   transfer_amount_cents: 1000
   transfer_created_at: 2019-10-29 00:00:00
   value_cents: 1000
+  
+zero_value_pass:
+  serial_number: zerovalue
+  recipient: trying_it_out (Account)
+  order: zero_value_order
+  created_at: 2019-11-03 00:00:00
+  expiration: 2029-11-03 00:00:00
+  message: Trying it out
+  buyable: zero_product (Product)
+  value_cents: 0

@@ -166,4 +166,15 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
        refute first_pass.can_redeem?
         
     end
+    
+    test "redeem a zero value pass" do 
+        
+        merchant = merchants(:quantum)
+        pass = passes(:zero_value_pass)
+        code = get_code(merchant, pass)
+        
+        assert_difference "merchant.charges.count", 1 do
+           perform_redemption(merchant, code) 
+        end
+    end 
 end

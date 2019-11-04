@@ -58,10 +58,14 @@ class CaptureOrder
         end
         
         begin
-                    
-            tx = transfer(amount, @merchant, order)
+            
+            transfer_id = if amount > 0 
+                transfer(amount, @merchant, order).id
+            else 
+                @pass.serial_number
+            end
             @pass.update(merchant: @merchant, 
-                         transfer_stripe_id: tx.id, 
+                         transfer_stripe_id: transfer_id, 
                          transfer_amount_cents: amount, 
                          transfer_created_at: Time.new, 
                          redeemed_by: account)

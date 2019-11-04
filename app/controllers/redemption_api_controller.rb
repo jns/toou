@@ -69,7 +69,9 @@ class RedemptionApiController < ApiBaseController
         authorize Device
         cmd = CaptureOrder.call(@current_user.merchant, code)
         if cmd.success?
-            render json: {amount: "$%0.2f" % (cmd.result.transfer_amount_cents/100.0)}, status: :ok
+            result = cmd.result
+            buyable = result.buyable
+            render json: {amount: "$%0.2f" % (result.transfer_amount_cents/100.0), buyable_type: buyable.class.name, buyable_name: buyable.name}, status: :ok
         else
             render json: cmd.errors, status: :bad_request 
         end
