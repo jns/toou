@@ -2,7 +2,13 @@
 
 <div>
     Hi <%= @current_user.username %> | 
-    <a href="/logout">logout</a>
+    <a id="merchant-logout" href="#">logout</a>
+    <script>
+        $("#merchant-logout").click(function() {
+            Credentials.setToken("MERCHANT_TOKEN", null);
+            window.location = "/logout";
+        })
+    </script>
 </div>
 
 

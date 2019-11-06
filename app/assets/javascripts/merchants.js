@@ -100,7 +100,7 @@ var AuthorizedDevices = (function() {
         m.request({
             method: "POST",
             url: "/api/merchant/authorize_device",
-            body: {authorization: Credentials.getToken(),
+            body: {authorization: Credentials.getToken("MERCHANT_TOKEN"),
                 data: {merchant_id: MERCHANT_ID, device_id: device_id}}
         }).then(function(data) {
             Credentials.setToken("REDEMPTION_TOKEN", data["auth_token"]);
@@ -113,7 +113,7 @@ var AuthorizedDevices = (function() {
         m.request({
             method: "POST",
             url: "/api/merchant/deauthorize",
-            body: {authorization: Credentials.getToken(), 
+            body: {authorization: Credentials.getToken("MERCHANT_TOKEN"), 
                     data: {merchant_id: MERCHANT_ID, device_id: device_id}}
         }).then(function() {
             refresh();
@@ -124,7 +124,7 @@ var AuthorizedDevices = (function() {
        m.request({
             url: "/api/merchant/authorized_devices",
             method: "post",
-            body: {authorization: Credentials.getToken(),
+            body: {authorization: Credentials.getToken("MERCHANT_TOKEN"),
                     data: {merchant_id: MERCHANT_ID}}
         }).then(function(data) {
             devices = data;
@@ -151,20 +151,28 @@ var Merchants = (function() {
 
     var client_id;
     
-    var aftermount = function() {
-        $.get("/keys/stripe_client_id", function(data) {
-            client_id = data["stripe_client_id"];
-        });
-        
-        $.get("/merchants/token")
-            .done(function(data) {
-               var token = data["auth_token"];
-                Credentials.setToken(token);
-            })
-            .fail(function() {
-               Credentials.setToken(); 
+    var get_stripe_id = function() {
+        return new Promise(function (resolve, reject) {
+            $.get("/keys/stripe_client_id", function(data) {
+                resolve(data["stripe_client_id"]);
             });
-    }
+        });
+    };
+        
+    var get_merchant_token = function() {
+        return new Promise(function(resolve, reject) {
+            $.get("/merchants/token")
+                .done(function(data) {
+                   var token = data["auth_token"];
+                    Credentials.setToken("MERCHANT_TOKEN", token);
+                    resolve();
+                })
+                .fail(function() {
+                   Credentials.setToken("MERCHANT_TOKEN", null); 
+                   reject();
+                });
+        });
+    };
 
     var stripeConnect = function(event) {
         var stripe_connect_url;
@@ -174,7 +182,7 @@ var Merchants = (function() {
             m.request({
                 method: "POST",
                 url: "/api/merchant/stripe_link",
-                body: {authorization: Credentials.getToken(),
+                body: {authorization: Credentials.getToken("MERCHANT_TOKEN"),
                         data: {merchant_id: merchant_id}}
             }).then(function(data){
                 console.log(data.url);
@@ -216,8 +224,13 @@ var Merchants = (function() {
         $('.stripe-connect').click(stripeConnect);
         $('.stripe-dashboard-link').click(stripeDashboard);
         $('.product-redeem-checkbox').click(enableProductSave);
-        m.mount($('#authorized_devices')[0], AuthorizedDevices);
-        aftermount();
+
+        get_stripe_id().then(function(data) {
+            stripe_id = data;
+        });
+        get_merchant_token().then(function() {
+            m.mount($('#authorized_devices')[0], AuthorizedDevices);
+        });
     };
     
     return {mount: mount};
