@@ -13,7 +13,7 @@ class PassPolicy < AdminPolicy
     
     # Pass must belong to current user and be redeemable to get a code
     def get_code?
-       record.recipient == user && record.can_redeem?
+       record.recipient == user
     end
     
     # Admin can update a pass

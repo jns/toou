@@ -90,7 +90,7 @@ $(function() {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
         addSignout();
-    } else if (path === "/goArmy" || path === "/goarmy" || path === "/oorah") { 
+    } else if (path === "/goArmy" || path === "/goarmy" || path === "/oorah" || path === "/flyfightwin" || path === "/bornready" || path === "/gonavy") { 
         Breadcrumb.home();
         GroupBeerPayment.mount();
     } else if (path === "/mredeem") {

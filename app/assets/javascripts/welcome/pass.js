@@ -42,7 +42,8 @@ var ModalRedeemContent = (function() {
             Modal.setBody("<div class=\"text-center\">Show this code to your server</div><h3 class=\"text-center\">"+data.code+"</h3>");
             Modal.setCancelButton("Cancel", cancelCode);
         }).catch(function(error) {
-            Modal.setBody("Sorry, there was a problem. Please try again.");
+            console.log(error);
+            Modal.setBody("<div class=\"text-center\"><div>Sorry, there was a problem.</div><div>" + error + "</div><div>Please try again.</div></div>");
             Modal.setCancelButton("OK", Modal.dismiss);
         });
     };

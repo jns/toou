@@ -32,7 +32,7 @@ class RedemptionApiController < ApiBaseController
             if cmd.success? 
                 render json: {code: cmd.result}, status: :ok
             else
-              render json: cmd.errors, status: :bad_request 
+              render json: cmd.errors[:unredeemable], status: :bad_request 
             end  
         rescue  Pundit::NotAuthorizedError
             render json: {}, status: :not_found

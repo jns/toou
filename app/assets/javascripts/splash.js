@@ -84,7 +84,7 @@ var Home = (function() {
                 ]),
             m(MerchantLogos),
             m(".row.mt-5.border-top", [
-                m(".col-sm-3.text-center.pt-3", m("a[href='/merchants/new_user']", "Merchant Signup")),
+                m(".col-sm-3.text-center.pt-3", m("a[href='/merchants/new_user']", "For Merchants")),
                 m(".col-sm-3.text-center.pt-3", m("a[href='/mredeem/toou']", "Redeem a Toou")),
                  m(".col-sm-3.text-center.pt-3", m("a[href='/about']", "About TooU")),
                  m(".col-sm-3.text-center.pt-3", m("a[href='/support']", "Contact Us")),

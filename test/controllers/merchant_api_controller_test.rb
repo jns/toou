@@ -168,7 +168,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	    post "/api/merchant/credits", params: {authorization: token, data: {merchant_id: merchant.id}}
 	    assert_response :ok
 	    credits = JSON.parse(response.body)
-	    assert_equal 3, credits.size
+	    assert_equal 4, credits.size
 	end 
 	
 	test "stripe link returns enrollment link for unenrolled merchant" do

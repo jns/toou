@@ -35,6 +35,14 @@ class AddPassToMerchantQueueTest < ActiveSupport::TestCase
     test "Cannot generate a code for a used pass" do
         cmd = AddPassToMerchantQueue.call(merchants(:quantum), passes(:used_beer_pass))
         refute cmd.success?
+        assert_equal ["Pass already used"], cmd.errors[:unredeemable]
+    end
+    
+    
+    test "Cannot generate a code for a used group pass" do
+        cmd = AddPassToMerchantQueue.call(merchants(:quantum), passes(:used_group_beer_pass))
+        refute cmd.success?
+        assert_equal ["Pass already used"], cmd.errors[:unredeemable]
     end
 
 end
