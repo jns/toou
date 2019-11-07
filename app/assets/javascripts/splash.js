@@ -61,35 +61,47 @@ var Home = (function() {
     var oninit = function() {
     };
     
-    var view = function(vnode) {
-        return m(".container-fluid", [
-            m(".row", [
-                m(".col.text-center.mt-3", [
-                    m("a[href='/send_gifts']", [
-                        m(".buy-graphic", m(".free-trial", "Try it Free")),
-                        m("span.regular-20pt.darkgray", "Send TooU")
-                        ])
-                    ])
-                ]),
-            m(".row", [
-                m(".col.text-center.mt-3", [
+    var myTooUs = function() {
+        return  m(".col.text-center.mt-3", [
                     m("a[href='/passes']", [
-                        m(".drink-graphic"),
-                        m("span.regular-20pt.darkgray", "My TooU's")
+                        m(".my-toous"),
+                        m("span.regular-14pt.poiret.shift-up-35px", "My tooU's")
                         ])
-                    ])
-                ]),
-            m(".row", [
-                m(".col.text-center.mt-5.h5", m("a[href='merchant_map']", "Map of Participating Merchants"))
-                ]),
-            m(MerchantLogos),
-            m(".row.mt-5.border-top", [
-                m(".col-sm-3.text-center.pt-3", m("a[href='/merchants/new_user']", "For Merchants")),
-                m(".col-sm-3.text-center.pt-3", m("a[href='/mredeem/toou']", "Redeem a Toou")),
-                 m(".col-sm-3.text-center.pt-3", m("a[href='/about']", "About TooU")),
+                    ]);
+    };
+    
+    var sendTooU = function() {
+        return  m(".col.text-center.mt-3", [
+                    m("a[href='/send_gifts']", [
+                        m(".send-toou"),
+                        m("span.regular-14pt.poiret.shift-up-35px", "Send tooU")
+                        ])
+                    ]);
+
+    };
+    
+    var merchantMap = function() {
+        return m(".col.text-center.mt-5.h5", m("a[href='merchant_map']", "Map of Participating Merchants"));
+    };
+    
+    var navLinks = function() {
+        return [ m(".col-sm-3.text-center.pt-3", m("a[href='/merchants/new_user']", "For Merchants")),
+                m(".col-sm-3.text-center.pt-3", m("a[href='/mredeem/toou']", "Redeem a toou")),
+                 m(".col-sm-3.text-center.pt-3", m("a[href='/about']", "About tooU")),
                  m(".col-sm-3.text-center.pt-3", m("a[href='/support']", "Contact Us")),
-                ])
-            ]);
+                ];
+    };
+    
+    var view = function(vnode) {
+        var leftCol = m(".col.order-last", m(".map-graphic"));
+        var rightCol = m(".col.p-0.mx-auto", [m(".row", sendTooU()),
+                            m(".row", myTooUs()),
+                            m(".row", merchantMap()),
+                            m(MerchantLogos),
+                            m(".row.mt-5.border-top", navLinks()),
+                            ]);
+                                            
+        return [m(".container",  m(".row", [leftCol, rightCol]))];
     };
     
     return {view: view, oninit: oninit};
