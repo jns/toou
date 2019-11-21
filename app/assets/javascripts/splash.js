@@ -82,11 +82,11 @@ var Home = (function() {
     };
     
     var tagline = function() {
-        return m(".regular-16pt.pl-4.text-left", "Send treats to your friends... wherever they are.");
+        return m(".regular-16pt.text-center", "Send treats to your friends.");
     };
     
     var merchantMap = function() {
-        return m("a[href='merchant_map']", m(".map-graphic"));
+        return m("a[href='merchant_map']", [m(".map-graphic"), m(".text-center.mt-0.poiret", "Click for participating merchants")]);
     };
     
     var navLinks = function() {

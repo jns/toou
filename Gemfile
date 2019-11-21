@@ -57,7 +57,7 @@ gem 'stripe', '~> 4.24.0'
 gem 'pundit', '~> 2.0.1'
 
 # Use barby for barcode generation
-gem 'barby'
+#gem 'barby'
 
 # For image resizing
 gem 'image_processing', '~> 1.2'

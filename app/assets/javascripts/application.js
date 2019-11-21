@@ -42,12 +42,12 @@ var uuidv4 = function() {
   });
 }
 
+
 var addSignout = function() {
     if (Credentials.hasToken()) {
         Credentials.getUserData().then(function(data) {
-            console.log(data);
-            $(".sign-out").html("<div class=\"btn btn-link\">sign out</div>");
-            $(".sign-out").click(function() {Credentials.setToken(); Routes.goHome();});
+            $(".navbar-nav").append("<li class=\"nav-item\"><a href=\"/logout\" class=\"nav-link signout\">logout " + data.name + "</a></li>");
+            $(".signout").click(function() {Credentials.setToken(); Routes.goHome();});
         });
     }
 };
