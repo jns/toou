@@ -61,6 +61,7 @@ var Home = (function() {
     var oninit = function() {
     };
     
+    
     var myTooUs = function() {
         return  m(".col.text-center.mt-3", [
                     m("a[href='/passes']", [
@@ -80,28 +81,26 @@ var Home = (function() {
 
     };
     
+    var tagline = function() {
+        return m(".regular-16pt.pl-4.text-left", "Send treats to your friends... wherever they are.");
+    };
+    
     var merchantMap = function() {
-        return m(".col.text-center.mt-5.h5", m("a[href='merchant_map']", "Map of Participating Merchants"));
+        return m("a[href='merchant_map']", m(".map-graphic"));
     };
     
     var navLinks = function() {
-        return [ m(".col-sm-3.text-center.pt-3", m("a[href='/merchants/new_user']", "For Merchants")),
-                m(".col-sm-3.text-center.pt-3", m("a[href='/mredeem/toou']", "Redeem a toou")),
-                 m(".col-sm-3.text-center.pt-3", m("a[href='/about']", "About tooU")),
-                 m(".col-sm-3.text-center.pt-3", m("a[href='/support']", "Contact Us")),
-                ];
+        return [m(".text-center.pt-1.mt-3.border-top", m("a[href='/mredeem/toou']", "Redeem a toou")),];
     };
     
     var view = function(vnode) {
-        var leftCol = m(".col.order-last", m(".map-graphic"));
-        var rightCol = m(".col.p-0.mx-auto", [m(".row", sendTooU()),
+        var leftTop = m(".left-top", tagline());
+        var leftBottom = m(".left-bottom", [merchantMap(), m(MerchantLogos)]);
+        var rightMiddle = m(".right-middle", [m(".row", sendTooU()),
                             m(".row", myTooUs()),
-                            m(".row", merchantMap()),
-                            m(MerchantLogos),
-                            m(".row.mt-5.border-top", navLinks()),
                             ]);
                                             
-        return [m(".container",  m(".row", [leftCol, rightCol]))];
+        return [ m(".splash-container", [leftTop, rightMiddle, leftBottom]), navLinks()];
     };
     
     return {view: view, oninit: oninit};
@@ -111,7 +110,7 @@ var Splash = (function() {
     
     var mount = function() {
         Breadcrumb.hide();
-       return m.mount($('#splash')[0], {view: function() {return m(Home, {merchant_logos: []});}});
+       return m.mount($('#splash')[0], Home);
     };
     
     return {mount: mount};
