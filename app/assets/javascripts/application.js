@@ -16,8 +16,8 @@
 //= require jquery_ujs
 //= require breadcrumb
 //= require modal
-//= require splash
 //= require credentials
+//= require splash
 
 /* global $, Breadcrumb, Credentials */
 
