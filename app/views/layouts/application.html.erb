@@ -29,15 +29,21 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-blue clearfix">
-  <a href="#" class="nav-breadcrumb navbar-text pr-3"><i class="fas fa-angle-left"></i>&nbsp;<span id="nav-breadcrumb-text"></span></a>
-  <a class="navbar-brand text-center mx-auto" href="/"><%= image_tag "TooULogoMini.png", {width: 100, height: 50} %></a> 
+<nav class="navbar navbar-expand-lg bg-blue">
+  <!--<a href="#" class="nav-breadcrumb navbar-text pr-3"><i class="fas fa-angle-left"></i>&nbsp;<span id="nav-breadcrumb-text"></span></a>-->
+  <a class="navbar-brand" href="/"><%= image_tag "TooULogoMini.png", {width: 100, height: 50} %></a> 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navItems" aria-controls="navItems" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navItems">
   <ul class="navbar-nav">
+    <% if @current_user and @current_user.merchant? %>
+    <li class="nav-item"><%= link_to "Merchant Dashboard", "/merchants", class: 'nav-link black'  %></li>
+    <li class="nav-item"><%= link_to "Redeem a tooU", "/mredeem/toou", class: 'nav-link black'  %></li>
+    <% else %>
     <li class="nav-item"><%= link_to "For Merchants", "/merchants", class: 'nav-link black'  %></li>
+    <% end %>
+    
     <li class="nav-item"><%= link_to "About", '/about', class: 'nav-link black' %></li>
     <li class="nav-item"><%= link_to "Contact", '/support', class: 'nav-link black' %></li>
   </ul>  
@@ -46,6 +52,7 @@
 </nav>
 
 <div class="below-header">
+  <a href="#" class="nav-breadcrumb p-1"><i class="fas fa-angle-left"></i>&nbsp;<span id="nav-breadcrumb-text"></span></a>
 
 
 <% unless request.host =~ /www\.toou\.gifts/ %>
@@ -53,8 +60,6 @@
   TEST VERSION <br/> Promotions are not real and credit cards will not be charged 
 </div>
 <% end %>
-
-<div class="text-right sign-out pr-3"></div>
 
 <div class="flash">
     <% flash.each do |name, msg| -%>

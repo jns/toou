@@ -85,7 +85,7 @@ var Home = (function() {
     };
     
     var merchantMap = function() {
-        return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret", "Click for participating merchants")]);
+        return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret", {style: "position: relative; top: -2.5em"}, "Click for participating merchants")]);
     };
     
     var navLinks = function() {
