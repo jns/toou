@@ -126,7 +126,7 @@ class MerchantApiController < ApiBaseController
        merchant = merchant_params
        authorize merchant
        
-       @devices = policy_scope(Device).select{|d| d.merchant === merchant}
+       @devices = merchant.devices
        render 'devices.json.jbuilder', status: :ok
     end
 
