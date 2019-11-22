@@ -29,7 +29,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-blue">
+<nav class="navbar navbar-expand-lg bg-blue clearfix">
   <a href="#" class="nav-breadcrumb navbar-text pr-3"><i class="fas fa-angle-left"></i>&nbsp;<span id="nav-breadcrumb-text"></span></a>
   <a class="navbar-brand text-center mx-auto" href="/"><%= image_tag "TooULogoMini.png", {width: 100, height: 50} %></a> 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navItems" aria-controls="navItems" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,6 @@
   <div class="collapse navbar-collapse" id="navItems">
   <ul class="navbar-nav">
     <li class="nav-item"><%= link_to "For Merchants", "/merchants", class: 'nav-link black'  %></li>
-    <li class="nav-item"><%= link_to "Redeem a TooU", "/mredeem/toou", class: 'nav-link black'  %></li>
     <li class="nav-item"><%= link_to "About", '/about', class: 'nav-link black' %></li>
     <li class="nav-item"><%= link_to "Contact", '/support', class: 'nav-link black' %></li>
   </ul>  

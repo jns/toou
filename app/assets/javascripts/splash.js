@@ -42,9 +42,8 @@ var MerchantLogos = (function() {
     };
     
     var view = function(vnode) {
-        if (merchants.length > 1) {
-        return m(".row", [
-                m("div", {style: "height: 75px"}),
+        if (merchants.length > 0) {
+        return m(".row.mt-3", [
                 m(".col-4.text-right", m("img.logo.logo-0", {src: merchants[nextIndex()]["logo"], height: 75})),
                 m(".col-4.text-center", m("img.logo.logo-1", {src: merchants[nextIndex()]["logo"], height: 75})),
                 m(".col-4.text-left", m("img.logo.logo-2", {src: merchants[nextIndex()]["logo"], height: 75})),
@@ -86,7 +85,7 @@ var Home = (function() {
     };
     
     var merchantMap = function() {
-        return m("a[href='merchant_map']", [m("img.map-graphic", {src: '<%= asset_path 'map_graphic.png' %>'}), m(".text-center.mt-0.poiret", "Click for participating merchants")]);
+        return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret", "Click for participating merchants")]);
     };
     
     var navLinks = function() {
@@ -100,7 +99,7 @@ var Home = (function() {
                             m(".row", myTooUs()),
                             ]);
                                             
-        return [ m(".splash-container", [leftTop, rightMiddle, leftBottom]), navLinks()];
+        return [ m(".splash-container", [leftTop, rightMiddle, leftBottom]) ];
     };
     
     return {view: view, oninit: oninit};
