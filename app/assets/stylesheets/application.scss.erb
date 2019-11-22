@@ -36,21 +36,8 @@ body {
 }
 
 .nav-breadcrumb {
-    color: rgb(245, 245, 245);
+    color: rgba(0, 0, 0, 0.5);
     font-size: 16pt;
-    position: absolute;
-}
-
-.navbar-brand {
-    background-image: url(<%= asset_path 'TooULogoMini' %>);
-    background-repeat: no-repeat;
-    background-size: 100px 50px; 
-    width: 100px;
-    height: 50px;
-    
-    &:hover {
-        background-color: $app-blue;
-    }
 }
 
 .content-width {
@@ -197,14 +184,7 @@ a {
 }
 
 .map-graphic { 
-    background-image: url(<%= asset_path 'map_graphic.png' %>);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    min-width: 300px;
-    max-width: 425px;
-    height: 340px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .splash-container {

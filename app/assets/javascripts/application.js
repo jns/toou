@@ -65,19 +65,17 @@ $(function() {
 
     var path = window.location.pathname;
     
+    addSignout();
     
     if (path === "/send_gifts") {
         SendGifts.mount();
         Breadcrumb.home();
-        addSignout();
     } else if (path === "/") {
         Splash.mount();
         Breadcrumb.hide();
-        addSignout();
     } else if (path === "/passes") {
         Passes.mount();
         Breadcrumb.home();
-        addSignout();
     } else if (path == "/merchants/onboard1") {
         MerchantOnboard.mount();
         Breadcrumb.home();
@@ -89,7 +87,6 @@ $(function() {
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");
         Pass.mount();
-        addSignout();
     } else if (path === "/goArmy" || path === "/goarmy" || path === "/oorah" || path === "/flyfightwin" || path === "/bornready" || path === "/gonavy") { 
         Breadcrumb.home();
         GroupBeerPayment.mount();
