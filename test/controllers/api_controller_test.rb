@@ -277,6 +277,24 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     end
   end
   
+  test "Card declined results in fail" do
+
+    token = forceAuthenticate(@acct1)
+    
+    assert_no_difference 'Order.count' do
+      
+      post "/api/initiate_order", 
+        params: {authorization: token,
+                 recipients: [@acct1.phone_number.to_s],
+                 message: "Damn, doesn't work", 
+                 payment_source: MockStripePaymentIntent::INVALID_PAYMENT,
+                 product: {id: products(:beer).id, type: "Product"}}
+      
+      assert_response :bad_request
+    end
+    
+  end
+  
   test "Place Order Succeeds" do
     
     post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
@@ -311,6 +329,8 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
       assert_response :unauthorized
     end
   end
+  
+
   
   test "Account History Succeeds" do
     post "/api/authenticate", params: {phone_number: @acct2.phone_number.to_s, pass_code: @acct2_passcode, device_id: @devId}, as: :json  

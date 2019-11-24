@@ -71,9 +71,9 @@ body {
   height: 16px;
 }
 
-.shift-up-35px {
+.shift-up-25px {
     position: relative;
-    top: -35px;
+    top: -25px;
 }
 
 .regular-12pt {
@@ -110,6 +110,46 @@ body {
 .medium-28pt {
     font-size: 28pt;
     font-weight: 500;
+}
+
+
+@media (min-width: 1400px) {
+    .regular-12pt {
+        font-size: 24pt;
+        font-weight: 400;
+    }
+    
+    .regular-14pt {
+        font-size: 28pt;
+        font-weight: 400;
+    }
+    
+    .regular-16pt {
+        font-size: 32pt;
+        font-weight: 400;
+        line-height: 40pt;
+    }
+    
+    .regular-20pt {
+        font-size: 40pt;
+        font-weight: 400;
+        line-height: 48pt;    
+    }
+    
+    .medium-20pt {
+        font-size: 40pt;
+        font-weight: 500;
+    }
+    
+    .regular-28pt {
+        font-size: 56pt;
+        font-weight: 400;
+    }
+    .medium-28pt {
+        font-size: 56pt;
+        font-weight: 500;
+    }
+
 }
 
 
@@ -167,20 +207,12 @@ a {
 }
 
 .send-toou {
-    background-image: url(<%= asset_path 'SendToou.png' %>);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 425px 125px; 
-    height: 125px;
+    width: 100%;
     margin: 0 auto;
 }
 
 .my-toous {
-    background-image: url(<%= asset_path 'MyToous.png' %>);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 425px 125px; 
-    height: 125px;
+    width: 100%;
     margin: 0 auto;
 }
 

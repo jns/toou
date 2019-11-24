@@ -64,8 +64,8 @@ var Home = (function() {
     var myTooUs = function() {
         return  m(".col.text-center.mt-3", [
                     m("a[href='/passes']", [
-                        m(".my-toous"),
-                        m("span.regular-14pt.poiret.shift-up-35px", "My tooU's")
+                        m("img.my-toous", {src: window.toouAssets.myToous}),
+                        m("span.regular-14pt.poiret.shift-up-25px", "My tooU's")
                         ])
                     ]);
     };
@@ -73,8 +73,8 @@ var Home = (function() {
     var sendTooU = function() {
         return  m(".col.text-center.mt-3", [
                     m("a[href='/send_gifts']", [
-                        m(".send-toou"),
-                        m("span.regular-14pt.poiret.shift-up-35px", "Send tooU")
+                        m("img.send-toou", {src: window.toouAssets.sendToou}),
+                        m("span.regular-14pt.poiret.shift-up-25px", "Send tooU")
                         ])
                     ]);
 
@@ -85,7 +85,7 @@ var Home = (function() {
     };
     
     var merchantMap = function() {
-        return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret", {style: "position: relative; top: -2.5em"}, "Click for participating merchants")]);
+        return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret.regular-12pt", {style: "position: relative; top: -2.5em"}, "Click for participating merchants")]);
     };
     
     var navLinks = function() {

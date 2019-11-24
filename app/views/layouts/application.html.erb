@@ -15,6 +15,7 @@
   <%= csrf_meta_tags %>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
+  <% unless request.host =~ /www\.toou\.gifts/ %>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WXN44KCK0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -23,6 +24,7 @@
   
     gtag('config', 'G-2WXN44KCK0');
   </script>
+  <% end %>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <%= content_for?(:head) ? yield(:head) : "" %>

@@ -9,7 +9,13 @@ var PaymentForm = (function() {
      
     var oninit = function(vnode) {
         
+        userData = null;
+        stripe = null;
+        cardElement = null;
+        paymentMethods = [];
+         
         stripe = vnode.attrs.stripe;
+
 
         Credentials.getUserData().then(function(data) {
             userData = data;
@@ -39,7 +45,7 @@ var PaymentForm = (function() {
     var createCardElement = function() {
 
         // Remove other payment methods
-        // paymentMethods.length = 0;
+        paymentMethods.length = 0;
         
         cardElement = stripe.elements().create('card');
 

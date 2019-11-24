@@ -142,8 +142,8 @@ var Payment = (function() {
         Modal.setTitle("Whoops");
         Modal.setBody("<div class=\"purchase-animation\"><img /></div><div class=\"text-center\">There was a problem with the purchase.<p/>" + err + "</div>");
         $(".purchase-animation img")[0].src = window.toouAssets.purchase_failed_img;
-        Modal.setOkButton("Ok", Routes.goHome);
-        Modal.setCancelButton(null);
+        Modal.setOkButton("Try Again", createPaymentForm);
+        Modal.setCancelButton("Never mind", Routes.goHome);
         Modal.show();
     };
     
