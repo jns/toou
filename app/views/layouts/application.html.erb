@@ -15,7 +15,7 @@
   <%= csrf_meta_tags %>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
-  <% unless request.host =~ /www\.toou\.gifts/ %>
+  <% if request.host =~ /www\.toou\.gifts/ %>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WXN44KCK0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
