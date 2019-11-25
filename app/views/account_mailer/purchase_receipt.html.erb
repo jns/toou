@@ -33,7 +33,7 @@
     <body>
         <div class="content">
             <div class="logo">
-        <%= image_tag "TooULogoMini.png", alt: "TooU", size: "100x50", style: "margin: 0 auto" %>
+        <%= image_tag attachments["TooULogoMini.png"].url, alt: "TooU", size: "100x50", style: "margin: 0 auto" %>
             </div>
         <p>       
         Hello <%= @account.to_s %>
@@ -45,6 +45,9 @@
 <% @order.passes.each do |pass| %>
 <table>
     <tr>
+    <td>Date:</td>
+    <td><%= @order.created_at.to_date.to_formatted_s %></td>
+    </tr>
     <td>Recipient:</td>
     <td><%= pass.recipient.to_s %></td>
     </tr>
@@ -72,7 +75,7 @@
         Thank you for using tooU.  
         </p>
         <p>
-        Yours truly,</br> 
+        Yours truly,</br>
         Shane and Josh</br>
         Founders of tooU
         </p>

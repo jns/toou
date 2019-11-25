@@ -8,9 +8,10 @@ class AccountMailer < ApplicationMailer
     end
     
     def purchase_receipt
+        attachments.inline['TooULogoMini.png'] = File.read(File.join([Rails.root, "app", "assets", "images", "TooULogoMini.png"]))
         @order = params[:order]
         @account = @order.account
        email_with_name = %("#{@account.name}" <#{@account.email}>)
-        mail(to: email_with_name, bcc: "support@toou.gifts", subject: "Thank you for using tooU")
+        mail(to: email_with_name, bcc: "support@toou.gifts", subject: "Receipt from tooU")
     end
 end

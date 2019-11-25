@@ -4,6 +4,7 @@ Hello <%= @account.to_s %>
 This email confirms you recently sent the following tooU.
 
 <% @order.passes.each do |pass| %>
+  Date: <%= @order.created_at.to_date.to_formatted_s %>
   Recipient: <%= pass.recipient.to_s %>
   Product: <%= pass.buyable.name %>
   Value: <%= "$%0.2f" % (pass.value_cents/100.0) %>
