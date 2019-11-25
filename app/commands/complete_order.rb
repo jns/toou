@@ -47,6 +47,7 @@ class CompleteOrder
             end
         end
         PassNotificationJob.perform_later(*@order.passes.collect{|pass| pass.id})
+        AccountMailer.with(order: @order).purchase_receipt.deliver_later
         return @order
     end
   

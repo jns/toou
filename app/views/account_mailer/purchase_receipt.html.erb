@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500');
+
+    .logo {
+        margin: 0 auto;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .content {
+        font-family: 'Maven Pro', sans-serif;
+        margin: 0 auto;
+        padding: 20px 20px 20px 20px;
+        border-radius: 15px;
+        background-color: rgba(97, 187, 222, 0.25);
+        -webkit-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+        box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+    }
+    
+    table {
+        margin-left: 2em;    
+    }
+    
+    tr {
+      border: 1px solid black;  
+    }
+    </style>
+</head>
+    <body>
+        <div class="content">
+            <div class="logo">
+        <%= image_tag "TooULogoMini.png", alt: "TooU", size: "100x50", style: "margin: 0 auto" %>
+            </div>
+        <p>       
+        Hello <%= @account.to_s %>
+        </p>
+        <p>
+            This email confirms you recently sent the following tooU.
+        </p>
+
+<% @order.passes.each do |pass| %>
+<table>
+    <tr>
+    <td>Recipient:</td>
+    <td><%= pass.recipient.to_s %></td>
+    </tr>
+    <tr>
+    <td>Product:</td>
+    <td><%= pass.buyable.name %></td>
+    </tr>
+    <tr>
+    <td>Value:</td>
+    <td><%= "$%0.2f" % (pass.value_cents/100.0) %></td>
+    </tr>
+</table>
+<% end %>
+        <p>
+        We charged you a total of <%= "$%0.2f" % (@order.charge_amount_cents/100.0) %>
+        </p>
+        <p>
+        You will receive a notification when the tooU is redeemed.
+        </p>
+        <p>
+        If you have any questions or did not place this order, please email us at
+        <a href="mailto:support@toou.gifts">support@toou.gifts</a> or call us directly at +1 (213) 319-5821.
+        </p>
+        <p>
+        Thank you for using tooU.  
+        </p>
+        <p>
+        Yours truly,</br> 
+        Shane and Josh</br>
+        Founders of tooU
+        </p>
+        </div>
+    </body>
+</html>

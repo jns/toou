@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Maven+Pro:400,500');
+
+    .logo {
+        margin: 0 auto;
+        text-align: center;
+        position: absolute;
+        width: 100%;
+    }
+    
+    .content {
+        font-family: 'Maven Pro', sans-serif;
+        margin: 0 auto;
+        padding: 20px 20px 20px 20px;
+        border-radius: 15px;
+        background-color: rgba(97, 187, 222, 0.25);
+        -webkit-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+        box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.75);
+    }
+</style>
+</head>
+<body>
+<div class="content">
+    <div class="logo">
+<%= image_tag "TooULogoMini.png", alt: "TooU", size: "100x50", style: "margin: 0 auto" %>
+    </div>
+<p>
+<%= @greeting %> 
+</p>
+<p>
+Welcome to tooU.  
+</p>
+
+<p>
+We want you to have a great time sharing desserts and beverages with your friends.  
+If you have suggestions for how we can make tooU even better please reach out to us 
+at <a href="mailto:support@toou.gifts">support@toou.gifts</a> or call us at +1 (213) 319-5821.  
+We especially would love to get suggestions and help adding new merchants to our platform, 
+so please talk to your local establishments and let them know about us.
+</p>
+
+<p>
+Yours truly,</br> 
+Shane and Josh</br>
+Founders of tooU
+</p>    
+</div>
+</body>
+</html>

@@ -12,12 +12,18 @@ class ApiController < ApiBaseController
             data = params.require(:data).permit(:name, :email, :device_id)
             data[:device_id] = nil if data[:device_id] == "nil"
             @current_user.update(data)
+            if @current_user.email
+                AccountMailer.with(account: @current_user).welcome.deliver_later
+            end
             render json: {success: "Success"}, status: :ok
         when "POST"
             data = params.permit(data: [:name, :email, :device_id])[:data]
             if (data) 
                 data[:device_id] = nil if data[:device_id] == "nil"
                 @current_user.update(data)
+            end
+            if @current_user.email
+                AccountMailer.with(account: @current_user).welcome.deliver_later
             end
             render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
         else

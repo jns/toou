@@ -21,7 +21,7 @@ class Order < ActiveRecord::Base
     end
     
     def recipients 
-       passes.collect{|p| p.account} 
+       passes.collect{|p| p.recipient} 
     end
     
     def redeemable_passes

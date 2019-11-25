@@ -66,10 +66,10 @@ class Account < ActiveRecord::Base
     
     
     def to_s
-        if @name
-           @name
+        if name
+           name
         else
-            @phone_number
+            phone_number
         end
     end
 end

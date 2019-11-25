@@ -1,0 +1,24 @@
+
+Hello <%= @account.to_s %>
+
+This email confirms you recently sent the following tooU.
+
+<% @order.passes.each do |pass| %>
+  Recipient: <%= pass.recipient.to_s %>
+  Product: <%= pass.buyable.name %>
+  Value: <%= "$%0.2f" % (pass.value_cents/100.0) %>
+
+<% end %>
+We charged you a total of <%= "$%0.2f" % (@order.charge_amount_cents/100.0) %>
+
+You will receive a notification when the tooU is redeemed.
+
+If you have any questions or did not place this order, please email us at
+support@toou.gifts or call us directly at +1 (213) 319-5821.
+
+Thank you for using tooU.  
+
+Yours truly, 
+Shane and Josh
+Founders of tooU
+
