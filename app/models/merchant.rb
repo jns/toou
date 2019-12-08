@@ -9,7 +9,7 @@ class Merchant < ApplicationRecord
 
     scope :enrolled, ->{ where('stripe_id is not null') }
     
-    scope :distance_sort, ->(lon, lat) { order("point(latitude, longitude) <@> point(#{lon}, #{lat})") }
+    scope :distance_sort, ->(lon, lat) { order(Arel.sql("point(longitude, latitude) <@> point(#{lon}, #{lat})")) }
     
     before_save do
         if ! self.phone_number.empty?

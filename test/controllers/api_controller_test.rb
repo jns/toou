@@ -423,6 +423,17 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   end
   
   test "Fetch merchants, sort by distance" do 
+    post "/api/merchants", params: {query: {latitude: 32, longitude: -118}}
+    assert_response :ok
+    merchants = JSON.parse(response.body)
+    assert_equal merchants(:quantum).id, merchants.first["id"]
+    assert_equal merchants(:cupcake_store2).id, merchants.last["id"]
+    
+    post "/api/merchants", params: {query: {latitude: 36, longitude: -114}}
+    assert_response :ok
+    merchants = JSON.parse(response.body)
+    assert_equal merchants(:cupcake_store2).id, merchants.first["id"]
+    assert_equal merchants(:quantum).id, merchants.last["id"]
     
   end 
   

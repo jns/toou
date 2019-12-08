@@ -4,23 +4,32 @@ quantum:
   name: Quantum
   stripe_id: stripeid12345
   user: quantum_user
+  latitude: 32
+  longitude: -118
   
 cupcake_store:
   name: Cupcake Store
   stripe_id: stripeid54321
   user: cupcake_user
+  latitude: 33
+  longitude: -117
 
 cupcake_store2:
   name: Cupcakes Too
   stripe_id: stripeid13589
   user: cupcake_user
+  latitude: 34
+  longitude: -116
   
 test_store:
   name: Test Store
   user: tester
+  latitude: 35
+  longitude: -115
   
 unenrolled_store:
   name: Unenrolled Store
   user: cupcake_user
   phone_number: +11234567890
-  
+  latitude: 36
+  longitude: -114
