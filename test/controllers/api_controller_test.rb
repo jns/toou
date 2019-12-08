@@ -422,6 +422,10 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, JSON.parse(response.body).count
   end
   
+  test "Fetch merchants, sort by distance" do 
+    
+  end 
+  
   test "Fetch groups with passes" do
     acct = accounts(:active_duty)
     token = forceAuthenticate(acct)

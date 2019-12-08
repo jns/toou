@@ -129,4 +129,9 @@ class PhoneNumberTest  < ActiveSupport::TestCase
     assert_equal "+13109097243", p.to_s
   end
 
+  test "Australian phone test" do
+    p = PhoneNumber.new("+61 444 444 444")
+    assert_equal "+61444444444", p.to_s
+  end
+
 end

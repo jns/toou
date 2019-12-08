@@ -9,6 +9,8 @@ class Merchant < ApplicationRecord
 
     scope :enrolled, ->{ where('stripe_id is not null') }
     
+    scope :distance_sort, ->(lon, lat) { order("point(latitude, longitude) <@> point(#{lon}, #{lat})") }
+    
     before_save do
         if ! self.phone_number.empty?
             self.phone_number = PhoneNumber.new(self.phone_number).to_s

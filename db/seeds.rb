@@ -23,3 +23,8 @@ Country.create(name: "Mexico", abbreviation: "MX", country_code: 52,
                phone_number_digits_min: 10, 
                phone_number_digits_max: 10,
                area_code_regex: "") # Mexico is mandating 10 digit numbers no area code should match
+
+Country.create(name: "Australia", abbreviation: "AU", country_code: 61, 
+               phone_number_digits_min: 9, 
+               phone_number_digits_max: 9,
+               area_code_regex: "") # Australia digits are 9 numbers

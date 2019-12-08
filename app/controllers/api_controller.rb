@@ -51,6 +51,10 @@ class ApiController < ApiBaseController
         elsif query and query[:product_id]
             p = Product.find(query[:product_id])
             @merchants = p.merchants
+        elsif query and query[:latitude] and query[:longitude]
+            lat = query[:latitude].to_f
+            lon = query[:longitude].to_f 
+            @merchants = Merchant.all.distance_sort(lon, lat)
         else
             # Select all merchants with products
             @merchants = Merchant.joins(:merchant_products).distinct
