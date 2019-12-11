@@ -84,6 +84,31 @@ var Home = (function() {
         return m(".regular-16pt.text-center", "Send treats to your friends.");
     };
     
+    var workflow = function() {
+        return m(".carousel.slide.w-100[data-ride=carousel][id=workflow]", [
+            m("ol.carousel-indicators", [
+                m("li.active[data-slide-to=0][data-target=workflow]"),
+                m("li[data-slide-to=1][data-target=#workflow]"),
+                m("li[data-slide-to=2][data-target=#workflow]"),
+                m("li[data-slide-to=3][data-target=#workflow]"),
+                m("li[data-slide-to=4][data-target=#workflow]"),
+                m("li[data-slide-to=5][data-target=#workflow]"),
+                m("li[data-slide-to=6][data-target=#workflow]"),
+                m("li[data-slide-to=7][data-target=#workflow]"),
+                ]),
+            m(".carousel-inner", [
+                    m(".carousel-item.active", m("img.d-block.w-100", {src: window.toouAssets.workflow_country})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send1})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send2})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send3})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem1})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem2})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem3})),
+                    m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem4})),
+                ])
+            ]);  
+    };
+    
     var merchantMap = function() {
         return m("a[href='merchant_map']", [m("img.map-graphic", {src: window.toouAssets.toouLogoMini}), m(".text-center.mt-0.poiret.regular-12pt", {style: "position: relative; top: -2.5em"}, "Click for participating merchants")]);
     };
@@ -94,7 +119,8 @@ var Home = (function() {
     
     var view = function(vnode) {
         var leftTop = m(".left-top", tagline());
-        var leftBottom = m(".left-bottom", [merchantMap(), m(MerchantLogos)]);
+        var leftBottom = m(".left-bottom", [workflow(), m(MerchantLogos)]);
+        // var leftBottom = m(".left-bottom", [merchantMap(), m(MerchantLogos)]);
         var rightMiddle = m(".right-middle", [m(".row", sendTooU()),
                             m(".row", myTooUs()),
                             ]);
