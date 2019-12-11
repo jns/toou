@@ -105,7 +105,14 @@ var Home = (function() {
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem2})),
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem3})),
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_redeem4})),
-                ])
+                ]),
+            m("a.carousel-control-prev[data-slide=prev][href=#workflow][role=button]", [
+                m("span.carousel-control-prev-icon[aria-hidden=true]"),
+                m("span.sr-only", "Previous")]),
+            m("a.carousel-control-next[data-slide=next][href=#workflow][role=button]", [
+                m("span.carousel-control-next-icon[aria-hidden=true]"),
+                m("span.sr-only", "Next")]),
+                
             ]);  
     };
     
@@ -119,7 +126,7 @@ var Home = (function() {
     
     var view = function(vnode) {
         var leftTop = m(".left-top", tagline());
-        var leftBottom = m(".left-bottom", [workflow(), m(MerchantLogos)]);
+        var leftBottom = m(".left-bottom", workflow());
         // var leftBottom = m(".left-bottom", [merchantMap(), m(MerchantLogos)]);
         var rightMiddle = m(".right-middle", [m(".row", sendTooU()),
                             m(".row", myTooUs()),
