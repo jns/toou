@@ -97,7 +97,9 @@ var Home = (function() {
                 m("li[data-slide-to=7][data-target=#workflow]"),
                 ]),
             m(".carousel-inner", [
-                    m(".carousel-item.active", m("img.d-block.w-100", {src: window.toouAssets.workflow_country})),
+                    m(".carousel-item.active", [m("a[href=merchant_map]",  m(".text-center.mt-0.poiret.regular-12pt", {style: "position: absolute; width: 100%; top: 25%;"}, "Click for participating merchants")),
+                                                m("img.d-block.w-100", {src: window.toouAssets.workflow_country}), 
+                                                ]),
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send1})),
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send2})),
                     m(".carousel-item", m("img.d-block.w-100", {src: window.toouAssets.workflow_send3})),
