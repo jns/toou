@@ -47,6 +47,14 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 	    post "/api/redemption/redeem", params: {authorization: device_token, data: {code: code}}, as: :json
     end
 	
+	test "Tester cannot redeem a pass" do 
+        merchant = merchants(:quantum)
+        pass = passes(:tester_pass)
+        code = get_code(merchant, pass)
+	    perform_redemption(merchant, code)
+        assert_response :bad_request
+	end 
+	
     test "User can get a code for own pass" do
         merchant = merchants(:quantum)
         pass = passes(:redeemable_pass)

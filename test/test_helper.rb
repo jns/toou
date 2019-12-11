@@ -23,7 +23,11 @@ module TestEnvironment
   # Returns a valid auth token for an account
   def forceAuthenticate(account)
     phone_number = account.phone_number
-    one_time_passcode = account.generate_otp
+    one_time_passcode = if account.test_user? 
+      "000000"
+    else 
+      account.generate_otp
+    end
     command = AuthenticateUser.call(phone_number, one_time_passcode)
     if command.success?
       command.result.token

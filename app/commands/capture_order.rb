@@ -29,6 +29,12 @@ class CaptureOrder
         amount = @pass.value_cents
         account = @mpq.account
         
+        if (receiver.is_a? Account and receiver.test_user?)
+           errors.add(:unredeemable, "Test User cannot redeem passes")
+           @mpq.destroy
+           return
+        end
+        
         if receiver.is_a? Group and (account == nil or not @pass.recipient.accounts.member?(account))
             Log.create(log_type: Log::ERROR, context: "CaptureOrder", current_user: @merchant.id, message: "Group Pass #{@pass.id} not redeemable by Account" )
             errors.add(:unredeemable, "Pass not redeemable by user")
