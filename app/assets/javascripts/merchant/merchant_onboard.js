@@ -7,11 +7,13 @@ var MerchantAddressForm = (function() {
         var merchant_name = "";
         var formatted_addr = "";
         var international_phone = "";
+        var website = "https://";
         
         if (vnode.attrs.place) {
             merchant_name = vnode.attrs.place.name;
             formatted_addr = vnode.attrs.place.formatted_address;
             international_phone = vnode.attrs.place.international_phone_number;
+            website = vnode.attrs.place.website;
         }
         
         return m("form", [
@@ -22,6 +24,8 @@ var MerchantAddressForm = (function() {
                 m("input.form-control", {type: "text", name: "merchant_address", value: formatted_addr}),
                 m("label", {for: "merchant_phone"}, "Phone"),
                 m("input.form-control", {type: "text", name: "merchant_phone", value: international_phone}),
+                m("label", {for: "merchant_website"}, "Website"),
+                m("input.form-control", {type: "text", name: "merchant_website", value: website}),
                 ]),
             m(".form-group"),
             ]

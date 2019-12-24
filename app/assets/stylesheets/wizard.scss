@@ -3,13 +3,14 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 200px;
+    height: 100%;
 }
 
 .wiz-item {
     position: absolute;
     width: 100%;
-    height: 200px;
+    padding-top: 2em;
+    padding-bottom: 2em;
 }
 
 .wiz-item.staged {
@@ -27,6 +28,6 @@
 }
 
 .wiz-control {
-    position: absolute;
-    bottom: 0;
+    position: relative;
+    
 }

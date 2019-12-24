@@ -25,10 +25,20 @@ body {
     color: black;
     line-height: 18px;
     font-size: 13px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.navbar {
+    height: 76px;    
 }
 
 .below-header {
+    position: relative;
+    width: 100%;
     margin-bottom: 30px;
+    height: calc(100% - 76px);
 }
 
 .poiret {
@@ -36,13 +46,16 @@ body {
 }
 
 .nav-breadcrumb {
-    display: inline-block;
+    position: absolute;
     color: rgba(0, 0, 0, 0.5);
     font-size: 16pt;
+    height: 1.5em;
 }
 
 .content-width {
+    position: relative;
     width: 100%;
+    height: 100%;
 }
 
 .hidden-sm {
