@@ -3,6 +3,7 @@ var MerchantAutocomplete = (function() {
 
     var token = uuidv4();
     var key = "AIzaSyAbmo8M4MHl7hPMvXyxsdW3BC_hATcZ3Bk";
+    var data = {};
     
     var oncreate = function() {
         createAutocomplete();
@@ -10,8 +11,10 @@ var MerchantAutocomplete = (function() {
     
     var createAutocomplete = function() {
         
+        
         var element = document.getElementById('autocomplete');
         var country = $("#country_select").val();
+
         if (element) {
            var autocomplete = new google.maps.places.Autocomplete(element, 
                 {   types: ['establishment'], 
@@ -22,8 +25,8 @@ var MerchantAutocomplete = (function() {
 
     var onPlaceChanged = function() {
          var place = this.getPlace();     
-    
-         console.log(place);  // Uncomment this line to view the full object returned by Google API.     
+         data.place = place;
+         console.log(place);  
     }
     var autocomplete = function(e) {
         var input = e.target.value;
@@ -38,8 +41,7 @@ var MerchantAutocomplete = (function() {
     };
 
     var view = function(vnode) {
-        return m(".content-width", [
-                    m(".row",
+        return [m(".row",
                         m(".col", [
                                 m("label", {for: "country_select"}, "Country"),
                                 m("select.form-control[name=country_select][id=country_select]", {onchange: createAutocomplete}, [m("option", {value: "us"}, "🇺🇸 United States"), m("option", {value: "au"}, "🇦🇺Australia")]),
@@ -53,8 +55,8 @@ var MerchantAutocomplete = (function() {
                             ]
                         )
                     ),   
-            ])
+            ];
     };
     
-    return {view: view, oncreate: oncreate};
+    return {view: view, oncreate: oncreate, data: data};
 })();

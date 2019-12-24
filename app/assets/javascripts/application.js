@@ -16,6 +16,7 @@
 //= require jquery_ujs
 //= require breadcrumb
 //= require modal
+//= require modal2
 //= require credentials
 //= require splash
 

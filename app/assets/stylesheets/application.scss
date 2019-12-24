@@ -267,25 +267,6 @@ a {
     }
 }
 
-.buy-graphic {
-    
-    background-image: url(<%= asset_path 'SendGraphic.png' %>);
-    background-repeat: no-repeat;
-    background-size: 75px 75px; 
-    width: 75px;
-    height: 75px;
-    margin: 0 auto;
-}
-
-
-.drink-graphic {
-    background-image: url(<%= asset_path 'RedeemRoundGrey100.png' %>);
-    background-repeat: no-repeat;
-    background-size: 75px 75px; 
-    width: 75px;
-    height: 75px;
-    margin: 0 auto;
-}
 
 .purchase-animation {
     width: 200px;
