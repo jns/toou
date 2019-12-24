@@ -7,7 +7,9 @@ var MerchantAutocomplete = (function() {
     var oncreate = function() {
         var element = document.getElementById('autocomplete');
         if (element) {
-           var autocomplete = new google.maps.places.Autocomplete(element, { types: ['geocode'], componentRestrictions: {country: 'us'} });
+           var autocomplete = new google.maps.places.Autocomplete(element, 
+                {   types: ['establishment'], 
+                    componentRestrictions: {country: 'us'} });
            google.maps.event.addListener(autocomplete, 'place_changed', onPlaceChanged);
         }
     }
@@ -34,10 +36,7 @@ var MerchantAutocomplete = (function() {
         return m(".content-width", 
                     m(".row", 
                         m(".col", 
-                            m("input.form-control[id='autocomplete']",
-                            {
-                                onkeyup: autocomplete
-                            })
+                            m("input.form-control[id='autocomplete']")
             )))
     };
     
