@@ -1,4 +1,8 @@
 
+<%= content_for :head do %>
+<%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places&key=#{ENV['GOOGLE_API_SERVER_KEY']}" %>
+<% end %>
+
 <div class="content-width container">
 <div id="merchant_onboard"></div>
 </div>
