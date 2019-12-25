@@ -1,17 +1,19 @@
-/** global m */
+/* global $, m */
 var MerchantProducts = (function() {
     
     var products = [];
     
     var oninit = function(vnode) {
-        products = vnode.attrs.products;
+        $.get("/api/products").then(function(data) {
+            products = data;    
+        });
     };
     
     var product_row = function(p) {
         return m("tr", [
                     m("td.text-center", m("input.form-check-input[type=checkbox]", {checked: p["can_redeem"]})),
                     m("td.text-left", p.name),
-                    m("td", p.price_formatted),
+                    m("td", "$" + p.max_price_dollars.toFixed(2)),
                     ]);
     };
     
@@ -28,9 +30,9 @@ var MerchantProducts = (function() {
         
         var tbody = m("tbody", trows);
 
-        return m("table.table", [thead, tbody]);
+        return [m(".h4.text-center", "Select Products"), m("table.table", [thead, tbody])];
     };
 
     
-    return {view: view};
+    return {view: view, oninit: oninit};
 })();

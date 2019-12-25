@@ -1,46 +1,12 @@
 //= require ./merchant/merchant_autocomplete
 //= require ./merchant/merchant_onboard
+//= require ./merchant/merchant_products
+//= require ./merchant/merchant_address_form
 
 /* global m, $, Breadcrumb, Credentials */
 
 var MERCHANT_ID = 0;
 
-var MerchantProducts = (function() {
-    
-    var products = [];
-    
-    var oninit = function() {
-
-    };
-    
-    var product_row = function(p) {
-        return m("tr", [
-                    m("td.text-center", m("input.form-check-input[type=checkbox]", {checked: p["can_redeem"]})),
-                    m("td.text-left", p.name),
-                    m("td", p.price_formatted),
-                    ]);
-    };
-    
-    var view = function() {
-        
-        var thead = m("thead", [
-            m("th", {width: 10}, "Redeem?"),
-            m("th.text-left", "Product"),
-            m("th", "Price")]);
-        
-        var trows = [];
-        products.forEach(function(p) {
-            trows.push(product_row(p));
-        });
-        
-        var tbody = m("tbody", trows);
-
-        return m("table.table", [thead, tbody]);
-    };
-
-    
-    return {view: view};
-})();
 
 var AuthorizedDevices = (function() {
     

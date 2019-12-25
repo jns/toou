@@ -41,20 +41,23 @@ var MerchantAutocomplete = (function() {
     };
 
     var view = function(vnode) {
-        return [m(".row",
-                        m(".col", [
-                                m("label", {for: "country_select"}, "Country"),
-                                m("select.form-control[name=country_select][id=country_select]", {onchange: createAutocomplete}, [m("option", {value: "us"}, "🇺🇸 United States"), m("option", {value: "au"}, "🇦🇺Australia")]),
-                            ]
-                        )
-                    ),
-                    m(".row",
-                        m(".col", [
-                            m("label", {for: "autocomplete"}, "Search for your business"),
-                            m("input.form-control[name=autocomplete][id='autocomplete']", {placeholder: "Business Name"}),
-                            ]
-                        )
-                    ),   
+        return [m(".row", 
+                    m(".col.h4.text-center", "Search for Establishment")
+                ),  
+                m(".row",
+                    m(".col", [
+                            m("label", {for: "country_select"}, "Country"),
+                            m("select.form-control[name=country_select][id=country_select]", {onchange: createAutocomplete}, [m("option", {value: "us"}, "🇺🇸 United States"), m("option", {value: "au"}, "🇦🇺Australia")]),
+                        ]
+                    )
+                ),
+                m(".row",
+                    m(".col", [
+                        m("label", {for: "autocomplete"}, "Search for your business"),
+                        m("input.form-control[name=autocomplete][id='autocomplete']", {placeholder: "Business Name"}),
+                        ]
+                    )
+                ),   
             ];
     };
     
