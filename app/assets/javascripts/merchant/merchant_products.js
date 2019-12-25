@@ -30,7 +30,7 @@ var MerchantProducts = (function() {
         
         var tbody = m("tbody", trows);
 
-        return [m(".h4.text-center", "Select Products"), m("table.table", [thead, tbody])];
+        return [m(".h4.text-center", "Select Products"), m("table.table.overflow-auto", [thead, tbody])];
     };
 
     

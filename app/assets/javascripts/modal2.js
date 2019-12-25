@@ -10,19 +10,6 @@ var Modal2 = function(components) {
     
     var data = {};
 
-    var oncreate = function(vnode) {
-        var wizItemsHeight = 0;
-        $(".wiz-item").each(function() {
-           var item = $(this);
-           var h = item.outerHeight();
-           if (h > wizItemsHeight) { 
-                wizItemsHeight = h;   
-           }
-        });
-        console.log(wizItemsHeight)
-        $(".wiz-items").css("height", wizItemsHeight);
-    };
-
     var activeComponent = function() {
         return components.find(function(c) { return c.state == "active";});
     };
@@ -48,15 +35,21 @@ var Modal2 = function(components) {
     };
 
     var view = function(vnode) {
+        var activeIndex = components.findIndex(function(c) { return c.state == "active";});
+        var first = activeIndex === 0;
+        var last = activeIndex === (components.length-1);
+        
         var comps = components.map(function(c) { return m(".wiz-item."+c.state, m(c, data))});
+        var dots = components.map(function(c) { return m("span.dot" + (c.state == "active" ? ".filled" : ""));});
         return m(".wiz", [m(".wiz-items", comps), 
                          m(".wiz-control", [
-                             m("input.btn.btn-light.previous", {type: "button", onclick: previous, value: "Previous"}),
-                             m("input.btn.btn-light.next", {type: "button", onclick: advance, value: "Next"}),
+                             m("input.btn.btn-light.previous" + (first ? ".invisible" : ".visible"), {type: "button", onclick: previous, value: "Back"}),
+                             m(".dots", dots),
+                             m("input.btn.btn-light.next" + (last ? ".invisible" :  ".visible"), {type: "button", onclick: advance, value: "Next"}),
                              ])]);
     };
     
     
-    return {view: view, oncreate: oncreate};
+    return {view: view};
     
 };
