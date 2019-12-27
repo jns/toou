@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :merchants]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :initiate_order, :merchants]
     
     # Account details for the current user
     def account
@@ -176,7 +176,7 @@ class ApiController < ApiBaseController
         if command.success?
             render json: {}, status: :ok
         else
-            render json: {error: command.errors}, status: :bad_request
+            render json: {error: command.errors.first.message}, status: :bad_request
         end
     end
     
@@ -200,9 +200,34 @@ class ApiController < ApiBaseController
 
     def initiate_order
         recipients, payment_source = params.require([:recipients, :payment_source])
+        
         message = params.permit(:message)[:message]
         product = buyable_params
         fee = product.fee(:cents)
+        
+        
+        cmd = AuthorizeApiRequest.call(params)
+    
+        if cmd.success? 
+            @current_user = cmd.result
+        else
+            purchaser = params.require(:purchaser).permit(:name, :phone, :email)
+            
+            # Sanitize and format the phone number
+            phone = PhoneNumber.new(purchaser[:phone]).to_s
+            unless phone
+                render json: {error: "Invalid Phone Number"}, status: :bad_request
+                return
+            end
+            
+            # Find or generate an account
+            @current_user = Account.search_by_phone_number(phone) || 
+                    Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
+            
+            # Update name and email if they are nil
+            @current_user.update(email: purchaser[:email]) unless @current_user.email
+            @current_user.update(name: purchaser[:name]) unless @current_user.name
+        end 
         
         # Place the order
         command = InitiateOrder.call(@current_user, payment_source, recipients, message, product, fee)

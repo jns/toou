@@ -32,6 +32,7 @@ var Modal2 = function(components) {
         active.state = "unstaged";
         next.state = "active";
         Object.assign(data, active.data);
+        console.log(data);
     };
 
     var view = function(vnode) {

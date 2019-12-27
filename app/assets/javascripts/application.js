@@ -14,6 +14,7 @@
 //= require popper
 //= require bootstrap
 //= require jquery_ujs
+//= require dispatcher
 //= require breadcrumb
 //= require modal
 //= require modal2

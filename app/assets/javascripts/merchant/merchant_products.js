@@ -2,16 +2,23 @@
 var MerchantProducts = (function() {
     
     var products = [];
-    
+
     var oninit = function(vnode) {
         $.get("/api/products").then(function(data) {
-            products = data;    
+            data.forEach(function(p) {products.push(p);}); 
         });
+    };
+    
+    var toggleProduct = function(ev) {
+        var checked = $(ev.target).prop("checked");
+        var productId = $(ev.target).data("product-id");
+        products.find(function(p) {return p.id === productId;}).redeem = checked;
+
     };
     
     var product_row = function(p) {
         return m("tr", [
-                    m("td.text-center", m("input.form-check-input[type=checkbox]", {checked: p["can_redeem"]})),
+                    m("td.text-center", m("input.form-check-input[type=checkbox]", {onclick: toggleProduct, "data-product-id": p.id, checked: p["can_redeem"]})),
                     m("td.text-left", p.name),
                     m("td", "$" + p.max_price_dollars.toFixed(2)),
                     ]);
@@ -34,5 +41,5 @@ var MerchantProducts = (function() {
     };
 
     
-    return {view: view, oninit: oninit};
+    return {view: view, oninit: oninit, data: {products: products}};
 })();

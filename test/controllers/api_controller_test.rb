@@ -295,6 +295,22 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "Initiate Order without authentication succeeds" do
+    assert_difference 'Order.count', 1 do 
+    # Posting with an array of serial numbers will return those serial numbers
+    post "/api/initiate_order",  
+      params: {recipients: [@acct1.phone_number.to_s],
+               purchaser: {name: @acct1.name, phone: @acct1.phone_number.to_s, email: @acct1.email},
+               message: "So Long and Thanks for all the Fish",
+               payment_source: "mock_payment_source_token",
+               product: {id: products(:beer).id, type: "Product"}}
+    
+      assert_response :success
+      result = JSON.parse(@response.body)
+      assert result["success"]
+    end
+  end 
+  
   test "Place Order Succeeds" do
     
     post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
