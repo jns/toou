@@ -15,6 +15,8 @@
 //= require bootstrap
 //= require jquery_ujs
 //= require dispatcher
+//= require assets
+//= require google_signin
 //= require breadcrumb
 //= require modal
 //= require modal2

@@ -5,6 +5,7 @@ class UserController < ApplicationController
     def password_reset
     end
 
+    
     def new_merchant
         authorize User, :new?
         if request.get?
@@ -36,18 +37,32 @@ class UserController < ApplicationController
             @user = User.new
             render 'login'
         elsif request.post?
-            user_params = params.require(:user).permit(:username, :password)
-            user = User.find_by(email: user_params[:username].downcase) 
-            if user and user.authenticate(user_params[:password])
+            user = if params[:gtoken] # this is a google signin
+                token = params[:gtoken]
+                cmd = ProcessGoogleToken.call(token)
+                if cmd.success?
+                    cmd.result
+                else
+                    nil
+                end
+            else 
+                user_params = params.require(:user).permit(:username, :password)
+                user = User.find_by(email: user_params[:username].downcase) 
+                if user and user.authenticate(user_params[:password])
+                    user
+                else 
+                    nil
+                end 
+            end
+            if user
                 flash[:notice] = ""
                 set_user(user)
                 destination = user_home(user)
-                
                 redirect_to destination
             else
                 flash[:notice] = "Invalid login credentials"
                 render 'login', status: :unauthorized
-            end       
+            end
         end
     end
 

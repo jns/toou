@@ -17,12 +17,9 @@ var GoogleSignin = (function() {
     var oncreate = function() {
         gapi.signin2.render('g-signin2', {
             'scope': 'profile email',
-            'width': 200,
-            'height': 30,
             'longtitle': true,
             'theme': 'dark',
-            // 'onsuccess': onSuccess,
-            // 'onfailure': onFailure
+            'margin': 'auto',
         });
     }
 
@@ -58,7 +55,15 @@ var GoogleSignin = (function() {
     */
     var signinChanged = function (state) {
         if (state) {
-            Dispatcher.dispatch(Dispatcher.topics.SIGNIN, googleUser);
+            var csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
+            m.request({
+                url: "/login",
+                method: "POST",
+                headers: {'X-CSRF-Token': csrfToken},
+                body: {gtoken: googleUser.getAuthResponse().id_token}
+            }).then(function(data) {
+                Dispatcher.dispatch(Dispatcher.topics.SIGNIN, googleUser);
+            });
         } else {
             Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
         }
@@ -87,15 +92,15 @@ var GoogleSignin = (function() {
     
     var isSignedIn = function() {
         if (auth2) {
-            return auth2.isSignedIn;
+            return auth2.isSignedIn.get();
         } else {
-            return false;
+            return false
         }
     };
     
     var view = function(vnode) {
         if (! isSignedIn() ) {
-            return m(".mx-auto", {id: "g-signin2"});  
+            return m(".w-100", [m(".m-1.text-center", "or"), m(".m-1", {id: "g-signin2"})]);  
         }
     };
     

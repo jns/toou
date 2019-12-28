@@ -1,3 +1,4 @@
+//= require ./merchant/login
 //= require ./merchant/merchant_autocomplete
 //= require ./merchant/merchant_onboard
 //= require ./merchant/merchant_products

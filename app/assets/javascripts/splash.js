@@ -128,7 +128,7 @@ var Home = (function() {
     
     var view = function(vnode) {
         var leftTop = m(".left-top", tagline());
-        var leftBottom = m(".left-bottom", workflow());
+        var leftBottom = m(".left-bottom.m-3", workflow());
         // var leftBottom = m(".left-bottom", [merchantMap(), m(MerchantLogos)]);
         var rightMiddle = m(".right-middle", [m(".row", sendTooU()),
                             m(".row", myTooUs()),

@@ -10,9 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_28_054512) do
+ActiveRecord::Schema.define(version: 2019_12_27_234156) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "cube"
+  enable_extension "earthdistance"
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
@@ -236,6 +238,8 @@ ActiveRecord::Schema.define(version: 2019_10_28_054512) do
     t.datetime "updated_at", null: false
     t.string "reset_digest"
     t.datetime "reset_sent_at"
+    t.string "picture_url"
+    t.string "locale"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 

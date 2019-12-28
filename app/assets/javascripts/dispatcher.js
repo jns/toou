@@ -1,6 +1,6 @@
 var Dispatcher = (function() {
 
-    var topics = {SIGNIN: "", SIGNOUT: ""};
+    var topics = {SIGNIN: "signin", SIGNOUT: "signout"};
     var routes = [];
 
     var register = function (topic, action) {

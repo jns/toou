@@ -3,7 +3,7 @@ class ApiController < ApiBaseController
     include PassesHelper
 
     # autheticates user with JWT
-    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate, :promotions, :products, :order, :initiate_order, :merchants]
+    skip_before_action :authorize_request, only: [:requestOneTimePasscode, :authenticate,:promotions, :products, :order, :initiate_order, :merchants]
     
     # Account details for the current user
     def account
@@ -135,9 +135,11 @@ class ApiController < ApiBaseController
            end
         rescue Exception => e
             render json: {error: e.message}, status: :internal_server_error
-       end
+        end
     end
     
+    # Authenticate with a google token
+
     # get groups a user belongs and the number of valid passes for
     # buyables in that group
     def groups
