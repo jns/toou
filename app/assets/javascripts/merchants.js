@@ -1,8 +1,10 @@
-//= require ./merchant/login
+//= require ./merchant/merchant
+//= require ./merchant/merchant_login
 //= require ./merchant/merchant_autocomplete
-//= require ./merchant/merchant_onboard
 //= require ./merchant/merchant_products
 //= require ./merchant/merchant_address_form
+//= require ./merchant/authorize_device
+//= require ./merchant/merchant_onboard
 
 /* global m, $, Breadcrumb, Credentials */
 

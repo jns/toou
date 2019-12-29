@@ -1,5 +1,5 @@
+json.id @merchant.id
 json.name @merchant.name
-json.email @current_user.username
 json.website @merchant.website
 json.phone_number @merchant.phone_number
 json.enrolled @merchant.enrolled

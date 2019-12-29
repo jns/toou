@@ -15,6 +15,7 @@
 //= require bootstrap
 //= require jquery_ujs
 //= require dispatcher
+//= require mutex
 //= require assets
 //= require google_signin
 //= require breadcrumb

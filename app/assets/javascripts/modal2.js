@@ -1,14 +1,41 @@
 /* global $, m */
 
+/**
+ * A Task is a simple interface that provides a 'complete' method
+ * that is invoked by inheriting objects upon completion of their work unit.
+ * complete takes two arguments, result and error that are passed to the 
+ * oncomplete callback that is registered.
+ */
+var Task = {
+    oncomplete: null,
+    complete: function(result, error) {
+        if (typeof this.oncomplete == 'function') {
+            this.oncomplete(result, error);
+        }
+    }
+}
+
+
 var Modal2 = function(components) {
-    components.forEach(function(c) {
+    
+    var unstagedComponents = [];
+    var data = {};
+    var task = Object.create(Task);
+    
+    components.forEach(function(c, i) {
         c.state = "staged";
+        c.oncomplete = function(result, err) {
+            if (err === null) {
+               Object.assign(data, result);
+               console.log(data);
+               advance();
+            } else {
+                console.log(err);
+            }
+        }
     });
     components[0].state = "active";
 
-    var unstagedComponents = [];
-    
-    var data = {};
 
     var activeComponent = function() {
         return components.find(function(c) { return c.state == "active";});
@@ -25,17 +52,20 @@ var Modal2 = function(components) {
         active.state = "staged";
     };
     
-    var advance = function(ev) {
+    var advance = function() {
         var active = activeComponent();
         var next = onDeck();
+        if (typeof next == 'undefined') {
+            task.complete(data, null);
+            return;
+        }
         unstagedComponents.push(active);
         active.state = "unstaged";
         next.state = "active";
-        Object.assign(data, active.data);
-        console.log(data);
+        m.redraw();
     };
 
-    var view = function(vnode) {
+    task.view = function(vnode) {
         var activeIndex = components.findIndex(function(c) { return c.state == "active";});
         var first = activeIndex === 0;
         var last = activeIndex === (components.length-1);
@@ -51,6 +81,6 @@ var Modal2 = function(components) {
     };
     
     
-    return {view: view};
+    return task;
     
 };

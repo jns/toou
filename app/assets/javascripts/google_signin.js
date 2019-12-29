@@ -41,10 +41,10 @@ var GoogleSignin = (function() {
         // Sign in the user if they are currently signed in.
         if (auth2.isSignedIn.get() == true) {
             auth2.signIn();
+            googleUser = auth2.currentUser.get();
+            Credentials.authenticateGoogleUser(googleUser.getAuthResponse().id_token);
         }
     
-        // Start with the current live values.
-        refreshValues();
     };
 
 
@@ -55,17 +55,9 @@ var GoogleSignin = (function() {
     */
     var signinChanged = function (state) {
         if (state) {
-            var csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
-            m.request({
-                url: "/login",
-                method: "POST",
-                headers: {'X-CSRF-Token': csrfToken},
-                body: {gtoken: googleUser.getAuthResponse().id_token}
-            }).then(function(data) {
-                Dispatcher.dispatch(Dispatcher.topics.SIGNIN, googleUser);
-            });
+            Credentials.authenticateGoogleUser(googleUser.getAuthResponse().id_token);
         } else {
-            Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
+            Credentials.logoutUser();
         }
     };
 
@@ -79,30 +71,10 @@ var GoogleSignin = (function() {
         googleUser = user;
     };
 
-
-    /**
-    * Retrieves the current user and signed in states from the GoogleAuth
-    * object.
-    */
-    var refreshValues = function() {
-        if (auth2){
-            googleUser = auth2.currentUser.get();
-        }
-    }
-    
-    var isSignedIn = function() {
-        if (auth2) {
-            return auth2.isSignedIn.get();
-        } else {
-            return false
-        }
-    };
     
     var view = function(vnode) {
-        if (! isSignedIn() ) {
-            return m(".w-100", [m(".m-1.text-center", "or"), m(".m-1", {id: "g-signin2"})]);  
-        }
+        return m(".w-100", [m(".m-1.text-center", "or"), m(".m-1", {id: "g-signin2"})]);  
     };
     
-    return {view: view, oninit: oninit, oncreate: oncreate, isSignedIn: isSignedIn};
+    return {view: view, oninit: oninit, oncreate: oncreate};
 })();

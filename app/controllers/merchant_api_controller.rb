@@ -3,21 +3,8 @@ class MerchantApiController < ApiBaseController
 	include MerchantsHelper
 	
 
-	skip_before_action :authorize_request, only: [:authenticate_merchant, :authorize_device]
+	skip_before_action :authorize_request, only: [:authorize_device]
 
-    # Authenticate a merchant user
-    # @param [String] username The merchant's username
-    # @param [String] password The merchant's password
-    def authenticate_merchant 
-       credentials = params.require(:data).permit([:username, :password])
-       command = CreateAuthToken.call(credentials[:username], credentials[:password])
-       if command.success?
-           render json: {auth_token: command.result}, status: :ok
-       else
-           render json: {error: command.errors}, status: :unauthorized
-       end
-    end
-    
     def products
         @merchant = merchant_params
         authorize @merchant
@@ -39,23 +26,27 @@ class MerchantApiController < ApiBaseController
        render 'products.json.jbuilder', status: :ok
     end
 
+    def create
+        begin
+            data = params.require(:data).permit(:name, :website, :phone_number, :address1, :address2, :city, :state, :country, :zip, :latitude, :longitude)
+            data[:country] = Country.find_by(abbreviation: data[:country]) if data[:country]
+            data[:user] = @current_user
+            @merchant = Merchant.create(data)
+            render 'merchant_new.json.jbuilder', status: :ok
+        rescue Error => e
+            render json: {error: e.message}, status: :bad_request
+        end
+    end
+
     def merchant
         @merchant = merchant_params
         authorize @merchant
         if request.put?
-            data = params.require(:data).permit(:name, :website, :phone_number, location: [:address1, :address2, :city, :state, :zip, :latitude, :longitude])
-            @merchant.update(name: data[:name], website: data[:website], phone_number: data[:phone_number])
-            if data[:location]
-               @merchant.update(address1: data[:location][:address1],
-                        address2: data[:location][:address2],
-                        city: data[:location][:city],
-                        state: data[:location][:state],
-                        zip: data[:location][:zip],
-                        latitude: data[:location][:latitude],
-                        longitude: data[:location][:longitude])
-            end
+            data = params.require(:data).permit(:name, :website, :phone_number, :address1, :address2, :city, :state, :country, :zip, :latitude, :longitude)
+            data[:country] = Country.find_by(abbreviation: data[:country]) if data[:country]
+            @merchant.update(data)
         end
-        render 'merchant.json.jbuilder', status: :ok
+        render 'merchant_new.json.jbuilder', status: :ok
     end
 
     

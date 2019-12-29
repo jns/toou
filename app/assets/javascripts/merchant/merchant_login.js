@@ -1,13 +1,11 @@
 /* global m, $ */
-var Login = (function() {
+var MerchantLogin = (function() {
     
     var submit = function() {
         var csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
         var username = $("input[name=username").val();
         var password = $("input[name=password").val();
-        
-        var body = {username: username, password: password};
-        console.log(body);
+        Credentials.authenticateUser(username, password);
     };
     
     var view = function(vnode) {

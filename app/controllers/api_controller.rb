@@ -137,8 +137,6 @@ class ApiController < ApiBaseController
             render json: {error: e.message}, status: :internal_server_error
         end
     end
-    
-    # Authenticate with a google token
 
     # get groups a user belongs and the number of valid passes for
     # buyables in that group

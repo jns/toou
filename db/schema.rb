@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_27_234156) do
+ActiveRecord::Schema.define(version: 2019_12_29_201931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "cube"
@@ -142,6 +142,8 @@ ActiveRecord::Schema.define(version: 2019_12_27_234156) do
     t.string "zip"
     t.float "latitude"
     t.float "longitude"
+    t.bigint "country_id"
+    t.index ["country_id"], name: "index_merchants_on_country_id"
     t.index ["user_id"], name: "index_merchants_on_user_id"
   end
 

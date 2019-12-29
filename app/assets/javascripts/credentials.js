@@ -9,6 +9,9 @@ var Credentials = (function() {
     var phone_number = undefined;
     var passcode = undefined;
     
+    var isUserLoggedIn = function() {
+      return hasToken("USER_TOKEN");  
+    };
     
     var setToken = function(arg1, arg2) {
         var token, token_name;
@@ -104,6 +107,41 @@ var Credentials = (function() {
         });
     };
     
+    var authenticateUser = function(username, password) {
+        return m.request({
+            method: "POST",
+            url: "/api/user/authenticate",
+            body: {data: {username: username, password: password}},
+        }).then(function(data) {
+            setToken("USER_TOKEN", data["auth_token"]);
+        }).catch(function(e) {
+            setToken("USER_TOKEN", null);
+        });
+    };
+    
+    var authenticateGoogleUser = function(token) {
+        return m.request({
+            method: "POST",
+            url: "/api/user/authenticate",
+            body: {gtoken: token},
+        }).then(function(data) {
+            setToken("USER_TOKEN", data["auth_token"]);
+            Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
+        }).catch(function(e) {
+            setToken("USER_TOKEN", null);
+            Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
+        });
+    };
+    
+    var getUserToken = function() {
+        return getToken("USER_TOKEN");    
+    };
+    
+    var logoutUser = function() {
+        Credentials.setToken("USER_TOKEN", null);    
+        Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
+    };
+    
     return {setToken: setToken, 
             getToken: getToken,
             phone_number: phone_number,
@@ -112,5 +150,10 @@ var Credentials = (function() {
             getUserData: getUserData,
             getMissingUserDataFields: getMissingUserDataFields,
             authenticate: authenticate,
+            authenticateUser: authenticateUser,
+            authenticateGoogleUser: authenticateGoogleUser,
+            logoutUser: logoutUser,
+            isUserLoggedIn: isUserLoggedIn,
+            getUserToken: getUserToken,
     };
 })();

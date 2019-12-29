@@ -6,7 +6,7 @@ class RedemptionApiControllerTest < ActionDispatch::IntegrationTest
 	    user = merchant.user
 	    user.update(password: password)
 	    
-	    post "/api/merchant/authenticate", params: {data: {username: user.username, password: password}}, as: :json  
+	    post "/api/user/authenticate", params: {data: {username: user.username, password: password}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]

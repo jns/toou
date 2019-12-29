@@ -1,12 +1,21 @@
 /* global $, m */
 var MerchantProducts = (function() {
     
+    var task = Object.create(Task);
+    
     var products = [];
 
-    var oninit = function(vnode) {
+    task.oninit = function(vnode) {
         $.get("/api/products").then(function(data) {
-            data.forEach(function(p) {products.push(p);}); 
+            data.forEach(function(p) {
+                p.redeem = false;
+                products.push(p);
+            }); 
         });
+    };
+    
+    var submit = function() {
+        task.complete({products: products}, null);    
     };
     
     var toggleProduct = function(ev) {
@@ -24,7 +33,7 @@ var MerchantProducts = (function() {
                     ]);
     };
     
-    var view = function(vnode) {
+    task.view = function(vnode) {
         
         var thead = m("thead", [
             m("th", {width: 10}, "Redeem?"),
@@ -37,9 +46,11 @@ var MerchantProducts = (function() {
         
         var tbody = m("tbody", trows);
 
-        return [m(".h4.text-center", "Select Products"), m("table.table.overflow-auto", [thead, tbody])];
+        return [m(".h4.text-center", "Select Products"), 
+                m("table.table.overflow-auto", [thead, tbody]),
+                m(".text-center.mt-5", m("input.btn.btn-primary", {onclick: submit, value: "Confirm"}))];
     };
 
+    return task;
     
-    return {view: view, oninit: oninit, data: {products: products}};
 })();

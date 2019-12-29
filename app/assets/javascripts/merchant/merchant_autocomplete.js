@@ -1,11 +1,12 @@
-/* global $, m,s uuidv4 */
+/* global $, m, google */
 var MerchantAutocomplete = (function() {
 
-    var token = uuidv4();
-    var key = "AIzaSyAbmo8M4MHl7hPMvXyxsdW3BC_hATcZ3Bk";
-    var data = {};
+    // The Component will be a Task object that 
+    // invokes the oncomplete callback upon finishing
+    // its work.
+    var task = Object.create(Task);
     
-    var oncreate = function() {
+    task.oncreate = function() {
         createAutocomplete();
     }
     
@@ -24,23 +25,13 @@ var MerchantAutocomplete = (function() {
     }
 
     var onPlaceChanged = function() {
-         var place = this.getPlace();     
-         data.place = place;
-         console.log(place);  
-    }
-    var autocomplete = function(e) {
-        var input = e.target.value;
-        
-        if (input.length > 2) {
-            $.get("https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+input+"&key="+key+"&sessionToken="+token)
-            .then(function(data) {
-                console.log(data);
-            })
-        }
-        console.log(e.target.value);
+         var place = this.getPlace();  
+         var m = new Merchant();
+         m.initializeFromGooglePlace(place);
+         task.complete({merchant: m}, null);
     };
 
-    var view = function(vnode) {
+    task.view = function(vnode) {
         return [m(".row", 
                     m(".col.h4.text-center", "Search for Establishment")
                 ),  
@@ -61,5 +52,5 @@ var MerchantAutocomplete = (function() {
             ];
     };
     
-    return {view: view, oncreate: oncreate, data: data};
+    return task;
 })();

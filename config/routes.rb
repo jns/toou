@@ -35,6 +35,9 @@ Rails.application.routes.draw do
   get 'mredeem/not_authorized', to: 'merchants#device_not_authorized'
   
   # API Endpoints
+  post 'api/user/authenticate', to: 'user_api#authenticate'
+
+
   get 'api/promotions', to: 'api#promotions'
   get 'api/products', to: 'api#products'
   patch 'api/account', to: 'api#account'
@@ -53,8 +56,8 @@ Rails.application.routes.draw do
   post 'api/merchants', to: 'api#merchants'
   post 'api/groups', to: 'api#groups'
   
+  post 'api/merchant/create', to: 'merchant_api#create'
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
-  post 'api/merchant/authenticate', to: 'merchant_api#authenticate_merchant'
   post 'api/merchant/authorize_device', to: 'merchant_api#authorize_device'
   post 'api/merchant/authorized_devices', to: 'merchant_api#authorized_devices'
   post 'api/merchant/credits', to: 'merchant_api#credits'
