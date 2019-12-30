@@ -51,6 +51,7 @@ var AuthorizeDevice = (function() {
             }).then(function(data) {
                 Credentials.setToken("REDEMPTION_TOKEN", data["auth_token"]);
                 showAuthorized = true;
+                showForm = false;
             }).catch(function(err) {
                 alert(err); 
             });
