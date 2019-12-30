@@ -8,7 +8,6 @@
  * oncomplete callback that is registered.
  */
 var Task = {
-    dataStore: {},
     oncomplete: null,
     complete: function(result, error) {
         if (typeof this.oncomplete == 'function') {
@@ -20,6 +19,7 @@ var Task = {
 
 var Modal2 = function(tasks) {
     
+    var data = {};
     var unstagedComponents = [];
     var task = Object.create(Task);
     
@@ -27,7 +27,7 @@ var Modal2 = function(tasks) {
         c.state = "staged";
         c.oncomplete = function(result, err) {
             if (err === null) {
-               Object.assign(task.dataStore, result);
+               Object.assign(data, result);
                advance();
             } else {
                 console.log(err);
@@ -56,7 +56,7 @@ var Modal2 = function(tasks) {
         var active = activeComponent();
         var next = onDeck();
         if (typeof next == 'undefined') {
-            task.complete(task.dataStore, null);
+            task.complete(data, null);
             return;
         }
         unstagedComponents.push(active);
@@ -70,7 +70,7 @@ var Modal2 = function(tasks) {
         var first = activeIndex === 0;
         var last = activeIndex === (tasks.length-1);
         
-        var comps = tasks.map(function(c) { return m(".wiz-item."+c.state, m(c, task.dataStore))});
+        var comps = tasks.map(function(c) { return m(".wiz-item."+c.state, m(c, data))});
         var dots = tasks.map(function(c) { return m("span.dot" + (c.state == "active" ? ".filled" : ""));});
         return m(".wiz", [m(".wiz-items", comps), 
                          m(".wiz-control", [

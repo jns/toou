@@ -87,7 +87,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		cupcake = products(:cupcake)
 		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, products: [{id: beer.id, can_redeem: false}, {id: cupcake.id, can_redeem: true}]}}
 		assert_response :ok
-		
+
 		JSON.parse(response.body).each do |p|
 			if p["id"] == beer.id
 				refute p["can_redeem"]

@@ -9,3 +9,5 @@ json.city @merchant.city
 json.state @merchant.state
 json.zip @merchant.zip
 json.country (@merchant.country ? @merchant.country.abbreviation : nil)
+json.products @products, partial: 'merchant_api/product', as: :product
+   

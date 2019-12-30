@@ -5,20 +5,20 @@ var MerchantProducts = (function() {
     var dataStore = null;
 
     var submit = function() {
-        
-        task.complete({products: products}, null);    
+        task.complete({}, null);    
     };
     
     var toggleProduct = function(ev) {
         var checked = $(ev.target).prop("checked");
         var productId = $(ev.target).data("product-id");
-        dataStore.merchant.products.find(function(p) {return p.id === productId;}).redeem = checked;
-
+        dataStore.merchant.products.find(function(p) {return p.id === productId;}).can_redeem = checked;
+        console.log(dataStore.merchant.products);
+        dataStore.merchant.updateProducts();
     };
     
     var product_row = function(p) {
         return m("tr", [
-                    m("td.text-center", m("input.form-check-input[type=checkbox]", {onclick: toggleProduct, "data-product-id": p.id, checked: p["can_redeem"]})),
+                    m("td.text-center", m("input.form-check-input[type=checkbox]", {onclick: toggleProduct, "data-product-id": p.id, checked: p.can_redeem})),
                     m("td.text-left", p.name),
                     m("td", "$" + p.max_price_dollars.toFixed(2)),
                     ]);

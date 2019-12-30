@@ -53,7 +53,6 @@ var Merchant = function() {
         return m.request({url: url, method: method, body: {authorization: Credentials.getUserToken(), data: data}})
             .then((data) => {
                 Object.assign(this, data);
-                this.updateProducts();
             });
     };
     
@@ -61,7 +60,7 @@ var Merchant = function() {
         
         var data = {merchant_id: this.merchant_id}
         data.products = this.products.map(function(p) {
-           return {product: {id: p.id, can_redeem: p.can_redeem, price_cents: p.max_price_cents}};
+           return {id: p.id, can_redeem: p.can_redeem, price_cents: p.max_price_cents};
         });
 
         var method = null;

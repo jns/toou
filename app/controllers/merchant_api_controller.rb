@@ -12,16 +12,16 @@ class MerchantApiController < ApiBaseController
         if request.put? 
             data = params.require(:data).permit(products: [:id, :can_redeem, :price_cents])
             data[:products].each do |p|
-                product = Product.find(p[:id])
+                product = Product.find(p["id"])
                 mp = MerchantProduct.find_by(product: product, merchant: @merchant)
                 if mp
-                    if p[:can_redeem] === "false"
+                    if p["can_redeem"] == "false" || p["can_redeem"] == false
                         mp.destroy
-                    elsif p[:price_cents]
-                        mp.update(price_cents: p[:price_cents])
+                    elsif p["price_cents"]
+                        mp.update(price_cents: p["price_cents"])
                     end
-                else
-                    price_cents = p[:price_cents] || product.max_price_cents
+                elsif p["can_redeem"] == "true" || p["can_redeem"] == true
+                    price_cents = p["price_cents"] || product.max_price_cents
                     MerchantProduct.create(merchant: @merchant, product: product, price_cents: price_cents)
                 end
             end
@@ -36,6 +36,7 @@ class MerchantApiController < ApiBaseController
             data[:country] = Country.find_by(abbreviation: data[:country]) if data[:country]
             data[:user] = @current_user
             @merchant = Merchant.create(data)
+            @products = Product.all
             render 'merchant_new.json.jbuilder', status: :ok
         rescue Error => e
             render json: {error: e.message}, status: :bad_request
@@ -50,6 +51,7 @@ class MerchantApiController < ApiBaseController
             data[:country] = Country.find_by(abbreviation: data[:country]) if data[:country]
             @merchant.update(data)
         end
+        @products = Product.all
         render 'merchant_new.json.jbuilder', status: :ok
     end
 
