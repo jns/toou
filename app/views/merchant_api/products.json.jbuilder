@@ -5,6 +5,6 @@ json.array! @products do |product|
     json.max_price_dollars product.price(:dollars)
     json.icon product.icon
     json.type product.class.name
-    json.can_redeem (product.can_redeem?(@merchant) ? "true" : "false")
+    json.can_redeem (product.can_redeem?(@merchant) ? true : false)
     json.price_cents product.merchant_price_cents(@merchant)
 end

@@ -1,5 +1,6 @@
 /* global $, m */
 
+
 /**
  * A Task is a simple interface that provides a 'complete' method
  * that is invoked by inheriting objects upon completion of their work unit.
@@ -7,6 +8,7 @@
  * oncomplete callback that is registered.
  */
 var Task = {
+    dataStore: {},
     oncomplete: null,
     complete: function(result, error) {
         if (typeof this.oncomplete == 'function') {
@@ -16,33 +18,31 @@ var Task = {
 }
 
 
-var Modal2 = function(components) {
+var Modal2 = function(tasks) {
     
     var unstagedComponents = [];
-    var data = {};
     var task = Object.create(Task);
     
-    components.forEach(function(c, i) {
+    tasks.forEach(function(c, i) {
         c.state = "staged";
         c.oncomplete = function(result, err) {
             if (err === null) {
-               Object.assign(data, result);
-               console.log(data);
+               Object.assign(task.dataStore, result);
                advance();
             } else {
                 console.log(err);
             }
         }
     });
-    components[0].state = "active";
+    tasks[0].state = "active";
 
 
     var activeComponent = function() {
-        return components.find(function(c) { return c.state == "active";});
+        return tasks.find(function(c) { return c.state == "active";});
     };
     
     var onDeck = function() {
-        return components.find(function(c) { return c.state == "staged"; });
+        return tasks.find(function(c) { return c.state == "staged"; });
     };
     
     var previous = function() {
@@ -56,7 +56,7 @@ var Modal2 = function(components) {
         var active = activeComponent();
         var next = onDeck();
         if (typeof next == 'undefined') {
-            task.complete(data, null);
+            task.complete(task.dataStore, null);
             return;
         }
         unstagedComponents.push(active);
@@ -66,12 +66,12 @@ var Modal2 = function(components) {
     };
 
     task.view = function(vnode) {
-        var activeIndex = components.findIndex(function(c) { return c.state == "active";});
+        var activeIndex = tasks.findIndex(function(c) { return c.state == "active";});
         var first = activeIndex === 0;
-        var last = activeIndex === (components.length-1);
+        var last = activeIndex === (tasks.length-1);
         
-        var comps = components.map(function(c) { return m(".wiz-item."+c.state, m(c, data))});
-        var dots = components.map(function(c) { return m("span.dot" + (c.state == "active" ? ".filled" : ""));});
+        var comps = tasks.map(function(c) { return m(".wiz-item."+c.state, m(c, task.dataStore))});
+        var dots = tasks.map(function(c) { return m("span.dot" + (c.state == "active" ? ".filled" : ""));});
         return m(".wiz", [m(".wiz-items", comps), 
                          m(".wiz-control", [
                              m("input.btn.btn-light.previous" + (first ? ".invisible" : ".visible"), {type: "button", onclick: previous, value: "Back"}),

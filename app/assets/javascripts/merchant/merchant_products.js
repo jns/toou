@@ -2,26 +2,17 @@
 var MerchantProducts = (function() {
     
     var task = Object.create(Task);
-    
-    var products = [];
+    var dataStore = null;
 
-    task.oninit = function(vnode) {
-        $.get("/api/products").then(function(data) {
-            data.forEach(function(p) {
-                p.redeem = false;
-                products.push(p);
-            }); 
-        });
-    };
-    
     var submit = function() {
+        
         task.complete({products: products}, null);    
     };
     
     var toggleProduct = function(ev) {
         var checked = $(ev.target).prop("checked");
         var productId = $(ev.target).data("product-id");
-        products.find(function(p) {return p.id === productId;}).redeem = checked;
+        dataStore.merchant.products.find(function(p) {return p.id === productId;}).redeem = checked;
 
     };
     
@@ -33,7 +24,15 @@ var MerchantProducts = (function() {
                     ]);
     };
     
+    task.oninit = function(vnode) {
+        dataStore = vnode.attrs;
+    };
+    
     task.view = function(vnode) {
+        var products = [];
+        if (dataStore.merchant) {
+            products = dataStore.merchant.products;
+        }
         
         var thead = m("thead", [
             m("th", {width: 10}, "Redeem?"),

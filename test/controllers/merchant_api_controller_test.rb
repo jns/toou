@@ -59,7 +59,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		assert_response :ok
 		JSON.parse(response.body).each do |p|
 			product = Product.find(p["id"])
-			assert_equal product.can_redeem?(merchant), p["can_redeem"]	== "true" ? true : false
+			assert_equal product.can_redeem?(merchant), p["can_redeem"]
 		end
 	end
 	
@@ -69,7 +69,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		beer = products(:beer)
 		qbeer = merchant_products(:quantum_beer)
 		cupcake = products(:cupcake)
-		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, product: {id: beer.id, price_cents: qbeer.price_cents+1, can_redeem: true}}}
+		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, products: [{id: beer.id, price_cents: qbeer.price_cents+1, can_redeem: true}]}}
 		assert_response :ok
 		
 		JSON.parse(response.body).each do |p|
@@ -85,12 +85,17 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		token = auth_merchant(merchant)
 		beer = products(:beer)
 		cupcake = products(:cupcake)
-		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, product: {id: beer.id, can_redeem: false}}}
+		put "/api/merchant/products", params: {authorization: token, data: {merchant_id: merchant.id, products: [{id: beer.id, can_redeem: false}, {id: cupcake.id, can_redeem: true}]}}
 		assert_response :ok
 		
 		JSON.parse(response.body).each do |p|
 			if p["id"] == beer.id
-				assert_equal "false", p["can_redeem"] 	
+				refute p["can_redeem"]
+				assert_equal beer.max_price_cents, p["price_cents"]
+			end
+			if p["id"] == cupcake.id
+				assert  p["can_redeem"]
+				assert_equal cupcake.max_price_cents, p["price_cents"]
 			end
 		end
 	end

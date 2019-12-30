@@ -40,8 +40,7 @@ var MerchantAddressForm = (function() {
     var submit = function() {
         // Perform update after google API lookup is complete
         addressUpdate.waitFor(function() {
-            dataStore.merchant.add_or_update().then(function(data) {
-                Object.assign(dataStore.merchant, data);
+            dataStore.merchant.addOrUpdate().then(function(data) {
                 task.complete({} , null);
             }).catch(function(error) {
                 alert(error);
@@ -65,7 +64,7 @@ var MerchantAddressForm = (function() {
         // Address is cached while validating with google API. 
         var address = formatted_address;
         if (address == null) {
-            address = dataStore.merchant.formatted_address();
+            address = dataStore.merchant.formattedAddress();
         }
         
         return [m(".h4.text-center", "Confirm Establishment Information"),

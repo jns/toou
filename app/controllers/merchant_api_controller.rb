@@ -8,18 +8,22 @@ class MerchantApiController < ApiBaseController
     def products
         @merchant = merchant_params
         authorize @merchant
-        if request.put?
-            data = params.require(:data).permit(product: [:id, :can_redeem, :price_cents])
-            product = Product.find(data[:product][:id])
-            mp = MerchantProduct.find_by(product: product)
-            if mp
-                if data[:product][:can_redeem] === "false"
-                    mp.destroy
+
+        if request.put? 
+            data = params.require(:data).permit(products: [:id, :can_redeem, :price_cents])
+            data[:products].each do |p|
+                product = Product.find(p[:id])
+                mp = MerchantProduct.find_by(product: product, merchant: @merchant)
+                if mp
+                    if p[:can_redeem] === "false"
+                        mp.destroy
+                    elsif p[:price_cents]
+                        mp.update(price_cents: p[:price_cents])
+                    end
                 else
-                    mp.update(price_cents: data[:product][:price_cents])
+                    price_cents = p[:price_cents] || product.max_price_cents
+                    MerchantProduct.create(merchant: @merchant, product: product, price_cents: price_cents)
                 end
-            else
-                MerchantProduct.create(merchant: @merchant, product: product, price_cents: data[:product][:price_cents])
             end
         end        
        @products = Product.all

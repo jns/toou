@@ -26,7 +26,7 @@ class Product < ApplicationRecord
         if product
             product.price_cents 
         else
-            0
+            max_price_cents
         end
     end
 end
