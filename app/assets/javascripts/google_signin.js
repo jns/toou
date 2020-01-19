@@ -28,7 +28,7 @@ var GoogleSignin = (function() {
      */
     var initSigninV2 = function() {
         auth2 = gapi.auth2.init({
-          client_id: window.toouAssets.googleSigninClientId,
+          client_id: window.gapiCredentials.googleSigninClientId,
           scope: 'profile email'
         });
     

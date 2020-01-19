@@ -5,6 +5,12 @@ class MerchantApiController < ApiBaseController
 
 	skip_before_action :authorize_request, only: [:authorize_device]
 
+    # Lists all merchants in scope
+    def merchants
+        @merchants = Merchant.where(user: @current_user)
+        render 'merchants.json.jbuilder', status: :ok
+    end
+
     def products
         @merchant = merchant_params
         authorize @merchant

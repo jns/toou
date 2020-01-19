@@ -9,7 +9,7 @@ var MerchantOnboardWorkflow = (function() {
     
     var view = function(vnode) {
         if (!Credentials.isUserLoggedIn()) {
-            return m(MerchantLogin);
+            return m(MerchantEnrollment);
         } else {
             return m(workflow);
         }

@@ -39,7 +39,7 @@ body {
     width: 100%;
     padding-bottom: 2em;
     height: calc(100% - 76px);
-    overflow: auto;
+    overflow: visible;
 }
 
 .poiret {
@@ -201,6 +201,10 @@ a {
         position: absolute;
         right: 50px;
     }
+}
+
+.toou { 
+    font-weight: bold;    
 }
 
 .black { 

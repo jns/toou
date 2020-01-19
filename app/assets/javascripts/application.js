@@ -23,6 +23,7 @@
 //= require modal2
 //= require credentials
 //= require splash
+//= require merchants
 
 /* global $, Breadcrumb, Credentials */
 
@@ -81,13 +82,12 @@ $(function() {
     } else if (path === "/passes") {
         Passes.mount();
         Breadcrumb.home();
-    } else if (path == "/merchants/onboard1") {
-        MerchantOnboard.mount();
-        Breadcrumb.home();
     } else if (path === "/merchants") {
         Breadcrumb.home();
+        Merchants.test();
+        // Merchants.mount(); 
     } else if (path.match(/\/merchants\/\d+/)) {
-        Merchants.mount();
+        // Merchants.mount();
         Breadcrumb.show("Back", "/merchants");
     } else if (path.match(/\/pass\/.{30}/)) {
         Breadcrumb.show("Passes", "/passes");

@@ -28,7 +28,7 @@ class UserApiController < ApiBaseController
         
             if user 
                 token = JsonWebToken.encode(user_id: user.id, user_type: "User") 
-                render json: {auth_token: token, type: "USER"}, status: :ok
+                render json: {auth_token: token, type: "USER", username: user.username}, status: :ok
             else 
                render json: {error: "User not found"}, status: :unauthorized 
             end

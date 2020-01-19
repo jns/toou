@@ -1,6 +1,5 @@
 class MerchantsController < ApplicationController
 
-    layout "merchant"
     include MerchantsHelper
     
     #skip_before_action :validate_auth_token
@@ -12,87 +11,21 @@ class MerchantsController < ApplicationController
         render json: {auth_token: token}, status: :ok
     end
     
-    # Info message for now
-    def new_user
-        @title = "Merchant Enrollment"
-    end
-    
     # presents the welcome screen
     def index
-        if @current_user    
-            @title = "Merchant Dashboard"
-            authorize Merchant
-            @merchants = policy_scope(Merchant)
-            render 'dashboard'
-        else
-            @title = "Merchant Enrollment"
-            render 'new_user'
-        end
+        # if @current_user    
+        #     @title = "Merchant Dashboard"
+        #     authorize Merchant
+        #     @merchants = policy_scope(Merchant)
+        #     render 'dashboard'
+        # else
+        #     @title = "Merchant Enrollment"
+        #     render 'new_user'
+        # end
     end
     
-    def onboard1
+    def onboard
         
-    end
-    
-    def onboard2
-        
-    end
-    
-    def onboard3
-        @merchant = Merchant.first
-    end
-    
-    
-    def new
-        authorize Merchant
-       @merchant = Merchant.new
-    end
-    
-    # POST creates a new merchant with data from the form
-    def create
-        authorize Merchant
-        @merchant = Merchant.create(merchant_params)
-        @merchant.user = @current_user
-        @merchant.save
-        redirect_to action: "index"
-    end
-    
-    def edit
-       set_merchant
-       authorize @merchant
-    end
-    
-
-    def show
-       set_merchant
-       authorize @merchant
-       @products = Product.all
-    end
-
-    
-    def update
-        set_merchant
-        authorize @merchant
-        
-        # Update merchant properties if provided
-        data = merchant_params
-        @merchant.update(data)
-        redirect_to action: :show
-    end
-    
-    def update_products
-        set_merchant
-        authorize @merchant
-        
-        products = merchant_products
-        Product.all.each do |p|
-            if products[p.id.to_s] and products[p.id.to_s]["can_redeem"]
-                @merchant.add_product(p)
-            else
-                @merchant.remove_product(p)
-            end
-        end
-        redirect_to action: :show
     end
     
     # GET enrolls a new merchant with stripe

@@ -32,7 +32,7 @@ var AuthorizeDevice = (function() {
                                 m(".row" + (showForm ? "" : ".d-none"), form),
                                 m(".row.col.text-center.mt-5.regular-12pt" + (showAuthorized ? ".d-inline-block" : ".d-none"), "This device is now authorized"),
                                 m(".row.col.d-inline-block.text-center.mt-5.regular-12pt", ["You can authorize devices to redeem TooU's at any time by visiting ", m("a", {href: "https://www.toou.gifts/redeem"},"https://www.toou.gifts/redeem")]),
-                                m(".row" + (showDefer || showAuthorized ? "" : ".d-none"), m("input.btn.btn-primary", {onclick: complete, value: "Ok"})),
+                                m(".row.justify-content-center.col.mt-5" + (showDefer || showAuthorized ? "" : ".d-none"), m("input.btn.btn-primary", {onclick: complete, value: "Ok"})),
                            ]);
     };
     
