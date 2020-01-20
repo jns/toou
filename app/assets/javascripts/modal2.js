@@ -74,9 +74,9 @@ var Modal2 = function(tasks) {
         var dots = tasks.map(function(c) { return m("span.dot" + (c.state == "active" ? ".filled" : ""));});
         return m(".wiz", [m(".wiz-items", comps), 
                          m(".wiz-control", [
-                             m("input.btn.btn-light.previous" + (first ? ".invisible" : ".visible"), {type: "button", onclick: previous, value: "Back"}),
+                            //  m("input.btn.btn-light.previous" + (first ? ".invisible" : ".visible"), {type: "button", onclick: previous, value: "Back"}),
                              m(".dots", dots),
-                             m("input.btn.btn-light.next" + (last ? ".invisible" :  ".visible"), {type: "button", onclick: advance, value: "Next"}),
+                            //  m("input.btn.btn-light.next" + (last ? ".invisible" :  ".visible"), {type: "button", onclick: advance, value: "Next"}),
                              ])]);
     };
     

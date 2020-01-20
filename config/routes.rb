@@ -93,9 +93,7 @@ Rails.application.routes.draw do
   get 'merchants/token', to: 'merchants#get_auth_token' # temporary while stil have a hybrid traditional and single-page app
   get 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
-  get 'merchants/onboard1', to: 'merchants#onboard1'
-  get 'merchants/onboard2', to: 'merchants#onboard2'
-  get 'merchants/onboard3', to: 'merchants#onboard3'
+  get 'merchants/onboard', to: 'merchants#onboard'
   get 'merchants/enrollment_link', to: 'merchants#enrollment_link'
   get 'merchants/edit/:id', to: 'merchants#edit'
   post 'merchants/update', to: 'merchants#update'

@@ -1,3 +1,8 @@
+//= require ./merchant_autocomplete
+//= require ./merchant_address_form
+//= require ./merchant_products
+//= require ./authorize_device
+
 /* global m */
 
 var MerchantOnboardWorkflow = (function() {
@@ -9,20 +14,11 @@ var MerchantOnboardWorkflow = (function() {
     
     var view = function(vnode) {
         if (!Credentials.isUserLoggedIn()) {
-            return m(MerchantEnrollment);
+            return m(MerchantLogin);
         } else {
             return m(workflow);
         }
     };
 
     return {view: view};
-})();
-
-var MerchantOnboard = (function() {
-    
-    var mount = function() {
-        m.mount(document.getElementById("merchant_onboard"), MerchantOnboardWorkflow);
-    }
-    
-    return {mount: mount};
 })();

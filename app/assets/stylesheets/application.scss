@@ -42,6 +42,12 @@ body {
     overflow: visible;
 }
 
+.app-content {
+    position: relative;
+    height: 100%;
+    padding-bottom: 1em;
+}
+
 .poiret {
     font-family: 'Poiret One', cursive; 
 }

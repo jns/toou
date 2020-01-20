@@ -8,7 +8,61 @@ var Credentials = (function() {
     
     var phone_number = undefined;
     var passcode = undefined;
+    var auth2; // The Google Sign-In object.
+    var googleUser; // The current user.
+
+    var init = function() {
+        gapi.load('auth2', initSigninV2);
+    };
+
+    /**
+     * Initializes Signin v2 and sets up listeners.
+     */
+    var initSigninV2 = function() {
+        auth2 = gapi.auth2.init({
+          client_id: window.gapiCredentials.googleSigninClientId,
+          scope: 'profile email'
+        });
     
+        // Listen for sign-in state changes.
+        auth2.isSignedIn.listen(signinChanged);
+    
+        // Listen for changes to current user.
+        auth2.currentUser.listen(userChanged);
+    
+        // Sign in the user if they are currently signed in.
+        if (auth2.isSignedIn.get() == true) {
+            auth2.signIn();
+            googleUser = auth2.currentUser.get();
+            Credentials.authenticateGoogleUser(googleUser.getAuthResponse().id_token);
+        }
+    
+    };
+
+
+    /**
+    * Listener method for sign-out live value.
+    *
+    * @param {boolean} state the updated signed out state.
+    */
+    var signinChanged = function (state) {
+        if (state) {
+            authenticateGoogleUser(googleUser.getAuthResponse().id_token);
+        } else {
+            logoutUser();
+        }
+    };
+
+
+    /**
+    * Listener method for when the user changes.
+    *
+    * @param {GoogleUser} user the updated user.
+    */
+    var userChanged = function (user) {
+        googleUser = user;
+    };
+
     var isUserLoggedIn = function() {
       return hasToken("USER_TOKEN");  
     };
@@ -126,10 +180,8 @@ var Credentials = (function() {
             body: {gtoken: token},
         }).then(function(data) {
             setToken("USER_TOKEN", data["auth_token"]);
-            Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
         }).catch(function(e) {
             setToken("USER_TOKEN", null);
-            Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
         });
     };
     
@@ -138,11 +190,18 @@ var Credentials = (function() {
     };
     
     var logoutUser = function() {
-        Credentials.setToken("USER_TOKEN", null);    
-        Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
+        Credentials.setToken("USER_TOKEN", null);
+        googleSignout();
     };
     
-    return {setToken: setToken, 
+    var googleSignout = function() {
+        if (auth2.isSignedIn.get()) {
+            auth2.signOut();  
+        }
+    };
+    
+    return {init: init,
+            setToken: setToken, 
             getToken: getToken,
             phone_number: phone_number,
             passcode: passcode,
@@ -151,7 +210,6 @@ var Credentials = (function() {
             getMissingUserDataFields: getMissingUserDataFields,
             authenticate: authenticate,
             authenticateUser: authenticateUser,
-            authenticateGoogleUser: authenticateGoogleUser,
             logoutUser: logoutUser,
             isUserLoggedIn: isUserLoggedIn,
             getUserToken: getUserToken,

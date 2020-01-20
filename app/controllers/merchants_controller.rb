@@ -25,7 +25,7 @@ class MerchantsController < ApplicationController
     end
     
     def onboard
-        
+        render 'index'
     end
     
     # GET enrolls a new merchant with stripe

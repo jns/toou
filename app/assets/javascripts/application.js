@@ -19,11 +19,11 @@
 //= require assets
 //= require google_signin
 //= require breadcrumb
+//= require navbar
 //= require modal
 //= require modal2
 //= require credentials
 //= require splash
-//= require merchants
 
 /* global $, Breadcrumb, Credentials */
 
@@ -38,7 +38,6 @@ var Routes = {
     
     goRedeem: function() {
         window.location.pathname = "/mredeem/toou";
-        // Turbolinks.visit("/mredeem/toou", {action: "replace"});
     }
 };
 
@@ -49,29 +48,17 @@ var uuidv4 = function() {
 }
 
 
-var addSignout = function() {
-    if (Credentials.hasToken()) {
-        Credentials.getUserData().then(function(data) {
-            $(".navbar-nav").append("<li class=\"nav-item\"><a href=\"/logout\" class=\"nav-link signout\">logout " + data.name + "</a></li>");
-            $(".signout").click(function() {Credentials.setToken(); Routes.goHome();});
-        });
-    }
-};
 
 $(function() {
-    // var root = document.getElementById('mithril_root');
-    // m.route(root, "/", {
-    //     "/": Splash,
-    //     "/login": Login,
-    //     "/otp": OneTimePasscode,
-    //     "/passes": Passes,
-    //     "/promos": Promos,
-    //     });
     
+    // Init the credentials
+    Credentials.init();
+    
+    // Add navigation
+    var nav = document.getElementById('navigation');
+    m.mount(nav, Navbar);
 
     var path = window.location.pathname;
-    
-    addSignout();
     
     if (path === "/send_gifts") {
         SendGifts.mount();
@@ -82,10 +69,9 @@ $(function() {
     } else if (path === "/passes") {
         Passes.mount();
         Breadcrumb.home();
-    } else if (path === "/merchants") {
+    } else if (path.match(/\/merchants/)) {
         Breadcrumb.home();
-        Merchants.test();
-        // Merchants.mount(); 
+        Merchants.mount(path); 
     } else if (path.match(/\/merchants\/\d+/)) {
         // Merchants.mount();
         Breadcrumb.show("Back", "/merchants");
