@@ -1,26 +1,20 @@
-/* global $ */
-var Breadcrumb = (function() {
+/* global $, m */
+var Breadcrumb = function(crumbles) {
     
-    // Shortcrumb to set the crumb to the default route and text
-    var home = function() {
-        show("Home", "/");
-    };
-    
-    var hide = function() {
-        $('.nav-breadcrumb').hide();
-    };
-    
-    var show = function() {
-        if (arguments.length === 2) {
-            setCrumb(arguments[0], arguments[1]);
+    var view = function(vnode) {
+        var route = m.route.get();
+        var crumb = crumbles.find(function(c) {
+            var path_re = c["regex"];
+            return path_re.test(route);
+        });
+        if (crumb) {
+            var crumb_href = crumb["href"];
+            var crumb_text = crumb["text"];
+            return m(m.route.Link, {href: crumb_href}, m(".nav-breadcrumb.p-1", [m("i.fas.fa-angle-left"), m.trust("&nbsp;"), m("span.nav-breadcrumb-text", crumb_text)]));
+        } else {
+            return m("");
         }
-        $('.nav-breadcrumb').show();
-    };
+    }
     
-    var setCrumb = function(text, href) {
-        $('#nav-breadcrumb-text').text(text);  
-        $('a.nav-breadcrumb').attr("href", href).data("turbolinks-action", "replace");
-    }; 
-    
-    return {hide: hide, show: show, setCrumb: setCrumb, home: home};
-})();
+    return {view: view};
+};

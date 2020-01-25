@@ -21,7 +21,10 @@ var OneTimePasscode = (function() {
     };
     
     var cancel = function() {
-        Routes.goHome();
+       return new Promise(function(resolve, reject) {
+          m.route.set("/");
+          resolve();
+       });
     };
     
     var view = function(vnode) {

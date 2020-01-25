@@ -93,6 +93,7 @@ var Modal = (function() {
                 } else {
                     completion();
                 }
+                Modal.dismiss();
             });
             button.show();
         } else {

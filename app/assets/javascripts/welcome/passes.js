@@ -7,8 +7,9 @@ var PassesComponent = (function() {
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
         
     var afterLogin = function() {
-        Modal.dismiss();
-        loadPasses();    
+        if (Credentials.hasToken()) {
+            loadPasses();    
+        }
     };
     
     var loadPasses = function() {
@@ -66,7 +67,7 @@ var PassesComponent = (function() {
                     data: {group_id: group_id, buyable_id: buyable_id, buyable_type: buyable_type}}
         }).then(function(data) {
             var pass_sn = data.serialNumber;
-            window.location.pathname = "/pass/"+pass_sn;
+            m.route.set("/pass/:sn", {sn: pass_sn});
         }).catch(function(err) {
             alert(err);
         })
@@ -74,7 +75,7 @@ var PassesComponent = (function() {
     
     var showPass = function(ev) {
         var pass_sn = $(ev.target.closest(".pass")).data('pass-serial-number');
-        window.location.pathname = "/pass/"+pass_sn;  
+        m.route.set("/pass/:sn" , {sn: pass_sn})
     };
     
     var passCardForGroup = function(group) {
@@ -140,11 +141,4 @@ var PassesComponent = (function() {
     };
     
     return {view: view, oninit: oninit};
-})();
-
-var Passes = (function() {
-    var mount = function() {
-        m.mount($(".pass-list")[0], PassesComponent);
-    }
-    return {mount: mount};
 })();

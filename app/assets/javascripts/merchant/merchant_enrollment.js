@@ -27,7 +27,7 @@ var MerchantEnrollment = (function() {
                         ])
                     ]),
                 m(".m-4.text-center.regular-14pt", "All you need is a tablet or smart phone!"),
-                m(".pb-5.text-center", m("a.btn.btn-primary", {href: "/merchants/onboard"}, "Get Started")),
+                m(".pb-5.text-center", m(m.route.Link, {href: "/merchants/onboard", class: "btn btn-primary"}, "Get Started")),
                 ];
     };
     

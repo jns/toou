@@ -19,11 +19,12 @@ var Credentials = (function() {
      * Initializes Signin v2 and sets up listeners.
      */
     var initSigninV2 = function() {
+
         auth2 = gapi.auth2.init({
           client_id: window.gapiCredentials.googleSigninClientId,
           scope: 'profile email'
         });
-    
+        
         // Listen for sign-in state changes.
         auth2.isSignedIn.listen(signinChanged);
     
@@ -34,7 +35,7 @@ var Credentials = (function() {
         if (auth2.isSignedIn.get() == true) {
             auth2.signIn();
             googleUser = auth2.currentUser.get();
-            Credentials.authenticateGoogleUser(googleUser.getAuthResponse().id_token);
+            authenticateGoogleUser(googleUser.getAuthResponse().id_token);
         }
     
     };
@@ -162,14 +163,18 @@ var Credentials = (function() {
     };
     
     var authenticateUser = function(username, password) {
-        return m.request({
-            method: "POST",
-            url: "/api/user/authenticate",
-            body: {data: {username: username, password: password}},
-        }).then(function(data) {
-            setToken("USER_TOKEN", data["auth_token"]);
-        }).catch(function(e) {
-            setToken("USER_TOKEN", null);
+        return new Promise(function(resolve, reject) {
+            m.request({
+                method: "POST",
+                url: "/api/user/authenticate",
+                body: {data: {username: username, password: password}},
+            }).then(function(data) {
+                setToken("USER_TOKEN", data["auth_token"]);
+                resolve();
+            }).catch(function(e) {
+                setToken("USER_TOKEN", null);
+                reject(e);
+            });
         });
     };
     

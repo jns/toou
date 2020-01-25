@@ -12,7 +12,7 @@
   <script src="https://apis.google.com/js/platform.js" async defer></script>
 
   <%= javascript_include_tag "https://js.stripe.com/v3/" %>
-  <%= javascript_include_tag "mithril.2.0.0.js" %>
+  <%= javascript_include_tag "https://unpkg.com/mithril@2.0.4/mithril.js" %>
   <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places&key=#{ENV['GOOGLE_API_SERVER_KEY']}" %>
   <%= javascript_tag "window.gapiCredentials = {googleSigninClientId: '#{ENV['GOOGLE_SIGNIN_CLIENT_ID']}'};" %>
 
@@ -54,7 +54,7 @@
 <% end %>
 
 <div class="below-header">
-  <a href="#" class="nav-breadcrumb p-1"><i class="fas fa-angle-left"></i>&nbsp;<span id="nav-breadcrumb-text"></span></a>
+  <div id="breadcrumb"></div>
 
 <div class="flash">
     <% flash.each do |name, msg| -%>
@@ -62,7 +62,11 @@
     <% end -%>
 </div>
 
+<div id="app-content">
 <%= content_for?(:content) ? yield(:content) : yield %>
+</div>
+
+<%= render partial: 'modal' %>
 
 </div>
 </body>

@@ -1,7 +1,8 @@
 /* global $, Credentials , m, Routes */
 var MerchantInfo = (function() {
-
+ 
     var view = function(vnode) {
+
         if (vnode.attrs.name != undefined && vnode.attrs.address != undefined) {
             return m(".col-md.text-center", [m(".h5", vnode.attrs.name), m(".h6", vnode.attrs.address)]);
         } else if (vnode.attrs.error != undefined) {
@@ -44,13 +45,11 @@ var RecentCredits = (function(){
     return {view: view};    
 })();
 
-var DeviceAuthorizationName = (function() {
-    var secret = null;
+var DeviceAuthorizationNameTask = (function() {
+    
+    var task = Object.create(Task);
     var errors = null;
     
-    var oninit = function(vnode) {
-        secret = vnode.attrs.secret;  
-    };
     
     var authorize = function() {
         var merchant_id = $("[name*='merchant_id']").val();
@@ -58,39 +57,44 @@ var DeviceAuthorizationName = (function() {
         
         if (device_id.length === 0) {
             errors = "You must provide a device name";
-            m.redraw();
-            Modal.enableOkButton();
             return;
         }
         
-        var body = {authorization: {secret: secret},
+        var body = {authorization: Credentials.getUserToken(),
                     data: {merchant_id: merchant_id, device_id: device_id}};
                     
-        return new Promise(function(resolve, reject) {
-            m.request({method: "POST", 
-                url: "/api/merchant/authorize_device",
-                body: body}
-            ).then(function(result) {
-                resolve(result);
-            }).catch(function(err) {
-                if (err.code == 401) {
-                    reject({error: "Timeout entering data. Please reload page."});
-                } else if (err.code == 400) {
-                    reject({error: "You must name the device"}); 
-                }
-            });
-        });  
+        m.request({method: "POST", 
+            url: "/api/merchant/authorize_device",
+            body: body}
+        ).then(function(result) {
+            console.log(result);
+            Credentials.setToken("REDEMPTION_TOKEN", result["auth_token"]);
+            task.complete(result);
+        }).catch(function(err) {
+            if (err.code == 401) {
+                errors = "Timeout entering data. Please reload page.";
+            } else if (err.code == 400) {
+                errors = "You must name the device"; 
+            }
+        });
     };
+
     
-    var view = function(vnode) {
+    task.view = function(vnode) {
+        
         var merchants = vnode.attrs.merchants;
+        
         var merchant_input;
+        if (typeof merchants == 'undefined' || merchants.length == 0) {
+            return "";
+        }
+        
         if (merchants.length == 1) {
             merchant_input = m("input[type=hidden]", {name: "merchant_id", value: merchants[0].id});
         } else {
             var options = merchants.map(function(x) {return m("option", {value: x.id}, x.name) });
-            merchant_input = m(".form-group", [
-                                m("label.label", "Merchant"),
+            merchant_input = m(".form-group.mt-3", [
+                                m("label.label.text-left", "Merchant"),
                                 m("select.form-control", {name: "merchant_id"}, options)
                                 ]);
         }
@@ -99,154 +103,140 @@ var DeviceAuthorizationName = (function() {
             errors += vnode.attrs.errors;    
         }
         
-        return [m(".error.text-center", errors),
-                m(".form-group", [
-                    m("label.label", "Name This Device"),
-                    m("input.form-control[type='text'][name='device_id']", {placeholder: "e.g. Counter iPad 1"})
-                    ]),
-                merchant_input];
+        return m(".container-fluid.mx-auto.mt-3", [m(".error.text-center", errors),
+                m(".form-group.text-center", [
+                    m("label.label.text-left", "Name This Device"),
+                    m("input.form-control[type='text'][name='device_id']", {placeholder: "e.g. Counter iPad 1"}),
+                    merchant_input,
+                    m("input.form-control.w-50.btn.btn-primary[type='button']", {onclick: authorize, value: "Authorize Device"})
+                    ])]);
     };
     
-    return {view: view, oninit: oninit, okClicked: authorize};
+    return task;
 })();
 
-var DeviceAuthorizationLogin = (function() {
+var DeviceAuthorizationLoginTask = (function() {
     
+    var task = Object.create(Task);
     var email = null;
     var password = null;
+    var error = null;
 
     var authenticate = function() {
         
-        body = {authorization: {email: email, password: password}};
-        return new Promise(function(resolve, reject) {
-            m.request({method: "POST", 
-                url: "/api/merchant/authorize_device",
-                body: body}
-            ).then(function(data) {
-                resolve(data);      
-            }).catch(function(err) {
-                if (err.code == 401) {
-                    reject({error: "Invalid email or password", email: email});
-                } else {
-                    reject(err);
-                }
-            })
-        })
+        Credentials.authenticateUser(email, password).then(function(data) {
+            task.complete();
+        }).catch(function(err) {
+            if (err.code == 401) {
+                error = "Invalid email or password";
+            } else {
+                error = "Unknown error";
+            }
+        });
     };
     
-    var view = function(vnode) {
+    task.view = function(vnode) {
         return m(".container-fluid.mt-3.mx-auto", 
-                    [
-                    m(".row",
-                        m(".col.text-center",
-                            m("span.error", vnode.attrs.error))),
-                    m(".row", 
-                        m(".col", 
-                            m(".form-group", [
-                                m("label.label","Email"), 
-                                m("input.form-control[type='text']", 
-                                    {value: email, 
-                                    oninput: function(e) { email = e.target.value }})
-                        ]))),
-                    m(".row", 
-                        m(".col",
-                            m(".form-group", [
-                                m("label.label","Password"), 
-                                m("input.form-control[type='password']",
-                                    {oninput: function(e) {password = e.target.value}}
-                                    )
-                        ])))
+                    [ m(".text-center.h3","Login to Authorize this Device"),
+                      m(".text-center.error", error),
+                      m(".form-group", [
+                        m("label.label","Email"), 
+                        m("input.form-control[type='text']", 
+                            {value: email, 
+                            onchange: function(e) { email = e.target.value }})
+                        ]),
+                      m(".form-group", [
+                            m("label.label","Password"), 
+                            m("input.form-control[type='password']",
+                                {onchange: function(e) {password = e.target.value}, value: password})
+                        ]),
+                      m(".form-group.text-center", 
+                            m("input.form-control.btn.btn-primary.w-50[type='button']",
+                                {onclick: authenticate, value: "Submit"} )
+                            ),
+                      m(GoogleSignin),
                     ]);
     };
     
-    return {view: view, okClicked: authenticate};
+    return task;
 })();
 
 var Overlay = (function() {
     
-    var detach = function(domElement) {
-        m.mount($(domElement)[0], null);
-    };
+    var state = "hidden";
+    
+    var setState = function(value) {
+        state = value;
+    }
     
     var approved = function(amount, dom) {
         return [m("div", "Approved"), 
                 m(".small", amount),
-                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){detach(dom);}})];
+                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){setState("hidden")}})];
     };
     
     var denied = function(text, dom) {
         return [m("div", "Denied"), 
                 m(".small", text),
-                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){detach(dom);}})];
+                m("input[value='Ok']", {class: "btn btn-outline-light", onclick: function(){setState("hidden")}})];
 
     };
     
     var view = function(vnode) {
-        if (vnode.attrs.state == "denied") {
+        if (state == "denied") {
             return m(".overlay", {class: "denied"}, denied(vnode.attrs.reason, vnode.attrs.element));
-        } else if (vnode.attrs.state == "approved") {
+        } else if (state == "approved") {
             return m(".overlay", {class: "approved"}, approved(vnode.attrs.amount + " " + vnode.attrs.buyable_name, vnode.attrs.element));
-        } else {
+        } else if (state == "pending") {
             return m(".overlay", {class: "pending"}, "Processing");
+        } else {
+            return null;
         }
         
     };
     
-    return {view: view, detach: detach};
+    return {view: view, setState: setState};
 })();
 
+
 var RedeemToou = (function() {
+   
+    var merchantList;
+    var merchant;
+    var recentTransactions = {transactions: []};
+    var overlayAttrs = {};
     
-    // Which code input to highlight first
-    var inputIndex = 1;
-    
-    var loadMerchantData = function() {
-        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
-            var tok = Credentials.getToken("REDEMPTION_TOKEN");
-            m.request({
-                method: "POST",
-                body: {authorization: tok},
-                url: "/api/redemption/merchant_info"
-            }).then(function(merchantData) {
-                m.mount($(".merchant-info")[0],{view: function() { return m(MerchantInfo, merchantData)}});
-            }).catch(function(error) {
-                if (error.code === 401) {
-                    Credentials.setToken();
-                    authenticate();
-                } else {
-                    Credentials.setToken("REDEMPTION_TOKEN", null);
-                    m.render($(".merchant-info")[0], m(".h6.error", "Unknown Error. Please reload page"));
-                }
-            });
-            m.request({
-                method: "POST",
-                body: {authorization: tok},
-                url: "/api/merchant/credits"
-            }).then(function(credits) {
-               if (credits.length > 0) {
-                   m.mount($(".last-redemption")[0], {view: function() {return m(RecentCredits, {transactions: credits})}});
-               }
-            }); 
-        }
-    };
-    
-    var authzSuccess = function(result) {
-        Credentials.setToken("REDEMPTION_TOKEN", result.auth_token);
-        Modal.setBody("Device Authorization Successful");
-        Modal.setOkButton("Ok", Modal.dismiss);
-    } ;
-    
-    var authxSuccess = function(result) {
-        Modal.setBody(DeviceAuthorizationName, result);
-        Modal.setOkButton("Authorize", authzSuccess);
-    };
-    
-    var authenticate = function() {
-        Modal.setTitle("Authorize This Device");
-        Modal.setBody(DeviceAuthorizationLogin);
-        Modal.setOkButton("Submit", authxSuccess);
-        Modal.show(loadMerchantData);
+    var loadTransactions = function() {
+        var tok = Credentials.getToken("REDEMPTION_TOKEN");
+        m.request({
+            method: "POST",
+            body: {authorization: tok},
+            url: "/api/merchant/credits"
+        }).then(function(credits) {
+           if (credits.length > 0) {
+                recentTransactions = {transactions: credits};
+           }
+        }); 
     }
+    
+    var loadMerchantInfo = function() {
+        var tok = Credentials.getToken("REDEMPTION_TOKEN");
+        m.request({
+            method: "POST",
+            body: {authorization: tok},
+            url: "/api/redemption/merchant_info"
+        }).then(function(merchantData) {
+            merchant = merchantData;
+        });        
+    }
+   
+    var initialize = function() {
+        if (Credentials.hasToken("REDEMPTION_TOKEN")) {
+            loadMerchantInfo();
+            loadTransactions();
+        } 
+        
+    };
     
     var shake = function(element) {
         element.animate({paddingLeft: "-=10px"}, 100)
@@ -257,43 +247,36 @@ var RedeemToou = (function() {
             .animate({paddingLeft: "+=10px"}, 100);
     };
     
-    var clear = function() {
-        $("#code-1").val("").removeClass("focus");
-        $("#code-2").val("").removeClass("focus");
-        $("#code-3").val("").removeClass("focus");
-        $("#code-4").val("").removeClass("focus");
-        
-        inputIndex = 1;
-        $("#code-1").addClass("focus");
-    };
     
     var showPending = function() {
-        m.mount($("#overlay")[0], {view: function() {return m(Overlay, {element: "#overlay", state: "pending"})}});
+        Overlay.setState("pending");
     };
     
     var showOverlay = function(state, attrs) {
-        m.mount($("#overlay")[0], {view: function() {return m(Overlay, $.extend({element: "#overlay", state: state}, attrs))}});
+        Overlay.setState(state) 
+        overlayAttrs = attrs;;
     };
     
     var hideOverlay = function() {
-        $(".overlay").detach();
-        clear();
+        Overlay.setState("hidden");
+        overlayAttrs = {};
     };
+
     
-    var submitIfNeeded = function() {
-         var code = "";
-        code += $("#code-1").val();
-        code += $("#code-2").val();
-        code += $("#code-3").val();
-        code += $("#code-4").val();
-        if (code.length == 4) {
-            submit(code);
-        }      
-    };
+
+    var codeInput = new CodeInput();
+    var numberPad = new NumberPad(function(number) {
+        if (number == "bs") {
+            codeInput.decr();
+        } else if ($.isNumeric(number)) {
+            codeInput.incr(number);
+            submitIfNeeded();
+        }
+    });
     
     var submit = function(code) {
 
-        clear();
+        codeInput.clear();
         showPending();
         
         return m.request({
@@ -302,10 +285,9 @@ var RedeemToou = (function() {
             body: {authorization: Credentials.getToken("REDEMPTION_TOKEN"), data: {code: code}}
         }).then(function(data) {
             showOverlay("approved", data);
-            loadMerchantData();
+            loadTransactions();
         }).catch(function(error) {
             if (error.code === 401) {
-                authenticate();
                 hideOverlay();
             } else {
                 var message = "";
@@ -318,68 +300,55 @@ var RedeemToou = (function() {
                 shake($(".overlay"));
             }
         });
-        
-
     };
     
-    
-    var clearInput = function(index) {
-        var input = $("#code-"+index);
-        input.val("");
+    var submitIfNeeded = function() {
+        var code = codeInput.getCode();
+        if (code.length == 4) {
+            submit(code);
+        }      
     };
     
-    var decrInputIndex = function() {
-        var currentIndex = inputIndex;
-        if (currentIndex > 1) {
-            var currentInput = $("#code-" + currentIndex);
-            inputIndex = currentIndex - 1;
-            var prevInput = $("#code-" + inputIndex);
-            currentInput.toggleClass("focus");
-            prevInput.toggleClass("focus");
-        }
-    };
+    var loadUsersMerchants = function() {
+        m.request({
+            url: "/api/merchant/merchants",
+            method: "POST", 
+            body: {authorization: Credentials.getUserToken()}
+        }).then(function(data) {
+            merchantList = data;
+        }).catch(function(err) {
+            merchantList = [];
+        });
+    }
     
-    var incrInputIndex = function() {
-        if (inputIndex < 4) {
-            var index = inputIndex + 1;
-            var previousInput = $("#code-" + inputIndex);
-            inputIndex = index;
-            var nextInput = $("#code-" + inputIndex);
-            previousInput.toggleClass("focus");
-            nextInput.toggleClass("focus");
-        }
-    };
-    
-    var numberpadPress = function(ev) {
-        var number = $(ev.target).closest(".number").data("value");
-        if (number == "bs") {
-            decrInputIndex();
-            clearInput(inputIndex);
-        } else if ($.isNumeric(number)) {
-            var input = $("#code-"+inputIndex);
-            input.val(number);
-            incrInputIndex();
-            submitIfNeeded();
-        }
-    };
-    
-    var mount = function() {
-        if (!Credentials.hasToken("REDEMPTION_TOKEN")) {
-            authenticate();
+    var view = function() {
+        if (Credentials.hasToken("REDEMPTION_TOKEN")) {    
+            if (typeof merchant == 'undefined') {
+                loadMerchantInfo();
+            }
+            return m(".container", [
+                    m(Overlay, overlayAttrs), 
+                    m(MerchantInfo, merchant), 
+                    m(".row", [
+                        m(".col-md", [m(codeInput), m(numberPad)]), 
+                        m(".col-md", m(RecentCredits, recentTransactions))
+                        ])
+                    ]);
+        } else if (Credentials.isUserLoggedIn()) {
+            // Merchant is logged in, only device auth is needed
+            if (merchantList) {            
+                return m(DeviceAuthorizationNameTask, {merchants: merchantList});
+            } else {
+                loadUsersMerchants();
+                return;
+            }
+        } else {
+            // Merchant is not logged in.
+           return m(DeviceAuthorizationLoginTask);
         }
         
-        $("td.number-pad.number").click(numberpadPress);
-    
-        clear();
-        $("#code-1").prop("disabled", true);
-        $("#code-2").prop("disabled", true);
-        $("#code-3").prop("disabled", true);
-        $("#code-4").prop("disabled", true);
-        
-        loadMerchantData();
-        
     };
     
     
-    return {mount: mount};
+    return {oninit: initialize, view: view};
 })();

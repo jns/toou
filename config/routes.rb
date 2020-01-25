@@ -12,8 +12,10 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'welcome#index'
   get 'about', to: 'welcome#about'
-  get 'howitworks', to: 'welcome#howitworks'
-  get 'send_gifts', to: 'welcome#send_gifts'
+  get 'send_gifts', to: 'welcome#index'
+  get 'passes', to: 'welcome#index'
+  get 'pass', to: 'welcome#index'
+  get 'pass/:serial_number', to: 'welcome#index'
   get 'goArmy', to: 'welcome#go_army'
   get 'goarmy', to: 'welcome#go_army'
   get 'oorah', to: 'welcome#oorah'
@@ -22,16 +24,13 @@ Rails.application.routes.draw do
   get 'flyfightwin', to: 'welcome#flyfightwin'
   get 'bornready', to: 'welcome#bornready'
 
-  get 'passes', to: 'welcome#passes'
-  get 'pass/:serial_number', to: 'welcome#pass'
-  get 'pass', to: 'welcome#pass_not_found'
   get 'support', to: 'welcome#support'
   get "faq", to: 'welcome#faq'
   get "merchant_map", to: 'welcome#merchant_map'
   
   # Redemption 
   get 'mredeem', to: 'redemption#index'
-  get 'mredeem/toou', to: 'redemption#toou'
+  get 'mredeem/toou', to: 'welcome#index'
   get 'mredeem/not_authorized', to: 'merchants#device_not_authorized'
   
   # API Endpoints
@@ -57,6 +56,7 @@ Rails.application.routes.draw do
   post 'api/groups', to: 'api#groups'
   
   post 'api/merchant/create', to: 'merchant_api#create'
+  post 'api/merchant/merchants', to: 'merchant_api#merchants'
   post 'api/merchant/deauthorize', to: 'merchant_api#deauthorize_device'
   post 'api/merchant/authorize_device', to: 'merchant_api#authorize_device'
   post 'api/merchant/authorized_devices', to: 'merchant_api#authorized_devices'
@@ -90,10 +90,12 @@ Rails.application.routes.draw do
   post 'admin/authenticate', to: 'admin#authenticate'
   get 'admin/restricted', to: 'admin#restricted'
   
+  get 'merchants', to: 'welcome#index'
+  get 'merchants/onboard', to: 'welcome#index'
+  
   get 'merchants/token', to: 'merchants#get_auth_token' # temporary while stil have a hybrid traditional and single-page app
   get 'merchants/new_user', to: 'merchants#new_user'
   get 'merchants/enroll', to: 'merchants#enroll'
-  get 'merchants/onboard', to: 'merchants#onboard'
   get 'merchants/enrollment_link', to: 'merchants#enrollment_link'
   get 'merchants/edit/:id', to: 'merchants#edit'
   post 'merchants/update', to: 'merchants#update'

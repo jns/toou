@@ -17,6 +17,15 @@ var Task = {
 }
 
 
+/**
+ * Constructs a mithril component that displays a series of Tasks in succession.
+ * The component automatically advances between tasks when the Task calls it's own
+ * complete(result) function. The contents of result are passed to the next
+ * Task via vnode.attrs
+ * 
+ * At the completion of the final Task, this component invokes it's own complete(result) 
+ * function, where result is the aggregation of all the data from the individual Tasks.
+ */
 var Modal2 = function(tasks) {
     
     var data = {};
@@ -26,7 +35,7 @@ var Modal2 = function(tasks) {
     tasks.forEach(function(c, i) {
         c.state = "staged";
         c.oncomplete = function(result, err) {
-            if (err === null) {
+            if (err === null || typeof err == 'undefined') {
                Object.assign(data, result);
                advance();
             } else {

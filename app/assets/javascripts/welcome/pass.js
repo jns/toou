@@ -62,7 +62,7 @@ var PassComponent = (function() {
     var merchants = [];
     
     var oninit = function() {
-        var pass_sn = document.location.pathname.split("/").pop();
+        var pass_sn = m.route.param("sn");
         m.request({
             method: "POST",
             url: "/api/pass/"+pass_sn,
@@ -143,11 +143,4 @@ var PassComponent = (function() {
     
     return {view: view, oninit: oninit};
     
-})();
-
-var Pass = (function() {
-    var mount = function() {
-        m.mount($(".pass")[0], PassComponent);
-    };
-    return {mount: mount};
 })();

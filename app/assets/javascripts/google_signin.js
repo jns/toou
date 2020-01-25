@@ -10,7 +10,7 @@ var GoogleSignin = (function() {
             'longtitle': true,
             'theme': 'dark',
             'margin': 'auto',
-        });
+        }); 
     }
     
     var view = function(vnode) {

@@ -18,18 +18,44 @@ var RecipientForm = (function() {
     return {view: view};
 })();
 
+var MessageForm = (function() {
+    
+    var view = function(vnode) {
+        return m(".form-group.message-form", [
+                m("label", {for: "message_input"}, "Custom Message"),
+                m("input.form-control.text-center", {type: "text", id: "message_input", value: "Thanks!!"}),
+            ]);
+    };
+    
+    return {view: view};
+})();
+
+var PaymentOptions = (function() {
+    
+    var view = function() {
+        return m(".payment-form.text-center", [
+                m(".mt-3.mx-auto.w-50", {id: "payment-request-button"}),
+                m(".mt-3.mx-auto", {id: "alternate-payment-button"}),
+                m(".mx-auto.w-50", {id: "payment-errors"}),
+            ]);    
+    };
+    
+    return {view: view};
+
+})();
 
 var SendGifts = (function() {
     
-    
-    var mount = function() {
-        m.mount($('.product-list')[0], ProductList);
-        m.mount($('.recipient-form')[0], RecipientForm);
-        $(".message-form").hide();
-        $('.recipient-form').hide();
-        $('.payment-form').hide();
-        return null;
+    var view = function() {
+        return m(".container", [
+                m(".product-list-label", "What do you want to send?"),
+                m(".text-center", m(ProductList)),
+                m(".text-center", "Includes tax and tip"),
+                m(MessageForm),
+                m(RecipientForm),
+                m(PaymentOptions)
+            ]);
     };
     
-    return {mount: mount};
+    return {view: view};
 })();

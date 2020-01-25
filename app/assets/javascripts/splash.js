@@ -63,7 +63,7 @@ var Home = (function() {
     
     var myTooUs = function() {
         return  m(".col.text-center.mt-3", [
-                    m("a[href='/passes']", [
+                    m(m.route.Link, {href: "/passes"}, [
                         m("img.my-toous", {src: window.toouAssets.myToous}),
                         m("span.regular-14pt.poiret.shift-up-25px", "My tooU's")
                         ])
@@ -72,7 +72,7 @@ var Home = (function() {
     
     var sendTooU = function() {
         return  m(".col.text-center.mt-3", [
-                    m("a[href='/send_gifts']", [
+                    m(m.route.Link, {href: "/send_gifts"}, [
                         m("img.send-toou", {src: window.toouAssets.sendToou}),
                         m("span.regular-14pt.poiret.shift-up-25px", "Send tooU")
                         ])
@@ -138,14 +138,4 @@ var Home = (function() {
     };
     
     return {view: view, oninit: oninit};
-})();
-
-var Splash = (function() {
-    
-    var mount = function() {
-        Breadcrumb.hide();
-       return m.mount($('#splash')[0], Home);
-    };
-    
-    return {mount: mount};
 })();
