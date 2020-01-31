@@ -66,18 +66,28 @@ $(function() {
             return PassComponent;
         }},
         "/merchants": {onmatch: function(args, requestedPath, route) {
-            console.log(args);
            if (Credentials.isUserLoggedIn()) {
-               document.title = "Merchant Dashboard";
-               return MerchantDashboard;
+               m.route.set("/merchants/dashboard");
            } else {
                document.title = "For Merchants";
                return MerchantEnrollment;
            }
         }},
+        "/merchants/dashboard": {onmatch: function(args, requestedPath, route) {
+            if (Credentials.isUserLoggedIn()) {
+               document.title = "Merchant Dashboard";
+               return MerchantDashboard;
+           } else {
+               return MerchantLogin;
+           }
+        }},
         "/merchants/onboard": {onmatch: function(args, requestedPath, route) {
+            if (Credentials.isUserLoggedIn()) {
                document.title = "Merchants Onboard";
                return new MerchantOnboardWorkflow();
+            } else {
+                return MerchantLogin;
+            }
         }},
         "/merchants/:key": {onmatch: function(args, requestedPath, route) {
             document.title = "Merchant Dashboard";

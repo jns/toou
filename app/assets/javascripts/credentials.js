@@ -170,6 +170,7 @@ var Credentials = (function() {
                 body: {data: {username: username, password: password}},
             }).then(function(data) {
                 setToken("USER_TOKEN", data["auth_token"]);
+                Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
                 setToken("USER_TOKEN", null);
@@ -185,6 +186,7 @@ var Credentials = (function() {
             body: {gtoken: token},
         }).then(function(data) {
             setToken("USER_TOKEN", data["auth_token"]);
+            Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
         }).catch(function(e) {
             setToken("USER_TOKEN", null);
         });
@@ -197,6 +199,7 @@ var Credentials = (function() {
     var logoutUser = function() {
         Credentials.setToken("USER_TOKEN", null);
         googleSignout();
+        Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
     };
     
     var googleSignout = function() {

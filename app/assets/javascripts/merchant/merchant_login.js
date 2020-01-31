@@ -1,14 +1,18 @@
-/* global m, $ */
+/* global m, $, Credentials */
 var MerchantLogin = (function() {
     
+    var destination = "";
+    
     var submit = function() {
-        var csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
         var username = $("input[name=username").val();
         var password = $("input[name=password").val();
-        Credentials.authenticateUser(username, password);
+        Credentials.authenticateUser(username, password).then(function() {
+            m.route.set(destination);
+        });
     };
     
     var view = function(vnode) {
+        destination = m.route.get();
         return m(".content-width.container", [
             m(".row", m(".col", m(".form-group", [
                 m("label", {for: "username"}, "email"),
@@ -20,7 +24,7 @@ var MerchantLogin = (function() {
                 ]))),
             m(".row", m(".col.text-center", 
                 m("input.btn.btn-primary", {type: "button", onclick: submit, value: "Create Account"}))),
-            m(".row.justify-content-center", m(".col", m(GoogleSignin))),
+            m(".row.justify-content-center", m(".col", m(GoogleSignin, {destination: destination}))),
             ]);
     };
     
