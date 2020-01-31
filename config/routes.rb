@@ -92,6 +92,7 @@ Rails.application.routes.draw do
   
   get 'merchants', to: 'welcome#index'
   get 'merchants/onboard', to: 'welcome#index'
+  get 'merchants/:id', to: 'welcome#index'
   
   get 'merchants/token', to: 'merchants#get_auth_token' # temporary while stil have a hybrid traditional and single-page app
   get 'merchants/new_user', to: 'merchants#new_user'
@@ -104,11 +105,11 @@ Rails.application.routes.draw do
   get 'keys/stripe_key', to: 'public_keys#stripe_key'
   get 'keys/stripe_client_id', to: 'public_keys#stripe_client_id' 
   
-  resources :merchants do
-    member do
-      get 'stripe_dashboard_link'
-    end
-  end
+  # resources :merchants do
+  #   member do
+  #     get 'stripe_dashboard_link'
+  #   end
+  # end
   
   resources :password_resets, only: [:new, :edit, :create, :update]
   # Example of regular route:

@@ -17,7 +17,6 @@
 //= require dispatcher
 //= require mutex
 //= require assets
-//= require google_api
 //= require google_signin
 //= require breadcrumb
 //= require navbar
@@ -67,12 +66,22 @@ $(function() {
             return PassComponent;
         }},
         "/merchants": {onmatch: function(args, requestedPath, route) {
-           document.title = "For Merchants";
-           return MerchantEnrollment;
+            console.log(args);
+           if (Credentials.isUserLoggedIn()) {
+               document.title = "Merchant Dashboard";
+               return MerchantDashboard;
+           } else {
+               document.title = "For Merchants";
+               return MerchantEnrollment;
+           }
         }},
         "/merchants/onboard": {onmatch: function(args, requestedPath, route) {
-           document.title = "Merchants Onboard";
-           return MerchantOnboardWorkflow;
+               document.title = "Merchants Onboard";
+               return new MerchantOnboardWorkflow();
+        }},
+        "/merchants/:key": {onmatch: function(args, requestedPath, route) {
+            document.title = "Merchant Dashboard";
+            return MerchantHome;
         }},
         "/mredeem/toou": {onmatch: function(args, requestedPath, route) {
             document.title = "Redeem";

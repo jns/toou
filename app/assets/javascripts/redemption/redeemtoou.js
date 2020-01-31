@@ -15,35 +15,6 @@ var MerchantInfo = (function() {
     return {view: view};    
 })();
 
-var RecentCredits = (function(){
-
-    var currencyFormatter;
-    
-    if (typeof Intl == 'object') {
-        currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-    } else {
-        currencyFormatter = {format: function(value) {
-            return "$" + value.toFixed(2);   
-        }};
-    }
-    
-    var tableRows = function(transactions) {
-        return transactions.map(function(t) {
-            var d = new Date(t.created_at);
-            return m("tr", [
-                m("td", d.toLocaleString()),
-                m("td", currencyFormatter.format(t.amount_cents/100.0))
-            ]);
-        });
-    };
-    
-    var view = function(vnode) {
-        var table = m("table.table.table-sm", m("tbody", tableRows(vnode.attrs.transactions)));
-        return m(".text-center", [m(".h5.text-center", "Recent Transactions"), table]);    
-    };
-    
-    return {view: view};    
-})();
 
 var DeviceAuthorizationNameTask = (function() {
     

@@ -77,6 +77,21 @@ var Merchant = function() {
             .then((result) => { this.products = result});
     };
     
+    
+    this.initialize = function(data) {
+        this.merchant_id = data.merchant_id;
+        this.name = data.name;
+        this.phone_number = data.phone_number;
+        this.website = data.website;
+        this.address1 = data.address1;
+        this.address2 = data.address2;
+        this.city = data.city;
+        this.state = data.state;
+        this.zip = data.zip;
+        this.country = data.country;
+        this.products = data.products;
+    }
+    
     this.initializeFromGooglePlace = function(data) {
         if (data.name) { this.name = data.name };
         if (data.international_phone_number) { this.phone_number = data.international_phone_number; }
