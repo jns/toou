@@ -2,6 +2,7 @@
 /* global m */
 var MerchantHome = (function () {
     
+    var error = "";
     var merchant = new Merchant();
     var transactions = [];
 
@@ -28,6 +29,8 @@ var MerchantHome = (function () {
             body: {authorization: Credentials.getUserToken(), data: {merchant_id: vnode.attrs.key}}
         }).then(function(data){
             merchant.initialize(data);
+        }).catch(function(err) {
+            error = "Merchant not found";
         })
         m.request({url: "/api/merchant/credits", 
                    method: "POST",
@@ -40,12 +43,18 @@ var MerchantHome = (function () {
     
     var view = function(vnode) {
 
-        return m(".content-width", [
-                    m(MerchantFullInfo, {merchant: merchant}), 
-                    tabs([{name: "Products", id: "Products", component: MerchantProducts, attrs: {merchant: merchant}},
-                          {name: "Authorized Devices", id: "AuthorizedDevices", component: AuthorizedDevices, attrs: {merchant: merchant}},
-                          {name: "Credits", id: "Credits", component: RecentCredits, attrs: {transactions: transactions}}])
-                    ]);
+        if (error) {
+            return m(".content-width.text-center", error);
+        } else if (merchant.merchant_id) {
+            return m(".content-width", [
+                        m(MerchantFullInfo, {merchant: merchant}), 
+                        tabs([{name: "Products", id: "Products", component: MerchantProducts, attrs: {merchant: merchant}},
+                              {name: "Authorized Devices", id: "AuthorizedDevices", component: AuthorizedDevices, attrs: {merchant: merchant}},
+                              {name: "Credits", id: "Credits", component: RecentCredits, attrs: {transactions: transactions}}])
+                        ]);
+        } else {
+            return m(".content-width.text-center", "Loading ...");
+        }
     };
     
     return {view: view, oninit: oninit};

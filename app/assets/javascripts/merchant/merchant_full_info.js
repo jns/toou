@@ -8,6 +8,7 @@ var MerchantFullInfo = (function() {
             m(".row", [m(".col", "Website"), m(".col", merchant.website)]),
             m(".row", [m(".col", "Phone Number"), m(".col", merchant.phone_number)]),
             m(".row", [m(".col", "Address"), m(".col", merchant.formattedAddress())]),
+            m(".row", [m(".col", "Stripe URL"), m(".col", m(StripeLink, {merchant: merchant}))]),
             ])
     }
     

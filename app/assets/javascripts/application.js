@@ -29,6 +29,20 @@
 
 /* global $, Breadcrumb, Credentials */
 
+// Given User is not logged in:
+//   if path == merchants
+//      go to enrollment info
+  
+//   If path == dashboard
+//      go to signin
+//      go to dashboard
+  
+//   If path == onboard
+//      login or create account
+//      go to onboard workflow
+
+
+// Given User is logged in:
 var uuidv4 = function() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c) {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
@@ -87,6 +101,14 @@ $(function() {
                return new MerchantOnboardWorkflow();
             } else {
                 return MerchantLogin;
+            }
+        }},
+        "/merchants/new": {onmatch: function(args, requestedPath, route) {
+            if (Credentials.isUserLoggedIn()) {
+                m.route.set("/merchants/dashboard");
+            } else {
+                document.title = "New Merchant Account";
+                return MerchantNew;
             }
         }},
         "/merchants/:key": {onmatch: function(args, requestedPath, route) {

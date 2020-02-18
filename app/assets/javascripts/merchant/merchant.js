@@ -1,6 +1,8 @@
 /* global m */
 var Merchant = function() {
     
+    var stripe_link = null;
+    
     this.merchant_id = null;
     this.name = null;
     this.phone_number = null;
@@ -17,6 +19,24 @@ var Merchant = function() {
 
     this.formattedAddress = function() {
         return [this.address1, this.address2, this.city + ",", this.state, this.zip, this.country].join(" ");  
+    };
+    
+    /** Returns a promise that resolves to a URL for a stripe dashboard or enrollment link */
+    this.stripeLink = function() {
+        if (stripe_link) {
+            return stripe_link;
+        } else {
+            var mid = this.merchant_id;
+            return new Promise(function(resolve, reject) {
+                  $.post("/api/merchant/stripe_link", 
+                         {authorization: Credentials.getUserToken(), 
+                          data: {merchant_id: mid}}, 
+                          function(data) {
+                            stripe_link = data;
+                            resolve(data);
+                        }, "json");
+            });
+        }
     };
     
     var findAddressComponent = function(name, fields) {

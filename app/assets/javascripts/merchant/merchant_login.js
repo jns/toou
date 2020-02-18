@@ -23,7 +23,7 @@ var MerchantLogin = (function() {
                 m("input.form-control", {type: "password", name: "password"}),
                 ]))),
             m(".row", m(".col.text-center", 
-                m("input.btn.btn-primary", {type: "button", onclick: submit, value: "Create Account"}))),
+                m("input.btn.btn-primary", {type: "button", onclick: submit, value: "Sign in"}))),
             m(".row.justify-content-center", m(".col", m(GoogleSignin, {destination: destination}))),
             ]);
     };
