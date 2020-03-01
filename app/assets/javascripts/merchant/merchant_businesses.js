@@ -25,13 +25,17 @@ var MerchantBusinesses = (function() {
     
     var view = function(vnode) {
         
-        return m(".card", 
-                  [m(".card-header", "Businesses"),
-                   m(".card-body", [
-                       m("table.table", m("tbody", businesses.map(function(b) { return tableRow(b); }))),
-                       m(".text-center", m("button.btn.btn-primary", {onclick: addBusiness },"Add A Business")),
-                       ]),
-                   ]);
+        if (businesses.length > 0) {
+            return m(".card", 
+                      [m(".card-header", "Businesses"),
+                       m(".card-body", [
+                           m("table.table", m("tbody", businesses.map(function(b) { return tableRow(b); }))),
+                           m(".text-center", m("button.btn.btn-primary", {onclick: addBusiness },"Add A Business")),
+                           ]),
+                       ]);
+        } else {
+            return m(".text-center", m("button.btn.btn-primary", {onclick: addBusiness },"Onboard Your Business"));
+        }
     }
     
     return {view: view, oncreate: oncreate};

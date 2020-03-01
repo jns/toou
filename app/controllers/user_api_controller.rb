@@ -1,6 +1,10 @@
 class UserApiController < ApiBaseController
     
-    skip_before_action :authorize_request, only: [:authenticate, :request_password_reset, :password_reset]
+    skip_before_action :authorize_request, only: [:authenticate, :request_password_reset, :password_reset, :create_merchant_account]
+    
+    def get_user 
+       render json: {email: @current_user.email, username: @current_user.username}, status: :ok
+    end
     
     # Resets the password for a user and returns the JWT for the authenticated user.
     # expects a json payload with field {token: String, new_password: String} that is the password reset token
@@ -30,6 +34,24 @@ class UserApiController < ApiBaseController
         end
     end
     
+    def create_merchant_account
+        data = params.require(:data).permit([:email, :password])
+        email = data.require(:email).downcase
+        password = data.require(:password)
+        @user = User.find_by(email: email)
+        if @user
+            render json: {success: false, error: "User already exists"}, status: :bad_request
+        else
+            username = email
+            user = User.create(username: username, email: email, password: password)
+            if user
+                user.roles << Role.merchant
+                render json: auth_response(user), status: :ok
+            else
+                render json: {success: false, error: "Error creating account"}, status: :internal_server_error 
+            end 
+        end
+    end
     
     # Authenticate a  user
     # @param [String] username The username
@@ -69,7 +91,7 @@ class UserApiController < ApiBaseController
     
     def auth_response(user)
         token = JsonWebToken.encode(user_id: user.id, user_type: "User") 
-        {success: true, auth_token: token, type: "USER", username: user.username}
+        {success: true, auth_token: token, type: "USER", username: user.username, email: user.email}
     end
     
 end

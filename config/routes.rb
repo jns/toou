@@ -63,8 +63,10 @@ Rails.application.routes.draw do
   put 'api/merchant/products', to: 'merchant_api#products'
   
   # User api
+  post 'api/user', to: 'user_api#get_user'
   post 'api/user/request_password_reset', to: 'user_api#request_password_reset'
   post 'api/user/password_reset', to: 'user_api#password_reset'
+  post 'api/user/create_merchant_account', to: 'user_api#create_merchant_account'
   
   # Webhooks
   post '/webhook/stripe_event', to: 'stripe_webhooks#stripe_event'

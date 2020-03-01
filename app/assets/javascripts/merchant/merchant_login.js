@@ -20,8 +20,8 @@ var MerchantLogin = (function() {
         return m("form.content-width.container", [
             m(".row", m(".col.error.text-center", error)),
             m(".row", m(".col", m(".form-group", [
-                m("label", {for: "username"}, "email"),
-                m("input.form-control", {type: "email", name: "username"}),
+                m("label", {for: "email"}, "email"),
+                m("input.form-control", {type: "email", name: "email"}),
                 ]))),
             m(".row", m(".col", m(".form-group", [
                 m("label", {for: "password"}, "password"),

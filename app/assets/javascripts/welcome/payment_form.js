@@ -17,7 +17,7 @@ var PaymentForm = (function() {
         stripe = vnode.attrs.stripe;
 
 
-        Credentials.getUserData().then(function(data) {
+        Credentials.getCustomerData().then(function(data) {
             userData = data;
         });
         

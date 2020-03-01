@@ -4,6 +4,10 @@ var Credentials = (function() {
     
     var TOKEN = "token";
     
+    // Data for active tooU customer
+    var customerData = undefined;
+    
+    // Data for authenticated user
     var userData = undefined;
     
     var phone_number = undefined;
@@ -101,9 +105,9 @@ var Credentials = (function() {
         return (typeof token !== "undefined" && token !== null);  
     };
     
-    var getMissingUserDataFields = function() {
+    var getMissingCustomerDataFields = function() {
         return new Promise(function(resolve, reject) {
-            getUserData().then(function(data) {
+            getCustomerData().then(function(data) {
                 if (data == undefined) {
                     resolve(["name", "email"]);
                 } else {
@@ -122,16 +126,16 @@ var Credentials = (function() {
         });
     };
     
-    var getUserData = function() {
+    var getCustomerData = function() {
         return new Promise(function(resolve, reject) {
-            if (typeof userData == 'undefined') {
+            if (typeof customerData == 'undefined') {
                 fetch('/api/account', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({authorization: Credentials.getToken()})
                 }).then(function(response) { 
                     if (response.status == 200) {
-                        userData = response.json();
+                        customerData = response.json();
                         resolve(userData);
                     } else {
                         resolve(undefined);
@@ -140,14 +144,14 @@ var Credentials = (function() {
                     resolve(undefined);
                 });
             } else {
-                resolve(userData);
+                resolve(customerData);
             }
         });
     };
     
-    var refreshUserData = function() {
-        userData = undefined;
-        getUserData();
+    var refreshCustomerData = function() {
+        customerData = undefined;
+        getCustomerData();
     };
     
     var authenticate = function(phone_number, passcode) {
@@ -178,6 +182,24 @@ var Credentials = (function() {
         });
     };
     
+    var createMerchantAccount = function(email, password) {
+        return new Promise(function(resolve, reject) {
+            m.request({
+                method: "POST",
+                url: "/api/user/create_merchant_account",
+                body: {data: {email: email, password: password}},
+            }).then(function(data) {
+                setToken("USER_TOKEN", data["auth_token"]);
+                userData.email = data["email"]
+                Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
+                resolve();
+            }).catch(function(e) {
+                setToken("USER_TOKEN", null);
+                reject(e.response["error"]);
+            });
+        });    
+    };
+    
     var authenticateUser = function(email, password) {
         return new Promise(function(resolve, reject) {
             m.request({
@@ -186,6 +208,7 @@ var Credentials = (function() {
                 body: {data: {email: email, password: password}},
             }).then(function(data) {
                 setToken("USER_TOKEN", data["auth_token"]);
+                userData.email = data["email"]
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
@@ -202,9 +225,28 @@ var Credentials = (function() {
             body: {gtoken: token},
         }).then(function(data) {
             setToken("USER_TOKEN", data["auth_token"]);
+            userData.email = data["email"]
             Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
         }).catch(function(e) {
             setToken("USER_TOKEN", null);
+        });
+    };
+    
+    var getUserData = function() {
+        return new Promise(function(resolve, reject) {
+            if (typeof userData == 'undefined') {
+                m.request({url: "/api/user", 
+                    method: "POST", 
+                    body: {authorization: Credentials.getToken("USER_TOKEN")}
+                }).then(function(data) {
+                    userData = data;
+                    resolve(userData);
+                }).catch(function(err) {
+                    reject(err);
+                })
+            } else {
+                resolve(userData);
+            }         
         });
     };
     
@@ -214,6 +256,7 @@ var Credentials = (function() {
     
     var logoutUser = function() {
         Credentials.setToken("USER_TOKEN", null);
+        userData = undefined;
         googleSignout();
         Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
     };
@@ -230,13 +273,15 @@ var Credentials = (function() {
             phone_number: phone_number,
             passcode: passcode,
             hasToken: hasToken,
+            getCustomerData: getCustomerData,
             getUserData: getUserData,
-            getMissingUserDataFields: getMissingUserDataFields,
+            getMissingCustomerDataFields: getMissingCustomerDataFields,
             authenticate: authenticate,
             authenticateUser: authenticateUser,
             logoutUser: logoutUser,
             isUserLoggedIn: isUserLoggedIn,
             getUserToken: getUserToken,
             resetPassword: resetPassword,
+            createMerchantAccount: createMerchantAccount,
     };
 })();

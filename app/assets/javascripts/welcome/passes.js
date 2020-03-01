@@ -22,7 +22,7 @@ var PassesComponent = (function() {
             if (passList.length === 0) {
                 contents =  m(".text-center.h4", "Sorry, You don't have any passes.");
             }
-            Credentials.getMissingUserDataFields().then(function(missing) {
+            Credentials.getMissingCustomerDataFields().then(function(missing) {
                 if (missing.length > 0) {
                     CreateAccount.setMissing(missing);
                     Modal.setTitle("Complete Your Profile");
