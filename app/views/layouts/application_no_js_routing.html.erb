@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @title ? @title : "TooU" %></title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <%= javascript_include_tag "https://js.stripe.com/v3/" %>
+  <%= javascript_include_tag "https://unpkg.com/mithril@2.0.4/mithril.js" %>
+  <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places&key=#{ENV['GOOGLE_API_SERVER_KEY']}" %>
+  <%= javascript_tag "window.gapiCredentials = {googleSigninClientId: '#{ENV['GOOGLE_SIGNIN_CLIENT_ID']}'};" %>
+
+  <%= csrf_meta_tags %>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <% if request.host =~ /www\.toou\.gifts/ %>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WXN44KCK0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-2WXN44KCK0');
+  </script>
+  <% end %>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <%= content_for?(:head) ? yield(:head) : "" %>
+</head>
+<body>
+
+<div id="navigation"></div>
+
+<% if request.host =~ /www\.toou\.gifts/ %>
+<% elsif request.host =~ /staging\.toou\.gifts/ %>
+<div class="alert-warning text-center" style="position: fixed; top: 0px; width: 100%" role="alert">
+  STAGING VERSION
+</div>
+<% else %>
+<div class="alert-warning text-center" style="position: fixed; top: 0px; width: 100%" role="alert">
+  DEV VERSION
+</div>
+<% end %>
+
+<div class="below-header">
+  <div id="breadcrumb"></div>
+
+<div class="flash">
+    <% flash.each do |name, msg| -%>
+      <%= content_tag :div, msg, class: name %>
+    <% end -%>
+</div>
+
+<div id="app-content">
+<%= content_for?(:content) ? yield(:content) : yield %>
+</div>
+
+
+</div>
+</body>
+<footer class="footer">
+  <div class="container w-100 text-center">
+    <div class="text-muted">©2019 TooU Incorporated</div>
+  </div>
+</footer>
+  
+</html>

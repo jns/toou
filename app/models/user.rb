@@ -15,6 +15,9 @@ class User < ApplicationRecord
     has_secure_password
     has_and_belongs_to_many :roles
     
+    scope :active_reset, ->() { where("reset_sent_at > ?", 10.minutes.ago)}
+    
+    # Generates a random token
     def User.new_token
        SecureRandom.urlsafe_base64 
     end
@@ -24,6 +27,11 @@ class User < ApplicationRecord
         cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                       BCrypt::Engine.cost
         BCrypt::Password.create(string, cost: cost)
+    end
+    
+    # Returns the user that matches the given reset token or nil
+    def User.with_reset_token(token)
+       User.active_reset.find{|u| BCrypt::Password.new(u.reset_digest) == token}
     end
     
     def authenticated?(attribute, token)

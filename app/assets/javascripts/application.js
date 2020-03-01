@@ -26,6 +26,7 @@
 //= require splash
 //= require redemption
 //= require merchants
+//= require user
 
 /* global $, Breadcrumb, Credentials */
 
@@ -118,6 +119,14 @@ $(function() {
         "/mredeem/toou": {onmatch: function(args, requestedPath, route) {
             document.title = "Redeem";
             return RedeemToou;
+        }},
+        "/password_reset": {onmatch: function(args, requestedPath, route) {
+            document.title = "Password Reset";
+            return PasswordResetRequest;
+        }},
+        "/password_reset/:token": {onmatch: function(args, requestedPath, route) {
+            document.title = "Password Reset";
+            return PasswordReset;
         }},
     });
     

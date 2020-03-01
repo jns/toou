@@ -1,21 +1,16 @@
 Rails.application.routes.draw do
   
-  get 'password_resets/new'
-  get 'password_resets/edit'
-  resources :promotions
-  post 'payments/ephemeral_keys'
-#  get 'v1/passes/*pass_type_id/:serial_number', to: 'pass_kit_api#fetch'
-  
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
   root 'welcome#index'
-  get 'about', to: 'welcome#about'
+  get 'about', to: 'welcome#index'
   get 'send_gifts', to: 'welcome#index'
   get 'passes', to: 'welcome#index'
   get 'pass', to: 'welcome#index'
   get 'pass/:serial_number', to: 'welcome#index'
+  get 'password_reset(/:token)', to: 'welcome#index'
+
+
   get 'goArmy', to: 'welcome#go_army'
   get 'goarmy', to: 'welcome#go_army'
   get 'oorah', to: 'welcome#oorah'
@@ -66,6 +61,10 @@ Rails.application.routes.draw do
   put 'api/merchant', to: 'merchant_api#merchant'
   post 'api/merchant/products', to: 'merchant_api#products'
   put 'api/merchant/products', to: 'merchant_api#products'
+  
+  # User api
+  post 'api/user/request_password_reset', to: 'user_api#request_password_reset'
+  post 'api/user/password_reset', to: 'user_api#password_reset'
   
   # Webhooks
   post '/webhook/stripe_event', to: 'stripe_webhooks#stripe_event'

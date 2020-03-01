@@ -1,5 +1,7 @@
 class PasswordResetsController < ApplicationController
 
+  layout "application_no_js_routing"
+  
   skip_before_action :set_user
   
   before_action :get_user, only: [:edit, :update]
@@ -13,7 +15,7 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by(email: params[:password_reset][:email].downcase)
     if @user
       @user.create_reset_digest
-      UserMailer.with(user: @user, url:  edit_password_reset_url(@user.reset_token, email: @user.email)).password_reset.deliver_now
+      UserMailer.with(user: @user, url: edit_password_reset_url(@user.reset_token)).password_reset.deliver_now
       flash[:info] = "Email sent with password reset instructions"
       redirect_to login_url
     else

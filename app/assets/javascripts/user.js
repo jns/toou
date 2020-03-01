@@ -1,1 +1,1 @@
-// Nothing to load
+//= require_directory ./user

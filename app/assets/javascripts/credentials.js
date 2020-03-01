@@ -162,6 +162,22 @@ var Credentials = (function() {
         });
     };
     
+    var resetPassword = function(token, new_password) {
+        return new Promise(function(resolve, reject) {
+            m.request({url: "/api/user/password_reset", 
+                       method: "POST", 
+                       body: {token: token, new_password: new_password}
+            }).then(function(data) {
+                setToken("USER_TOKEN", data["auth_token"]);
+                Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
+                resolve();
+            }).catch(function(err) {
+                setToken("USER_TOKEN", null);
+                reject(err.response["error"]);
+            }); 
+        });
+    };
+    
     var authenticateUser = function(username, password) {
         return new Promise(function(resolve, reject) {
             m.request({
@@ -221,5 +237,6 @@ var Credentials = (function() {
             logoutUser: logoutUser,
             isUserLoggedIn: isUserLoggedIn,
             getUserToken: getUserToken,
+            resetPassword: resetPassword,
     };
 })();
