@@ -178,19 +178,19 @@ var Credentials = (function() {
         });
     };
     
-    var authenticateUser = function(username, password) {
+    var authenticateUser = function(email, password) {
         return new Promise(function(resolve, reject) {
             m.request({
                 method: "POST",
                 url: "/api/user/authenticate",
-                body: {data: {username: username, password: password}},
+                body: {data: {email: email, password: password}},
             }).then(function(data) {
                 setToken("USER_TOKEN", data["auth_token"]);
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
                 setToken("USER_TOKEN", null);
-                reject(e);
+                reject(e.response["error"]);
             });
         });
     };

@@ -45,8 +45,8 @@ class UserApiController < ApiBaseController
                     nil
                 end
             else # Use username, password
-                user_params = params.require(:data).permit(:username, :password)
-                u = User.find_by(username: user_params[:username].downcase) 
+                user_params = params.require(:data).permit(:email, :password)
+                u = User.find_by(email: user_params[:email].downcase) 
                 if u and u.authenticate(user_params[:password])
                     u
                 else 
