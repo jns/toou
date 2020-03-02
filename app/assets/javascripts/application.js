@@ -113,7 +113,7 @@ $(function() {
             }
         }},
         "/merchants/:key": {onmatch: function(args, requestedPath, route) {
-            document.title = "Merchant Dashboard";
+            document.title = "Merchant Home";
             return MerchantHome;
         }},
         "/mredeem/toou": {onmatch: function(args, requestedPath, route) {
@@ -134,6 +134,7 @@ $(function() {
        {regex: new RegExp("/send_gifts"), href: "/", text: "Home"},
        {regex: new RegExp("/passes"), href: "/", text: "Home"},
        {regex: new RegExp("/pass/.*"), href: "/passes", text: "Passes"},
+       {regex: new RegExp("/merchants/\\d+"), href: "/merchants/dashboard", text: "Dashboard"},
     ]);
     m.mount(breadcrumbs, crumbs);
 

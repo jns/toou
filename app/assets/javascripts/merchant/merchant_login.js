@@ -6,7 +6,7 @@ var MerchantLogin = (function() {
     
     var submit = function(ev) {
         ev.preventDefault();
-        var email = $("input[name=username").val();
+        var email = $("input[name=email").val();
         var password = $("input[name=password").val();
         Credentials.authenticateUser(email, password).then(function() {
             m.route.set(destination);

@@ -8,7 +8,7 @@ var Credentials = (function() {
     var customerData = undefined;
     
     // Data for authenticated user
-    var userData = undefined;
+    var userData = {};
     
     var phone_number = undefined;
     var passcode = undefined;
@@ -207,11 +207,13 @@ var Credentials = (function() {
                 url: "/api/user/authenticate",
                 body: {data: {email: email, password: password}},
             }).then(function(data) {
+                console.log(data);
                 setToken("USER_TOKEN", data["auth_token"]);
-                userData.email = data["email"]
+                userData = {email:  data["email"]};
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
+                console.log(e);
                 setToken("USER_TOKEN", null);
                 reject(e.response["error"]);
             });
@@ -225,7 +227,7 @@ var Credentials = (function() {
             body: {gtoken: token},
         }).then(function(data) {
             setToken("USER_TOKEN", data["auth_token"]);
-            userData.email = data["email"]
+            userData = {email:  data["email"]};
             Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
         }).catch(function(e) {
             setToken("USER_TOKEN", null);

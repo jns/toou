@@ -2,17 +2,19 @@
 var MerchantBusinesses = (function() {
     
     var businesses = [];
+    var mode = "loading";
     
     var oncreate = function(vnode) {
         m.request({url: "/api/merchant/merchants", 
                     method: "POST", 
                     body: {authorization: Credentials.getUserToken()}})
             .then(function(data) {
+                mode = "done";
                 businesses = data;
-                console.log("Loaded " + businesses.length + " businesses");
             }).catch(function(err) {
                 console.log(err);
             })
+        mode = "loading"
     };
     
     var tableRow = function(business) {
@@ -25,7 +27,9 @@ var MerchantBusinesses = (function() {
     
     var view = function(vnode) {
         
-        if (businesses.length > 0) {
+        if (mode == "loading") {
+            return m(".m-5.text-center", m("i.fas.fa-spinner"));
+        } else if (businesses.length > 0) {
             return m(".card", 
                       [m(".card-header", "Businesses"),
                        m(".card-body", [
@@ -34,7 +38,7 @@ var MerchantBusinesses = (function() {
                            ]),
                        ]);
         } else {
-            return m(".text-center", m("button.btn.btn-primary", {onclick: addBusiness },"Onboard Your Business"));
+            return m(".m-5.text-center", m("button.btn.btn-primary", {onclick: addBusiness },"Onboard Your Business"));
         }
     }
     

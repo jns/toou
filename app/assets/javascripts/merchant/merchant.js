@@ -23,21 +23,25 @@ var Merchant = function() {
     
     /** Returns a promise that resolves to a URL for a stripe dashboard or enrollment link */
     this.stripeLink = function() {
-        if (stripe_link) {
-            return stripe_link;
-        } else {
-            var mid = this.merchant_id;
-            return new Promise(function(resolve, reject) {
-                  $.post("/api/merchant/stripe_link", 
-                         {authorization: Credentials.getUserToken(), 
-                          data: {merchant_id: mid}}, 
-                          function(data) {
-                            stripe_link = data;
-                            resolve(data);
-                        }, "json");
-            });
-        }
-    };
+        var mid = this.merchant_id;
+                
+        return new Promise(function(resolve, reject) {
+            if (stripe_link) {
+                resolve(stripe_link);
+            } else {
+                m.request({url: "/api/merchant/stripe_link", 
+                            method: "POST",
+                            body: {authorization: Credentials.getUserToken(), 
+                                    data: {merchant_id: mid}}})
+                .then(function(data) {
+                    stripe_link = data;
+                    resolve(stripe_link);
+                }).catch(function(err) {
+                    reject(err);
+                });
+            }
+        });
+    }
     
     var findAddressComponent = function(name, fields) {
         var field = fields.find(function(f) {

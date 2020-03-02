@@ -138,9 +138,9 @@ class MerchantApiController < ApiBaseController
         @merchant = merchant_params
         authorize @merchant
     	if (@merchant.stripe_id == nil)
-    		render json: {url: stripe_connect_url}, status: :ok
+    		render json: {url: stripe_connect_url, type: "connect"}, status: :ok
     	else
-    		render json: {url: stripe_dashboard_url(@merchant.stripe_id)}, status: :ok
+    		render json: {url: stripe_dashboard_url(@merchant.stripe_id), type: "dashboard"}, status: :ok
     	end
     end
     

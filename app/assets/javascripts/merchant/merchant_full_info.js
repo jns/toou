@@ -1,15 +1,19 @@
 var MerchantFullInfo = (function() {
     
+    
     var view = function(vnode) {
         var merchant = vnode.attrs.merchant;
-        
-        return m(".container.m-3", [
-            m(".row", [m(".col", "Name"), m(".col", merchant.name)]),
-            m(".row", [m(".col", "Website"), m(".col", merchant.website)]),
-            m(".row", [m(".col", "Phone Number"), m(".col", merchant.phone_number)]),
-            m(".row", [m(".col", "Address"), m(".col", merchant.formattedAddress())]),
-            m(".row", [m(".col", "Stripe URL"), m(".col", m(StripeLink, {merchant: merchant}))]),
-            ])
+        if (merchant) {
+            return m("table.table.m-3", [
+                m("tr", [m("td", "Name"), m("td", merchant.name)]),
+                m("tr", [m("td", "Website"), m("td", merchant.website)]),
+                m("tr", [m("td", "Phone Number"), m("td", merchant.phone_number)]),
+                m("tr", [m("td", "Address"), m("td", merchant.formattedAddress())]),
+                m("tr", [m("td.text-center", {colspan: 2}, m(StripeLink, {merchant: merchant}))]),
+                ])
+        } else {
+            return "";
+        }
     }
     
     return {view: view};

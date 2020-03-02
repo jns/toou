@@ -1,17 +1,31 @@
 var StripeLink = (function() {
     
-    var task = Object.create(Task);
+    var stripeLink = null;
 
-    var addURL = function(url) {
-        console.log(url);
-    };
-
-    task.view = function(vnode) {
-        if (vnode.attrs.merchant) {
-            vnode.attrs.merchant.stripeLink().then(function(url) { this.addUrl(url); });  
-        }
-        return m(".h3", "Stripe Link");
+    var oncreate = function(vnode) {
+        vnode.attrs.merchant.stripeLink().then(function(data) {
+                    stripeLink = data;
+                });
     }
     
-    return task;
+    var onremove = function() {
+        stripeLink = null;
+    }
+
+    var view = function(vnode) {
+        if (stripeLink) {
+            var options = {href: stripeLink["url"], 
+                          target: "_blank",
+                          rel: "noreferrer noopener"};
+            if (stripeLink["type"] == "connect") {
+                return m("a.stripe-connect", options, m("span", "Connect With Stripe")); 
+            } else {
+                return m("a.btn-link", options, "Visit Stripe Dashboard");
+            }
+        } else {
+            return "";
+        }
+    }
+    
+    return {view: view, oncreate: oncreate, onremove: onremove};
 })();

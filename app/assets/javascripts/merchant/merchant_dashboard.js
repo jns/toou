@@ -25,7 +25,7 @@ var MerchantDashboard = function() {
     var view = function() {
         if (Credentials.isUserLoggedIn()) {
             console.log(userData.email);
-            return [m(".m-5.h4.text-center", "Welcome " + userData.email), 
+            return [m(".h5.text-center", "Welcome " + userData.email), 
                     m(".merchant-dashboard", m(MerchantBusinesses))];
         } else {
             return m(MerchantLogin);
