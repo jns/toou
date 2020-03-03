@@ -8,7 +8,7 @@ var Credentials = (function() {
     var customerData = undefined;
     
     // Data for authenticated user
-    var userData = {};
+    var userData = undefined;
     
     var phone_number = undefined;
     var passcode = undefined;

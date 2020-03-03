@@ -263,9 +263,13 @@ var RedeemToou = (function() {
             } else {
                 var message = "";
                 if (error.response.hasOwnProperty("unredeemable") ) {
-                    error.response.unredeemable.forEach(function(e) {
-                        message += e;
-                    });
+                    if (typeof error.response.unredeemable == "array") {
+                        error.response.unredeemable.forEach(function(e) {
+                            message += e;
+                        });
+                    } else {
+                        message = error.response.unredeemable;
+                    }
                 }
                 showOverlay("denied", {reason: message});
                 shake($(".overlay"));
