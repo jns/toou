@@ -124,6 +124,10 @@ var Payment = (function() {
         }
     };
     
+    var goHome = function() {
+        Modal.dismiss();
+        m.route.set("/");
+    };
     
     var cancelPurchase = function() {
         console.log("Cancel Purchase");  
@@ -133,7 +137,7 @@ var Payment = (function() {
         Modal.setTitle("Thanks");
         Modal.setBody("<div class=\"purchase-animation\"><img /></div><div class=\"text-center\">We've sent the TooU</div>");
         $(".purchase-animation img")[0].src = window.toouAssets.purchase_success_img;
-        Modal.setOkButton("Ok", Routes.goHome);
+        Modal.setOkButton("Ok", goHome);
         Modal.setCancelButton(null);
         Modal.show();
     };
@@ -143,14 +147,14 @@ var Payment = (function() {
         Modal.setBody("<div class=\"purchase-animation\"><img /></div><div class=\"text-center\">There was a problem with the purchase.<p/>" + err + "</div>");
         $(".purchase-animation img")[0].src = window.toouAssets.purchase_failed_img;
         Modal.setOkButton("Try Again", createPaymentForm);
-        Modal.setCancelButton("Never mind", Routes.goHome);
+        Modal.setCancelButton("Never mind", goHome);
         Modal.show();
     };
     
     var cancelPurchase = function() {
         Modal.setTitle("Cancelled Purchase");
         Modal.setBody("Sorry that didn't work out.  Please try again.");
-        Modal.setOkButton("Ok", Routes.goHome);
+        Modal.setOkButton("Ok", goHome);
         Modal.setCancelButton(null);
         Modal.show();
     };

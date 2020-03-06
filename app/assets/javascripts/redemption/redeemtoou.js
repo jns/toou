@@ -88,16 +88,13 @@ var DeviceAuthorizationNameTask = (function() {
 
 var DeviceAuthorizationLoginTask = (function() {
     
-    var task = Object.create(Task);
     var email = null;
     var password = null;
     var error = null;
 
     var authenticate = function() {
         
-        Credentials.authenticateUser(email, password).then(function(data) {
-            task.complete();
-        }).catch(function(err) {
+        Credentials.authenticateUser(email, password).catch(function(err) {
             if (err.code == 401) {
                 error = "Invalid email or password";
             } else {
@@ -106,7 +103,7 @@ var DeviceAuthorizationLoginTask = (function() {
         });
     };
     
-    task.view = function(vnode) {
+    var view = function(vnode) {
         return m(".container-fluid.mt-3.mx-auto", 
                     [ m(".text-center.h3","Login to Authorize this Device"),
                       m(".text-center.error", error),
@@ -125,11 +122,11 @@ var DeviceAuthorizationLoginTask = (function() {
                             m("input.form-control.btn.btn-primary.w-50[type='button']",
                                 {onclick: authenticate, value: "Submit"} )
                             ),
-                      m(GoogleSignin),
+                      m(GoogleSignin, {destination: "/mredeem/toou"}),
                     ]);
     };
     
-    return task;
+    return {view: view};
 })();
 
 var Overlay = (function() {
@@ -187,7 +184,11 @@ var RedeemToou = (function() {
            if (credits.length > 0) {
                 recentTransactions = {transactions: credits};
            }
-        }); 
+        }).catch(function(error) {
+            if (error.code == 401) {
+                Credentials.setToken("REDEMPTION_TOKEN", null);   
+            }
+        });
     }
     
     var loadMerchantInfo = function() {
@@ -198,7 +199,11 @@ var RedeemToou = (function() {
             url: "/api/redemption/merchant_info"
         }).then(function(merchantData) {
             merchant = merchantData;
-        });        
+        }).catch(function(error) {
+            if (error.code == 401) {
+                Credentials.setToken("REDEMPTION_TOKEN", null);   
+            }
+        });
     }
    
     var initialize = function() {

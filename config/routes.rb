@@ -24,7 +24,8 @@ Rails.application.routes.draw do
   get "merchant_map", to: 'welcome#merchant_map'
   
   # Redemption 
-  get 'mredeem', to: 'redemption#index'
+  get 'redeem', to: 'welcome#index'
+  get 'mredeem', to: 'welcome#index'
   get 'mredeem/toou', to: 'welcome#index'
   get 'mredeem/not_authorized', to: 'merchants#device_not_authorized'
   

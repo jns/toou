@@ -6,7 +6,6 @@ var GoogleSignin = (function() {
     var destination = ""
     
     var routeTo = function() {
-        console.log("received routing event");
         if (destination != "") {
             m.route.set(destination);
         }

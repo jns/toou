@@ -116,6 +116,14 @@ $(function() {
             document.title = "Merchant Home";
             return MerchantHome;
         }},
+        "/mredeem": {onmatch: function(args, requestedPath, route) {
+            document.title = "Redeem";
+            return RedeemToou;
+        }},
+        "/redeem": {onmatch: function(args, requestedPath, route) {
+            document.title = "Redeem";
+            return RedeemToou;
+        }},
         "/mredeem/toou": {onmatch: function(args, requestedPath, route) {
             document.title = "Redeem";
             return RedeemToou;
