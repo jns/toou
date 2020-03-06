@@ -1,32 +1,11 @@
 class MerchantsController < ApplicationController
 
+    layout 'application_no_js_routing'
+
     include MerchantsHelper
     
     #skip_before_action :validate_auth_token
-    skip_before_action :set_user, only: [:enroll, :onboard1, :onboard2, :onboard3]
-    
-    # Placeholder to retrieve an authentication token after already logged in and session is established
-    def get_auth_token 
-        token = JsonWebToken.encode(user_id: @current_user.id, user_type: "User")
-        render json: {auth_token: token}, status: :ok
-    end
-    
-    # presents the welcome screen
-    def index
-        # if @current_user    
-        #     @title = "Merchant Dashboard"
-        #     authorize Merchant
-        #     @merchants = policy_scope(Merchant)
-        #     render 'dashboard'
-        # else
-        #     @title = "Merchant Enrollment"
-        #     render 'new_user'
-        # end
-    end
-    
-    def onboard
-        render 'index'
-    end
+    skip_before_action :set_user, only: [:enroll]
     
     # GET enrolls a new merchant with stripe
     def enroll
@@ -55,30 +34,7 @@ class MerchantsController < ApplicationController
             render status: :bad_request
         end
     end
-    
-    def device_not_authorized
-    end    
-    
-    def stripe_dashboard_link 
-        begin
-            m = Merchant.find(params["id"])
-            authorize m
-            if m.stripe_id
-                account = Stripe::Account.retrieve(m.stripe_id)
-                links = account.login_links.create()
-                render json: links, status: :ok
-            else
-               render json: {error: "Merchant is not enrolled in Stripe"}, status: :bad_request 
-            end
-        rescue ActiveRecord::RecordNotFound
-            render json: {error: "Merchant Not Found"}, status: :not_found
-        rescue Stripe::InvalidRequestError
-            render json: {error: "Error connecting to Stripe"}, status: :bad_request
-        rescue 
-            render json: {error: "User not authorized"}, status: :unauthorized
-        end
-    end
-    
+
     private
     
     def set_merchant

@@ -10,6 +10,17 @@ var AuthorizedDevices = (function() {
         refresh();
     };
     
+    var authorize = function() {
+        if (DEVICE_INFO != "") {
+            if (window.confirm("This device is already authorized, do you want to override?")) {
+                Credentials.setToken("REDEMPTION_TOKEN", null);
+            } else {
+                return;
+            }
+        }
+        m.route.set("/mredeem/toou");
+    };
+    
     var view = function(vnode) {
         
         if (vnode.attrs.merchant.merchant_id != merchant_id) {
@@ -23,7 +34,7 @@ var AuthorizedDevices = (function() {
                 var contents = m("table.table", items);
             } else {
                 contents = [m(".h3.p-3.text-center", "No Authorized Devices"), 
-                            m(".h5.text-center", m(m.route.Link, {href: "/mredeem/toou"}, "Click Here to Authorize This Device"))];
+                            m(".h5.text-center", m("a.btn.btn-link", {onclick: authorize}, "Click Here to Authorize This Device"))];
             }
             
             return m("", contents);

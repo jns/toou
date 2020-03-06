@@ -7,7 +7,7 @@
 
 var MerchantOnboardWorkflow = function() {
 
-    var workflow = new Modal2([MerchantAutocomplete, MerchantAddressForm, MerchantProducts, AuthorizeDevice]);
+    var workflow = new Modal2([MerchantAutocomplete, MerchantAddressForm, MerchantProducts, AuthorizeDevice, StripeEnroll]);
     workflow.oncomplete = function(result, err) {
         console.log(result);    
     };

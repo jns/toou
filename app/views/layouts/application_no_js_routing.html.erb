@@ -6,15 +6,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
-
-  <%= javascript_include_tag "https://js.stripe.com/v3/" %>
-  <%= javascript_include_tag "https://unpkg.com/mithril@2.0.4/mithril.js" %>
-  <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?libraries=places&key=#{ENV['GOOGLE_API_SERVER_KEY']}" %>
-  <%= javascript_tag "window.gapiCredentials = {googleSigninClientId: '#{ENV['GOOGLE_SIGNIN_CLIENT_ID']}'};" %>
+  <%= stylesheet_link_tag    'application', media: 'all'%>
 
   <%= csrf_meta_tags %>
 
@@ -36,7 +29,11 @@
 </head>
 <body>
 
-<div id="navigation"></div>
+<div id="navigation">
+  <nav class="navbar navbar-expand-lg bg-blue">
+    <a href="/" class="navbar-brand"><%= image_tag "TooULogoMini.png", size: "100x50"  %></a>
+  </nav>
+</div>
 
 <% if request.host =~ /www\.toou\.gifts/ %>
 <% elsif request.host =~ /staging\.toou\.gifts/ %>

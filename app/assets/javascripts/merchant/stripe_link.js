@@ -2,10 +2,13 @@ var StripeLink = (function() {
     
     var stripeLink = null;
 
-    var oncreate = function(vnode) {
-        vnode.attrs.merchant.stripeLink().then(function(data) {
-                    stripeLink = data;
-                });
+    
+    var onupdate = function(vnode) {
+        if (! stripeLink && vnode.attrs.merchant) { 
+            vnode.attrs.merchant.stripeLink().then(function(data) {
+                stripeLink = data;
+            }); 
+        } 
     }
     
     var onremove = function() {
@@ -27,5 +30,5 @@ var StripeLink = (function() {
         }
     }
     
-    return {view: view, oncreate: oncreate, onremove: onremove};
+    return {view: view, onupdate: onupdate, onremove: onremove};
 })();

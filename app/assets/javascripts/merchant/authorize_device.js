@@ -5,6 +5,7 @@ var AuthorizeDevice = (function() {
     var showForm = false;
     var showDefer = false;
     var showAuthorized = false;
+    var authorized = false;
     
     var defer = function() {
         showDefer = true;
@@ -23,11 +24,11 @@ var AuthorizeDevice = (function() {
     
         var form = m("form.form.w-100.mt-5", {id: "authorize_device"}, [
             m("input.form-control", {type: "text", placeholder: "Name this device (ex. 'iPad #1')"}),
-            m(".text-center.mt-3", m("input.btn.btn-primary", {type: "button", value: "Ok", onclick: authorizeNewDevice})),
+            m(".text-center.mt-3", m("input.btn.btn-primary", {type: "submit", value: "Ok", onclick: authorizeNewDevice})),
             ])
         
         return m(".container",  [m(".row", m(".col", m(".h5.text-center", "Authorize this Device to Redeem TooU's?"))),
-                                m(".row" + (showForm || showDefer ? ".d-none" : ""), [m(".col-sm-6.mt-5.text-center", m("input.btn.btn-outline.regular-20pt", {type: "button", onclick: defer, value: "No"})),
+                                m(".row" + (authorized || showForm || showDefer ? ".d-none" : ""), [m(".col-sm-6.mt-5.text-center", m("input.btn.btn-outline.regular-20pt", {type: "button", onclick: defer, value: "No"})),
                                            m(".col-sm-6.mt-5.text-center", m("input.btn.btn-primary.regular-20pt", {type: "button", onclick: displayForm, value: "Yes"}))]),
                                 m(".row" + (showForm ? "" : ".d-none"), form),
                                 m(".row.col.text-center.mt-5.regular-12pt" + (showAuthorized ? ".d-inline-block" : ".d-none"), "This device is now authorized"),
@@ -41,6 +42,7 @@ var AuthorizeDevice = (function() {
     }
     
     var authorizeNewDevice = function(ev) {
+        ev.preventDefault();
         if (dataStore.merchant) {
             var device_id = $('#authorize_device input[type="text"]').val();
             m.request({
@@ -52,6 +54,7 @@ var AuthorizeDevice = (function() {
                 Credentials.setToken("REDEMPTION_TOKEN", data["auth_token"]);
                 showAuthorized = true;
                 showForm = false;
+                authorized = true;
             }).catch(function(err) {
                 alert(err); 
             });
