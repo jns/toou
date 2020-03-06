@@ -8,12 +8,10 @@ var RecipientForm = (function() {
     };
     
     var view = function() {
-        return m("form.mt-3", [
-            m(".form-group.row", [
-                m("label.col-sm-3.col-form-label.promo.p-0", "Send to:"),
+        return m(".form-group.row", [
+                m("label.col-sm-3", "Send to:"),
                 m("input.form-control.col-sm-9.text-center.p-0[id=recipient_phone][type=text][placeholder='10 digit phone']", {oninput: valueChanged}),
-                ])
-            ]);
+                ]);
     };
     return {view: view};
 })();
@@ -21,9 +19,9 @@ var RecipientForm = (function() {
 var MessageForm = (function() {
     
     var view = function(vnode) {
-        return m(".form-group.message-form", [
-                m("label", {for: "message_input"}, "Custom Message"),
-                m("input.form-control.text-center", {type: "text", id: "message_input", value: "Thanks!!"}),
+        return m(".form-group.row", [
+                m("label.col-sm-3", "Custom Message:"),
+                m("input.form-control.col-sm-9.text-center.p-0", {type: "text", id: "message_input", value: "Thanks!!"}),
             ]);
     };
     
@@ -50,7 +48,7 @@ var SendGifts = (function() {
         return m(".container", [
                 m(".product-list-label", "What do you want to send?"),
                 m(".text-center", m(ProductList)),
-                m(".text-center", "Includes tax and tip"),
+                m(".text-center.mb-3", "Includes tax and tip"),
                 m(MessageForm),
                 m(RecipientForm),
                 m(PaymentOptions)

@@ -258,6 +258,7 @@ var Credentials = (function() {
     
     var logoutUser = function() {
         Credentials.setToken("USER_TOKEN", null);
+        Credentials.setToken(TOKEN, null);  // also log out customer accounts;
         userData = undefined;
         googleSignout();
         Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});
