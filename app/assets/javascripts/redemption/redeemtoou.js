@@ -74,7 +74,8 @@ var DeviceAuthorizationNameTask = (function() {
             errors += vnode.attrs.errors;    
         }
         
-        return m(".container-fluid.mx-auto.mt-3", [m(".error.text-center", errors),
+        return m(".container-fluid.mx-auto.mt-3", [m(".h5.text-center", "Authorize This Device to Redeem TooUs"), 
+                m(".error.text-center", errors),
                 m(".form-group.text-center", [
                     m("label.label.text-left", "Name This Device"),
                     m("input.form-control[type='text'][name='device_id']", {placeholder: "e.g. Counter iPad 1"}),
@@ -95,11 +96,7 @@ var DeviceAuthorizationLoginTask = (function() {
     var authenticate = function() {
         
         Credentials.authenticateUser(email, password).catch(function(err) {
-            if (err.code == 401) {
-                error = "Invalid email or password";
-            } else {
-                error = "Unknown error";
-            }
+            error = err;
         });
     };
     

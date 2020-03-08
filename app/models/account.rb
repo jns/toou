@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     has_many :charges
     has_many :memberships
     has_many :groups, through: :memberships
-
+    
     before_save :format_phone_number
     after_create :generate_stripe_customer
     

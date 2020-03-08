@@ -5,7 +5,12 @@ var PassesComponent = (function() {
     var groupPasses = [];
     
     var contents = m(".text-center.h4", "Sorry, You don't have any passes.");
-        
+    
+    var purgePasses = function() {
+        passList.length = 0;
+        groupPasses.length = 0;
+    };
+    
     var afterLogin = function() {
         if (Credentials.hasToken()) {
             loadPasses();    
@@ -54,6 +59,8 @@ var PassesComponent = (function() {
     var oninit = function() {
         contents = m(".text-center.h4", "Loading Passes...");
         loadPasses();
+        Dispatcher.register(Dispatcher.topics.SIGNIN, loadPasses);
+        Dispatcher.register(Dispatcher.topics.SIGNOUT, purgePasses);
     };
     
     var showGroupPass = function(ev) {

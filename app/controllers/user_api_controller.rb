@@ -66,14 +66,27 @@ class UserApiController < ApiBaseController
                 else
                     nil
                 end
-            else # Use username, password
+            elsif params[:data][:email] and params[:data][:password] # Use username, password
                 user_params = params.require(:data).permit(:email, :password)
-                u = User.find_by(email: user_params[:email].downcase) 
-                if u and u.authenticate(user_params[:password])
+                email, password = user_params.require([:email, :password])
+                u = User.find_by(email: email.downcase) 
+                if u and u.authenticate(password)
                     u
                 else 
                     nil
                 end 
+            elsif params[:pass_code] and params[:phone_number]
+                user_params = params.require(:data).permit(:pass_code, :phone_number)
+                otp, phone_number = user_params.require([:pass_code, :phone_number])
+                command = AuthenticateUser.call(phoneNumber, otp)
+        
+                if command.success?
+                    command.result.user
+                else
+                    nil
+                end
+            else 
+                nil
             end
         
             if user 

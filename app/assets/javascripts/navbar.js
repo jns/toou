@@ -23,7 +23,7 @@ var Navbar = (function() {
              m(".collapse.navbar-collapse", {id: "navItems"}, 
                 m("ul.navbar-nav", [
                     m("li.nav-item", m(m.route.Link, {href: "/merchants", class: "nav-link", onclick: collapse}, (loggedIn ?  "Merchant Dashboard" : "For Merchants" ))),
-                    m("li.nav-item", m(m.route.Link, {href: "/mredeem/toou", class: "nav-link", onclick: collapse}, "Redeem a tooU")),
+                    (Credentials.isRedemptionDevice() ? m("li.nav-item", m(m.route.Link, {href: "/mredeem/toou", class: "nav-link", onclick: collapse}, "Redeem a tooU")) : null),
                     m("li.nav-item", m(m.route.Link, {href: "/about", class: "nav-link", onclick: collapse}, "About")),
                     m("li.nav-item", m(m.route.Link, {href: "/support", class: "nav-link", onclick: collapse}, "Support")),
                     (loggedIn ? m("li.nav-item", m(m.route.Link, {onclick: logout, href: "/", class: "nav-link"}, "Sign Out")) : null),

@@ -105,6 +105,10 @@ var Credentials = (function() {
         return (typeof token !== "undefined" && token !== null);  
     };
     
+    var isRedemptionDevice = function() {
+        return hasToken("REDEMPTION_TOKEN");
+    }
+    
     var getMissingCustomerDataFields = function() {
         return new Promise(function(resolve, reject) {
             getCustomerData().then(function(data) {
@@ -283,6 +287,7 @@ var Credentials = (function() {
             authenticateUser: authenticateUser,
             logoutUser: logoutUser,
             isUserLoggedIn: isUserLoggedIn,
+            isRedemptionDevice: isRedemptionDevice,
             getUserToken: getUserToken,
             resetPassword: resetPassword,
             createMerchantAccount: createMerchantAccount,
