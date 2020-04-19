@@ -1,60 +1,71 @@
 class Account < ActiveRecord::Base
+    
+    AUTHX_OTP = "One Time Password"
+    AUTHX_PASSWORD = "Password"
+    AUTHX_OAUTH = "Oauth"
+    
     has_many :passes, as: :recipient
     has_many :orders
     has_many :charges
     has_many :memberships
     has_many :groups, through: :memberships
+    belongs_to :user
     
-    before_save :format_phone_number
+    # before_save :format_phone_number
     after_create :generate_stripe_customer
     
+    validates :authentication_method, inclusion: {in: [AUTHX_OTP, AUTHX_PASSWORD, AUTHX_OAUTH], message: "Invalid authentication method"}
+    VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+    validates :email, length: { maximum: 255 },
+                    format: { with: VALID_EMAIL_REGEX }
+                    
     attr_accessor :token
     
     # Searches accounts by any unformatted string that resembles a phone number
     # Throws an error if the string cannot be formatted into a phone number
-    def Account.search_by_phone_number(unformatted_phone_number)
-        Account.find_by_phone_number(PhoneNumber.new(unformatted_phone_number).to_s)
-    end
+    # def Account.search_by_phone_number(unformatted_phone_number)
+    #     Account.find_by_phone_number(PhoneNumber.new(unformatted_phone_number).to_s)
+    # end
     
     # The account can receive notifications if there is a valid device id
-    def can_receive_notifications? 
-       device_id != nil && device_id != ""
-    end
+    # def can_receive_notifications? 
+    #   device_id != nil && device_id != ""
+    # end
     
-    def authenticate(password)
-        if test_user?
-           password === "000000" 
-        else
-            BCrypt::Password.new(self.one_time_password_hash) == password and self.one_time_password_validity > Time.new
-        end
-    end
+    # def authenticate(password)
+    #     if test_user?
+    #       password === "000000" 
+    #     else
+    #         BCrypt::Password.new(self.one_time_password_hash) == password and self.one_time_password_validity > Time.new
+    #     end
+    # end
     
     # formats the phone number before save
-    def format_phone_number
-       pn = PhoneNumber.new(self.phone_number).to_s
-       self.phone_number = pn
-    end
+    # def format_phone_number
+    #   pn = PhoneNumber.new(self.phone_number).to_s
+    #   self.phone_number = pn
+    # end
     
-    # Generates a one time passcode for accounts to authenticate
-    def generate_otp
-        otp = rand(100000...999999).to_s
-        self.one_time_password_hash = BCrypt::Password.create(otp)
-        self.one_time_password_validity = Time.new + 10.minutes
-        if self.save
-            otp
-        else
-            raise "Error generating password"
-        end
-    end
+    # # Generates a one time passcode for accounts to authenticate
+    # def generate_otp
+    #     otp = rand(100000...999999).to_s
+    #     self.one_time_password_hash = BCrypt::Password.create(otp)
+    #     self.one_time_password_validity = Time.new + 10.minutes
+    #     if self.save
+    #         otp
+    #     else
+    #         raise "Error generating password"
+    #     end
+    # end
     
     def generate_stripe_customer
         CreateStripeCustomerJob.perform_now(self.id)
         reload
     end
     
-    def test_user?
-       return self.phone_number === "+10000000000" 
-    end
+    # def test_user?
+    #   return self.phone_number === "+10000000000" 
+    # end
     
     def missing_fields
        result = []

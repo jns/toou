@@ -1,19 +1,22 @@
 class User < ApplicationRecord
     
+    has_and_belongs_to_many :roles
+    has_many :accounts
+    
+    # Used to reset the password.  Stored as a digest in the database
     attr_accessor :reset_token
     
     TEST_USERNAME = "tester"
     TEST_PASSCODE = "000000"
-    
+        
     before_save { self.email = email.downcase }
     validates :username,  presence: true, length: { maximum: 50 }
-    VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-    validates :email, presence: true, length: { maximum: 255 },
-                    format: { with: VALID_EMAIL_REGEX },
-                    uniqueness: { case_sensitive: false }
+    # VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+    # validates :email, presence: true, length: { maximum: 255 },
+    #                 format: { with: VALID_EMAIL_REGEX },
+    #                 uniqueness: { case_sensitive: false }
                     
-    has_secure_password
-    has_and_belongs_to_many :roles
+    # has_secure_password
     
     scope :active_reset, ->() { where("reset_sent_at > ?", 10.minutes.ago)}
     
