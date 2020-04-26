@@ -5,8 +5,8 @@ participant "Payment Processor" as payment
 app -> server : Initiate Purchase
 activate app
 
-server -> payment : Process Payment
 activate server
+server -> payment : Process Payment
 activate payment
 payment --> server : Approve Payment
 deactivate payment
