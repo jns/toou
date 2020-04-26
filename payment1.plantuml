@@ -1,0 +1,20 @@
+@startuml
+participant "TooU iOS App" as app
+participant "TooU Server" as server
+participant "Payment Processor" as payment
+app -> server : Initiate Purchase
+activate app
+
+server -> payment : Process Payment
+activate server
+activate payment
+payment --> server : Approve Payment
+deactivate payment
+
+server -> server : Generate Pass
+server -> server : Notify Recipient
+
+server --> app : Receipt
+deactivate server
+deactivate app
+@enduml
