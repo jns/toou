@@ -234,7 +234,6 @@ ActiveRecord::Schema.define(version: 2019_12_29_201931) do
     t.string "username"
     t.string "first_name"
     t.string "last_name"
-    t.string "email"
     t.string "password_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -242,6 +241,7 @@ ActiveRecord::Schema.define(version: 2019_12_29_201931) do
     t.datetime "reset_sent_at"
     t.string "picture_url"
     t.string "locale"
+    t.string "email"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 

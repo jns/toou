@@ -19,8 +19,14 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
           name = "#{u.first_name} #{u.last_name}"
           if u.accounts.count == 0
             
-            # Create a new EmailAccount
-            a = EmailAccount.new(name: name, email: u.email, password_digest: u.password_digest, user: u)
+            # If no password and email matches google.com then create a GoogleAccount
+            a = if u.password_digest == nil 
+              GoogleAccount.create(name: name, email: u.email, user: u, authentication_method: Account::AUTHX_OAUTH)
+            else
+              # Create a new EmailAccount
+              EmailAccount.new(name: name, email: u.email, password_digest: u.password_digest, user: u, authentication_method: Account::AUTHX_PASSWORD)
+            end
+            
             if a.save 
               puts "Created #{a.email}"
             else
@@ -48,13 +54,20 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
           end
         end
         
+        remove_column :users, :email
         
       end
       
       dir.down do
+        
+        add_column :users, :email, :string
+        EmailAccount.all.each do |a|
+          a.user.email = a.email
+          a.user.save
+        end
+        
         # Destroy EmailAccounts
         EmailAccount.all.destroy_all
-        
       end
     end
   end

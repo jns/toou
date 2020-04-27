@@ -41,7 +41,7 @@ class ProcessGoogleToken
             end
             
             user = User.find_or_create_by(email: payload[:email].downcase)
-            user.update(username: payload[:email], first_name: payload[:given_name], last_name: payload[:family_name], picture_url: payload[:picture], locale: payload[:locale])
+            user.update(username: payload[:email].downcase, first_name: payload[:given_name], last_name: payload[:family_name], picture_url: payload[:picture], locale: payload[:locale])
             return user
         rescue JWT::JWKError => e
             errors.add(:jwkError, e)

@@ -15,9 +15,7 @@ class Account < ActiveRecord::Base
     after_create :generate_stripe_customer
     
     validates :authentication_method, inclusion: {in: [AUTHX_OTP, AUTHX_PASSWORD, AUTHX_OAUTH], message: "Invalid authentication method"}
-    VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-    validates :email, length: { maximum: 255 },
-                    format: { with: VALID_EMAIL_REGEX }
+
                     
     attr_accessor :token
     

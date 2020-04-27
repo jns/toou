@@ -24,7 +24,7 @@ class UserApiController < ApiBaseController
     # returns a json payload with fields {success: [true, false], error: String}
     def request_password_reset 
         email = params.require(:email)
-        @user = User.find_by(email: email.downcase)
+        @user = EmailAccount.find_by(email: email.downcase)
         if @user
           @user.create_reset_digest
           UserMailer.with(user: @user, url: "#{root_url}password_reset/#{@user.reset_token}").password_reset.deliver_now
@@ -38,12 +38,13 @@ class UserApiController < ApiBaseController
         data = params.require(:data).permit([:email, :password])
         email = data.require(:email).downcase
         password = data.require(:password)
-        @user = User.find_by(email: email)
+        @user = EmailAccount.find_by(email: email)
         if @user
             render json: {success: false, error: "User already exists"}, status: :bad_request
         else
             username = email
-            user = User.create(username: username, email: email, password: password)
+            user = User.create(username: username, email: email)
+            user.accounts << EmailAccount.create(email: email, password: password)
             if user
                 user.roles << Role.merchant
                 render json: auth_response(user), status: :ok
@@ -69,9 +70,9 @@ class UserApiController < ApiBaseController
             elsif params[:data][:email] and params[:data][:password] # Use username, password
                 user_params = params.require(:data).permit(:email, :password)
                 email, password = user_params.require([:email, :password])
-                u = User.find_by(email: email.downcase) 
-                if u and u.authenticate(password)
-                    u
+                acct = EmailAccount.find_by(email: email.downcase) 
+                if acct and acct.authenticate(password)
+                    acct.user
                 else 
                     nil
                 end 
@@ -92,7 +93,7 @@ class UserApiController < ApiBaseController
             if user 
                 render json: auth_response(user), status: :ok
             else 
-               render json: {error: "User not found"}, status: :unauthorized 
+               render json: {error: "Email or Password not found or is incorrect"}, status: :unauthorized 
             end
         rescue Error => err
             puts err
