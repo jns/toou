@@ -1,11 +1,11 @@
 class PassPolicy < AdminPolicy
     
     def pass?
-        case record.recipient.class.name
-        when "Group"
-            record.recipient.accounts.member? user
-        when "Account"
-            record.recipient == user
+        recipient = record.recipient
+        if recipient.is_a? Group
+            recipient.accounts.member? user
+        elsif recipient.is_a? Account
+            recipient == user
         else
             false
         end

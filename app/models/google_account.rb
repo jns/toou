@@ -1,5 +1,5 @@
 class GoogleAccount < Account
    
-    before_create { authentication_method = AUTHX_OAUTH }
+    before_validation on: :create do authentication_method = AUTHX_OAUTH end
     
 end

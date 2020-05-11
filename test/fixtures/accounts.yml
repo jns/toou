@@ -1,57 +1,139 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 test:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: '+10000000000'
-
+  user: tester
+  
+testEmail:
+  type: EmailAccount
+  authentication_method: Password
+  email: tester  
+  user: tester
+  
 josh:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: '+13109097243'
   name: Josh
+  user: josh
+
+joshEmail:
+  type: EmailAccount
+  authentication_method: Password
   email: josh@toou.gifts
+  user: josh
 
 pete:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: '+15043834228'
+  user: pete
+  
+peteEmail:
+  type: EmailAccount
+  authentication_method: Password
   email: peter.shimpeno@gmail.com
+  user: pete
 
 three:
-  email: someone@somewhere
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: '+18187577604'
+  user: three
+
+threeEmail:
+  type: EmailAccount
+  authentication_method: Password
+  email: someone@somewhere
+  user: three
   
 notifiable:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+12052070297"
   device_id: ABC123
+  user: notifiable
 
   
 not_notifiable:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+16263983837"
-
+  user: not_notifiable
+  
 new_person_1:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551212"
   stripe_customer_id: np_1
+  user: np_1
   
 new_person_2:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551213"
   stripe_customer_id: np_2
-
+  user: np_2
+  
 cupcake_lover:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551214"
   stripe_customer_id: np_3
+  user: cupcake_lover
 
 cupcake_lovers_friend:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551215"
   stripe_customer_id: np_4
+  user: cupcake_lovers_friend
 
 beer_lover:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551215"
   stripe_customer_id: np_5
+  user: beer_lover
 
 beer_lovers_friend:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551216"
   stripe_customer_id: np_6
+  user: beer_lovers_friend
 
 active_duty:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551217"
   stripe_customer_id: np_7
+  user: active_duty
 
 trying_it_out:
+  type: MobilePhoneAccount
+  authentication_method: One Time Password
   phone_number: "+15555551218"
   stripe_customer_id: np_8
+  user: trying_it_out
+  
+quantum:
+  type: EmailAccount
+  authentication_method: Password
+  email: proprieter@quantum.com
+  user: quantum_user
+  
+admin:
+  type: EmailAccount
+  authentication_method: Password
+  email: admin@toou.gifts
+  user: admin_user
+  
+cupcake:
+  type: EmailAccount
+  authentication_method: Password
+  email: frosty@cupcakes.com
+  user: cupcake_user
+  

@@ -77,10 +77,9 @@ class ApiController < ApiBaseController
         email = params.permit(:email)[:email]
         
         begin
-            phone = PhoneNumber.new(acct_phone_number).to_s
-            acct = Account.find_or_create_by(phone_number: phone)
+            acct = User.find_or_create_mobile_phone_account(acct_phone_number, email, name)
             if (! acct)
-                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: "Error Creating Account with phone number #{phone}")
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: @current_user.id, message: "Error Creating Account with phone number #{acct_phone_number}")
                 render status: :internal_server_error, json: {error: "Error creating account"}
             end
             
@@ -88,29 +87,23 @@ class ApiController < ApiBaseController
                 acct.device_id = device_id
             end
             
-            if name and !name.empty? 
-               acct.name = name 
-            end
-            
-            if email and !email.empty?
-                acct.email = email
-            end 
             
             acct.save
             
             # Todo check the device ID and get worried if it changed
             otp = acct.generate_otp 
             begin
-                MessageSender.new.send_code(phone.to_s, "Your T👀U authentication code is #{otp}") unless acct.test_user?
+                MessageSender.new.send_code(acct.phone_number, "Your T👀U authentication code is #{otp}") unless acct.test_user?
             rescue Exception => err 
-                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: phone, message: err.message)
-                render status: :internal_server_error, json: {error: "Error sending SMS"}
+                Log.create(log_type: Log::ERROR, context: "ApiController#requestOneTimePasscode", current_user: acct_phone_number, message: err.message)
+                # render status: :internal_server_error, json: {error: "Error sending SMS"}
+                render status: :internal_server_error, json: {error: err.message}
                 return
             end
            render json: {}, status: :ok
             
         rescue Exception => e
-            render status: :bad_request, json: {error: "Invalid phone number."}
+            render status: :bad_request, json: {error: e.message}
         end
 
             
@@ -164,12 +157,8 @@ class ApiController < ApiBaseController
         end
         
         # Find or generate an account
-        acct = Account.search_by_phone_number(phone) || 
-                Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
-        
-        # Update name and email if they are nil
-        acct.update(email: purchaser[:email]) unless acct.email
-        acct.update(name: purchaser[:name]) unless acct.name
+        acct = User.find_or_create_mobile_phone_account(phone, purchaser[:email], purchaser[:name])
+            
         
         # Place the order
         command = PlaceOrder.call(acct, payment_source, recipients, message, product)
@@ -221,8 +210,7 @@ class ApiController < ApiBaseController
             end
             
             # Find or generate an account
-            @current_user = Account.search_by_phone_number(phone) || 
-                    Account.create(phone_number: phone, email: purchaser[:email], name: purchaser[:name])
+            @current_user = User.find_or_create_mobile_phone_account(phone, purchaser[:email], purchaser[:name])
             
             # Update name and email if they are nil
             @current_user.update(email: purchaser[:email]) unless @current_user.email

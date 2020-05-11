@@ -14,13 +14,13 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
         # Make all existing Accounts, MobilePhoneAccounts
         Account.update_all(type: MobilePhoneAccount.name, authentication_method: Account::AUTHX_OTP)
 
-        # Create EmailAccounts for all existing Users
+        # Create EmailAccounts for all existing Users with valid emails
         User.all.each do |u| 
           name = "#{u.first_name} #{u.last_name}"
           if u.accounts.count == 0
             
             # If no password and email matches google.com then create a GoogleAccount
-            a = if u.password_digest == nil 
+            a = if u.password_digest == nil and u.email != nil
               GoogleAccount.create(name: name, email: u.email, user: u, authentication_method: Account::AUTHX_OAUTH)
             else
               # Create a new EmailAccount
@@ -60,14 +60,25 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
       
       dir.down do
         
+        # Recreate user email accounts
         add_column :users, :email, :string
         EmailAccount.all.each do |a|
           a.user.email = a.email
           a.user.save
         end
         
+        # Re-add tester email
+        User.find(username: "tester").update(email: "tester")
+        
         # Destroy EmailAccounts
         EmailAccount.all.destroy_all
+        
+        # Destroy all other User accounts where email is null
+        User.where(email: nil).destroy_all
+        
+        # Destroy Accounts without phone number
+        Account.where(phone_number: nil).destroy_all
+        
       end
     end
   end

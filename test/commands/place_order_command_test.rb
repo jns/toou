@@ -76,7 +76,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       # Generate a random 10 digit phone number and confirm it doesn't exist
       # newAcct = Array.new(10){ [*'0'..'9'].sample }.join
       newAcct = "1 888 888 8888"
-      assert_nil( Account.search_by_phone_number(newAcct) )
+      assert_nil( MobilePhoneAccount.search_by_phone_number(newAcct) )
       
       # Create parameters for api and invoke command
       recipients = [newAcct]
@@ -85,7 +85,7 @@ class PlaceOrderCommandTest < ActiveSupport::TestCase
       assert cmd.success?
       
       # Assert that the phone number now exists and has an associated account
-      assert_not_nil Account.search_by_phone_number(newAcct)
+      assert_not_nil MobilePhoneAccount.search_by_phone_number(newAcct)
    end
    
    test "Order fails and no Stripe::Charge if recipient not provided" do

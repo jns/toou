@@ -2,20 +2,56 @@
 
 quantum_user:
   username: quantum_user
-  email: proprieter@quantum.com
   roles: merchant_role
   
 admin_user:
   username: admin@toou.gifts
-  email: admin@toou.gifts
   roles: admin_role
   
 cupcake_user:
   username: cupcake_user
-  email: frosty@cupcakes.com
   roles: merchant_role
   
 tester:
   username: tester
-  email: tester
   roles: merchant_role, tester_role
+  
+josh:
+  username: josh@toou.gifts
+
+pete:
+  username: peter.shimpeno@gmail.com
+  
+three:
+  username: someone
+  
+notifiable:
+  username: notifiable
+  
+not_notifiable:
+  username: not_notifiable
+  
+np_1:
+  username: np_1
+  
+np_2:
+  username: np_2
+  
+cupcake_lover:
+  username: cupcakes
+  
+cupcake_lovers_friend:
+  username: cupcakes toou
+  
+
+beer_lover:
+  username: Beer
+  
+beer_lovers_friend:
+  username: Beer toou
+  
+active_duty:
+  username: Active Duty
+  
+trying_it_out:
+  username: Just Trying

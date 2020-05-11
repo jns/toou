@@ -33,6 +33,22 @@ class InitiateOrderTest < ActiveSupport::TestCase
         end
     end 
     
+    test "Order placed for unknown user" do
+       acct = accounts(:josh)
+       newAcct = "1 888 888 8889"
+      assert_nil( MobilePhoneAccount.search_by_phone_number(newAcct) )
+        recipients = [newAcct]
+        source = "pm_12345"
+        message  = "test"
+        product = products(:cupcake)
+        assert_difference 'MockStripePaymentIntent.intents.count' do
+            cmd = InitiateOrder.call(acct, source, recipients, message, product, product.fee(:cents))
+            assert cmd.success?
+        end
+      assert_not_nil MobilePhoneAccount.search_by_phone_number(newAcct)
+        
+    end
+    
    test "Order Succeeds" do
        acct = accounts(:josh)
        recipients = [accounts(:pete).phone_number]

@@ -1,3 +1,4 @@
+require 'test_helper'
 
 # Test account history
 class AccountHistoryTest < ActiveSupport::TestCase

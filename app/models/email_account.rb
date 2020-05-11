@@ -1,7 +1,7 @@
 class EmailAccount < Account
    
     VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-    before_create { self.authentication_method = AUTHX_PASSWORD }
+    before_validation on: :create do self.authentication_method = AUTHX_PASSWORD end
     before_save { self.email = email.downcase }
     validates :email, presence: true, length: { maximum: 255 },
                      format: { with: VALID_EMAIL_REGEX },

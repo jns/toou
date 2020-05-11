@@ -10,6 +10,21 @@ class User < ApplicationRecord
         
     validates :username,  presence: true, length: { maximum: 50 }
 
+    def User.find_or_create_mobile_phone_account(phone_number, email, name)
+        phone = PhoneNumber.new(phone_number).to_s
+        begin
+            a = Account.find(phone_number: phone)
+            # Update name and email if they are nil
+            a.update(email: email) unless a.email
+            a.user.update(first_name: name) unless a.user.first_name
+            return a
+        rescue ActiveRecord::RecordNotFound
+            u = User.create(username: phone, first_name: name)
+            a = MobilePhoneAccount.create(phone_number: phone, email: email, user: u)
+            return a
+        end
+    end
+
     def admin?
        roles.member?(Role.admin) 
     end

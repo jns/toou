@@ -11,6 +11,7 @@ Feature: Place Order
     And The user named "Josh" is authenticated
     When The user named "Josh" sends a drink to "(310) 800-1646" using a valid payment
     And A text message is sent to "+13108001646" with a redemption code
+    Then A notification is sent to the device "AC139"
 
   Scenario: Placing an order for an existing user
     Given The person named "Josh" is a current user

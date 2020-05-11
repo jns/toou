@@ -5,6 +5,23 @@ class PassPolicyTest < ActiveSupport::TestCase
   def setup
   end
   
+  test "recipient can get pass" do
+    pass = passes(:distant_future)
+    account = pass.recipient
+    assert PassPolicy.new(account, pass).pass?
+  end
+  
+  test "thief cannot get pass" do
+    pass = passes(:distant_future)
+    accounts.each do |a|
+      if pass.recipient == a 
+        assert PassPolicy.new(a, pass).pass?
+      else
+        refute PassPolicy.new(a, pass).pass?
+      end
+    end
+  end
+  
   test "admin scope is all" do
     assert_equal Pass.all.count, PassPolicy::Scope.new(users(:admin_user), Pass.all).resolve.count
   end

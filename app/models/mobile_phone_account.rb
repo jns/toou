@@ -1,6 +1,6 @@
 class MobilePhoneAccount < Account
    
-    before_create { authentication_method = AUTHX_OTP }
+    before_validation on: :create do  self.authentication_method = Account::AUTHX_OTP end
     before_save :format_phone_number
 
     # Searches accounts by any unformatted string that resembles a phone number

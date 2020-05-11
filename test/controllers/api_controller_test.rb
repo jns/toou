@@ -94,36 +94,36 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "request OTP with unknown number creates a new account" do
     number = "(555) 555-5555"
-    assert_nil Account.search_by_phone_number(number)
+    assert_nil MobilePhoneAccount.search_by_phone_number(number)
     
     post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: @devId}, as: :json
     assert_response :success
         
-    acct = Account.search_by_phone_number(number)
+    acct = MobilePhoneAccount.search_by_phone_number(number)
     assert_not_nil acct
     assert_equal @devId, acct.device_id
   end
   
   test "request OTP without device id creates an account without" do
     number = "(555) 555-5556"
-    assert_nil Account.search_by_phone_number(number)
+    assert_nil MobilePhoneAccount.search_by_phone_number(number)
     
     post "/api/requestOneTimePasscode", params: {phone_number: number}, as: :json
     assert_response :success
     
-    acct = Account.search_by_phone_number(number)
+    acct = MobilePhoneAccount.search_by_phone_number(number)
     assert_not_nil acct
     assert_nil acct.device_id
   end
   
   test "request OTP creates an account with an empty device id" do
     number = "(555) 555-5556"
-    assert_nil Account.search_by_phone_number(number)
+    assert_nil MobilePhoneAccount.search_by_phone_number(number)
     
     post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: ""}, as: :json
     assert_response :success
     
-    acct = Account.search_by_phone_number(number)
+    acct = MobilePhoneAccount.search_by_phone_number(number)
     assert_not_nil acct
     assert_nil acct.device_id
   end
@@ -132,7 +132,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     FakeSMS.throw_error = "Testing Error"
     
     number = "(555) 555-5557"
-    assert_nil Account.search_by_phone_number(number)
+    assert_nil MobilePhoneAccount.search_by_phone_number(number)
     
     post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: ""}, as: :json
     assert_response :internal_server_error
@@ -409,7 +409,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     payment_source = "visa_tok"
     message = "Test"
     
-    assert_nil Account.search_by_phone_number(purchaser[:phone])
+    assert_nil MobilePhoneAccount.search_by_phone_number(purchaser[:phone])
     
     assert_difference "Order.count", 1 do
       post "/api/order", params: {purchaser: purchaser, product: product, recipients: recipients, payment_source: payment_source, message: message}

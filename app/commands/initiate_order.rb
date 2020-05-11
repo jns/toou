@@ -52,7 +52,7 @@ class InitiateOrder
                         raise "Test user can only place order for self"
                       end
                       
-                      Account.find_or_create_by(phone_number: pn) 
+                      MobilePhoneAccount.find_or_create_by(phone_number: pn) 
                     else
                         raise "Invalid recipient"
                     end
@@ -160,7 +160,7 @@ class InitiateOrder
     end
     
     def errorDescription
-       errors.collect{|e, m| return m.join(",")}.join(",")
+       errors.collect{|e, m| return m.respond_to?(:join) ? m.join(",") : m.to_s }.join(",")
     end
     
 end

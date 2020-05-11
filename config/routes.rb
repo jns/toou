@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get 'pass/:serial_number', to: 'welcome#index'
   get 'password_reset(/:token)', to: 'welcome#index'
 
+  get 'sse', to: 'sse_controller#stream'
 
   get 'goArmy', to: 'welcome#go_army'
   get 'goarmy', to: 'welcome#go_army'

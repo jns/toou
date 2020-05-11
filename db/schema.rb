@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_29_201931) do
+ActiveRecord::Schema.define(version: 2020_03_06_203828) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "cube"
@@ -27,7 +27,14 @@ ActiveRecord::Schema.define(version: 2019_12_29_201931) do
     t.string "device_id"
     t.string "stripe_customer_id"
     t.string "name"
+    t.string "type"
+    t.string "authentication_method"
+    t.string "password_digest"
+    t.string "reset_digest"
+    t.datetime "reset_sent_at"
+    t.bigint "user_id"
     t.index ["phone_number"], name: "index_accounts_on_phone_number"
+    t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -241,7 +248,6 @@ ActiveRecord::Schema.define(version: 2019_12_29_201931) do
     t.datetime "reset_sent_at"
     t.string "picture_url"
     t.string "locale"
-    t.string "email"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
