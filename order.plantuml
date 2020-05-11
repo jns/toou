@@ -1,0 +1,44 @@
+@startuml
+title Order
+participant "TooU iOS App" as app
+participant "TooU Server" as server
+participant "Payment Processor" as payment
+
+app -> server : initiate_order
+activate server
+
+server -> server : create_payment_intent
+activate server
+server -> payment : <<create payment intent>>
+deactivate server
+
+alt succeeded
+  payment --> server :
+  server -> server : complete_order
+  server --> app : success
+
+else confirmation required
+  payment --> server :
+  server -> server : confirm_payment_intent
+  activate server
+  server -> payment : <<confirm payment intent>>
+  payment --> server :
+  deactivate server
+  server -> server : complete_order
+  server --> app : success
+
+else requires_action
+  server --> app : requires action
+  app -> server : confirm_payment_intent
+  activate server
+  server -> payment : <<confirm payment intent>>
+  payment --> server :
+  deactivate server
+  server -> server : complete_order
+  server --> app : success
+  
+else failed
+  server --> app : failure
+end
+deactivate server
+@enduml
