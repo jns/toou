@@ -48,4 +48,10 @@ class User < ApplicationRecord
     def merchants
        Merchant.where(user: self) 
     end
+    
+    
+    def email
+       accounts.where("email is not null").first.email 
+    end
+    
 end

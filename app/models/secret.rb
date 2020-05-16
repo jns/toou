@@ -1,3 +1,4 @@
+require 'securerandom'
 class Secret
    
    
@@ -13,7 +14,7 @@ class Secret
    
    # Creates a temporary secret that can be accessed one time to return the associated value
    def Secret.create(value)
-       secret = Array.new(30){ [*'0'..'9',*'A'..'Z'].sample }.join 
+       secret = SecureRandom.base64(10)
        @@secrets[secret] = value
        removeSoon(secret)
        secret

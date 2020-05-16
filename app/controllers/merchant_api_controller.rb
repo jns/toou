@@ -79,8 +79,8 @@ class MerchantApiController < ApiBaseController
                 if secret = auth["secret"] and Secret.exists?(secret)
                     @current_user = Secret.find(secret)
                     @merchant = merchant_params
-                elsif u= User.find_by(email: auth["email"].downcase) and u.authenticate(auth["password"])
-                    @current_user = u
+                elsif acct= EmailAccount.find_by(email: auth["email"].downcase) and acct.authenticate(auth["password"])
+                    @current_user = acct.user
                     merchants = @current_user.merchants
                     if merchants.count == 1
                         render json: {secret: Secret.create(@current_user), merchants: [merchants.first]}, status: :ok

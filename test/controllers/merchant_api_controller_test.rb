@@ -4,9 +4,10 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 
 	def auth_merchant(merchant, password = "password")
 	    user = merchant.user
-	    user.update(password: password)
+	    acct = EmailAccount.where(user: user).first
 	    
-	    post "/api/user/authenticate", params: {data: {username: user.username, password: password}}, as: :json  
+	    acct.update(password: password)
+	    post "/api/user/authenticate", params: {data: {email: acct.email, password: password}}, as: :json  
 	    assert_response :ok
 	    json = JSON.parse(@response.body) 
 	    token = json["auth_token"]
@@ -102,13 +103,11 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	
 	test "authorize a device with email and password" do
 		merchant = merchants(:quantum)
-		user = merchant.user
-		user.password = "a password"
-		user.save
+		auth_merchant(merchant, "a password")
 		device = "Device555"
 		
 		assert_difference "merchant.devices.count", 1 do
-			post "/api/merchant/authorize_device", params: {authorization: {email: user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.email, password: "a password"}, data: {device_id: device}}, as: :json
 			assert_response :ok
 		    json = JSON.parse(@response.body) 
 			secret = json["secret"]
@@ -123,13 +122,11 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	
 	test "authorize a device with email and password for a user with multiple merchants" do
 		merchant = merchants(:cupcake_store2)
-		user = merchant.user
-		user.password = "a password"
-		user.save
+		auth_merchant(merchant, "a password")
 		device = "CupcakeTooDevice"
 		
 		assert_difference "merchant.devices.count", 1 do
-			post "/api/merchant/authorize_device", params: {authorization: {email: user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.email, password: "a password"}, data: {device_id: device}}, as: :json
 			assert_response :ok
 		    json = JSON.parse(@response.body) 
 		    secret = json["secret"]
