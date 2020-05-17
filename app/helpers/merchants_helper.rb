@@ -5,7 +5,7 @@ module MerchantsHelper
 		url +="?redirect_uri=#{merchants_enroll_url}"
 		url += "&client_id=#{ENV["STRIPE_CLIENT_ID"]}"
 		url += "&state=#{@merchant.id}"
-		url += "&stripe_user[email]=#{@merchant.user.email}" if @merchant.user.email
+		url += "&stripe_user[email]=#{@merchant.user.first_email}" if @merchant.user.first_email
 		url += "&stripe_user[business_name]=#{@merchant.name}" if @merchant.name
 		url += "&stripe_user[business_type]=company"
 		url += "&stripe_user[phone_number]=#{@merchant.phone_number}" if @merchant.phone_number

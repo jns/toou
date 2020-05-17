@@ -6,7 +6,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "admin user has admin role" do
-    u = User.create(username: "Test", email: "test@test.com", password: "password")
+    u = User.create(username: "Test")
     assert_not_nil u.id
     refute u.admin?
     
@@ -16,12 +16,19 @@ class UserTest < ActiveSupport::TestCase
   
   
   test "merchant user has merchant role" do
-    u = User.create(username: "Merchant", email: "merchant@merchant.com", password: "password")
+    u = User.create(username: "Merchant")
     assert_not_nil u.id
     refute u.merchant?
     
     u.roles << Role.merchant
     assert u.merchant?
   end
+  
+  
+  test "It should find mobilePhoneAccount for an existing user with phone number only" do 
+    acct = accounts(:josh)
+    assert_equal acct,  User.find_or_create_mobile_phone_account(acct.phone_number, nil, nil)
+  end
+  
   
 end

@@ -105,7 +105,8 @@ class UserApiController < ApiBaseController
     
     def auth_response(user)
         token = JsonWebToken.encode(user_id: user.id, user_type: "User") 
-        {success: true, auth_token: token, type: "USER", username: user.username, email: user.email}
+        email = user.first_email
+        {success: true, auth_token: token, type: "USER", username: user.username, email: email}
     end
     
 end

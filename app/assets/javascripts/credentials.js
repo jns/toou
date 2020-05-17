@@ -69,7 +69,7 @@ var Credentials = (function() {
     };
 
     var isUserLoggedIn = function() {
-      return hasToken("USER_TOKEN");  
+      return hasToken(TOKEN);  
     };
     
     var setToken = function(arg1, arg2) {
@@ -176,11 +176,11 @@ var Credentials = (function() {
                        method: "POST", 
                        body: {token: token, new_password: new_password}
             }).then(function(data) {
-                setToken("USER_TOKEN", data["auth_token"]);
+                setToken(data["auth_token"]);
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(err) {
-                setToken("USER_TOKEN", null);
+                setToken(null);
                 reject(err.response["error"]);
             }); 
         });
@@ -193,12 +193,12 @@ var Credentials = (function() {
                 url: "/api/user/create_merchant_account",
                 body: {data: {email: email, password: password}},
             }).then(function(data) {
-                setToken("USER_TOKEN", data["auth_token"]);
+                setToken(data["auth_token"]);
                 userData.email = data["email"]
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
-                setToken("USER_TOKEN", null);
+                setToken(null);
                 reject(e.response["error"]);
             });
         });    
@@ -212,13 +212,13 @@ var Credentials = (function() {
                 body: {data: {email: email, password: password}},
             }).then(function(data) {
                 console.log(data);
-                setToken("USER_TOKEN", data["auth_token"]);
+                setToken(data["auth_token"]);
                 userData = {email:  data["email"]};
                 Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
                 resolve();
             }).catch(function(e) {
                 console.log(e);
-                setToken("USER_TOKEN", null);
+                setToken(null);
                 reject(e.response["error"]);
             });
         });
@@ -230,11 +230,11 @@ var Credentials = (function() {
             url: "/api/user/authenticate",
             body: {gtoken: token},
         }).then(function(data) {
-            setToken("USER_TOKEN", data["auth_token"]);
+            setToken(data["auth_token"]);
             userData = {email:  data["email"]};
             Dispatcher.dispatch(Dispatcher.topics.SIGNIN, {});
         }).catch(function(e) {
-            setToken("USER_TOKEN", null);
+            setToken(null);
         });
     };
     
@@ -257,12 +257,11 @@ var Credentials = (function() {
     };
     
     var getUserToken = function() {
-        return getToken("USER_TOKEN");    
+        return getToken();    
     };
     
     var logoutUser = function() {
-        Credentials.setToken("USER_TOKEN", null);
-        Credentials.setToken(TOKEN, null);  // also log out customer accounts;
+        Credentials.setToken(null);  // also log out customer accounts;
         userData = undefined;
         googleSignout();
         Dispatcher.dispatch(Dispatcher.topics.SIGNOUT, {});

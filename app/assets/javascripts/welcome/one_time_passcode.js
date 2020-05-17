@@ -17,7 +17,11 @@ var OneTimePasscode = (function() {
     };
     
     var passcodeAuthentication = function() {
-        return Credentials.authenticate(phone_number, passcode);
+        if (Credentials.authenticate(phone_number, passcode)) {
+            return true;
+        } else {
+            throw "Invalid Credentials";
+        }
     };
     
     var cancel = function() {

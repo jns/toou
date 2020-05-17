@@ -6,9 +6,9 @@ class UserMailer < ApplicationMailer
   #   en.merchant_notifications_mailer.passcode.subject
   #
   def password_reset
-    user = params[:user]
-    @greeting = "Hi #{user.username}"
+    account = params[:account]
+    @greeting = "Hi #{account.user.username}"
     @url = params[:url]
-    mail to: user.email, subject: "TooU Password Reset"
+    mail to: account.email, subject: "TooU Password Reset"
   end
 end

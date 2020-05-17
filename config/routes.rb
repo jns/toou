@@ -72,6 +72,7 @@ Rails.application.routes.draw do
   
   # Webhooks
   post '/webhook/stripe_event', to: 'stripe_webhooks#stripe_event'
+  get 'merchants/enroll', to: 'stripe_webhooks#enroll'
   
   # Redemption api endpoints
   post '/api/redemption/redeem', to: 'redemption_api#redeem'
@@ -95,7 +96,6 @@ Rails.application.routes.draw do
   
   get 'merchants', to: 'welcome#index'
   get 'merchants/onboard', to: 'welcome#index'
-  get 'merchants/enroll', to: 'merchants#enroll'
   get 'merchants/:id', to: 'welcome#index'
   
 

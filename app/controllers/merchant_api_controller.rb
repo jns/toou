@@ -140,7 +140,12 @@ class MerchantApiController < ApiBaseController
     	if (@merchant.stripe_id == nil)
     		render json: {url: stripe_connect_url, type: "connect"}, status: :ok
     	else
-    		render json: {url: stripe_dashboard_url(@merchant.stripe_id), type: "dashboard"}, status: :ok
+    	    begin 
+    		    render json: {url: stripe_dashboard_url(@merchant.stripe_id), type: "dashboard"}, status: :ok
+    	    rescue Exception => e
+    	        Log.create(context: "stripe_link", current_user: @merchant.id, message: e.message, log_type: Log::ERROR)
+    	        render json: {error: "Error retrieving stripe link"}, status: :internal_server_error
+    	    end
     	end
     end
     

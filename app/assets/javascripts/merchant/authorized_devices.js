@@ -83,6 +83,7 @@ var AuthorizedDevices = (function() {
             })
             .catch(function(error) {
                 Credentials.setToken("REDEMPTION_TOKEN", null);
+                DEVICE_INFO = "";
             });
         }
     };

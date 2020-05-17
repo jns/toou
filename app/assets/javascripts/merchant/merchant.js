@@ -37,6 +37,7 @@ var Merchant = function() {
                     stripe_link = data;
                     resolve(stripe_link);
                 }).catch(function(err) {
+                    stripe_link = "Error retrieving Stripe Link";
                     reject(err);
                 });
             }

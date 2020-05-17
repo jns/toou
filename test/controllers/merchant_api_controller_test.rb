@@ -107,7 +107,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		device = "Device555"
 		
 		assert_difference "merchant.devices.count", 1 do
-			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.first_email, password: "a password"}, data: {device_id: device}}, as: :json
 			assert_response :ok
 		    json = JSON.parse(@response.body) 
 			secret = json["secret"]
@@ -126,7 +126,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		device = "CupcakeTooDevice"
 		
 		assert_difference "merchant.devices.count", 1 do
-			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.email, password: "a password"}, data: {device_id: device}}, as: :json
+			post "/api/merchant/authorize_device", params: {authorization: {email: merchant.user.first_email, password: "a password"}, data: {device_id: device}}, as: :json
 			assert_response :ok
 		    json = JSON.parse(@response.body) 
 		    secret = json["secret"]
@@ -182,7 +182,7 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 	    body = JSON.parse(response.body)
 	    url = URI.decode(body["url"])
 	    assert_not_nil url
-	    assert Regexp.new(merchant.user.email).match(url)
+	    assert Regexp.new(merchant.user.first_email).match(url)
 	    assert Regexp.new(merchant.name).match(url)
 	    assert Regexp.new(merchant.phone_number).match(url)
 	end

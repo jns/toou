@@ -2,9 +2,7 @@ class User < ApplicationRecord
     
     has_and_belongs_to_many :roles
     has_many :accounts
-    
-    # Used to reset the password.  Stored as a digest in the database
-    attr_accessor :reset_token
+
     
     TEST_USERNAME = "tester"
         
@@ -12,13 +10,17 @@ class User < ApplicationRecord
 
     def User.find_or_create_mobile_phone_account(phone_number, email, name)
         phone = PhoneNumber.new(phone_number).to_s
-        begin
-            a = Account.find(phone_number: phone)
+        a = Account.find_by(phone_number: phone)
+        if a
             # Update name and email if they are nil
-            a.update(email: email) unless a.email
-            a.user.update(first_name: name) unless a.user.first_name
+            if email and a.email == nil
+                a.update(email: email) 
+            end
+            if name and a.user.first_name == nil
+                a.user.update(first_name: name)
+            end
             return a
-        rescue ActiveRecord::RecordNotFound
+        else
             u = User.create(username: phone, first_name: name)
             a = MobilePhoneAccount.create(phone_number: phone, email: email, user: u)
             return a
@@ -49,9 +51,11 @@ class User < ApplicationRecord
        Merchant.where(user: self) 
     end
     
-    
-    def email
-       accounts.where("email is not null").first.email 
+    # Convenience method created when emails where moved into EmailAccounts
+    # This takes the first found email, and is not guaranteed to be the same from 
+    # one call to the next.
+    def first_email
+      accounts.where("email is not null").first.email 
     end
     
 end

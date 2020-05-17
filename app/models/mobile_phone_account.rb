@@ -3,6 +3,8 @@ class MobilePhoneAccount < Account
     before_validation on: :create do  self.authentication_method = Account::AUTHX_OTP end
     before_save :format_phone_number
 
+    validates_presence_of :phone_number, unique: true
+
     # Searches accounts by any unformatted string that resembles a phone number
     # Throws an error if the string cannot be formatted into a phone number
     def MobilePhoneAccount.search_by_phone_number(unformatted_phone_number)

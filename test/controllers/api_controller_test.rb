@@ -92,6 +92,15 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     
   end
   
+  test "request OTP with existing number creates existing account" do
+    number = accounts(:josh).phone_number
+    
+    assert_no_difference 'Account.count' do 
+      post "/api/requestOneTimePasscode", params: {phone_number: number, device_id: @devId}, as: :json
+      assert_response :success
+    end
+  end
+  
   test "request OTP with unknown number creates a new account" do
     number = "(555) 555-5555"
     assert_nil MobilePhoneAccount.search_by_phone_number(number)

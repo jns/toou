@@ -2,6 +2,7 @@ class AuthenticateUser
   
   prepend SimpleCommand
   
+  
   def initialize(identity, password, auth_method=Account::AUTHX_OTP)
     @identity = identity
     @password = password

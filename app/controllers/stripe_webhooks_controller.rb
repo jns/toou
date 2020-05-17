@@ -1,5 +1,33 @@
 class StripeWebhooksController < ApiBaseController
     
+    # GET enrolls a new merchant with stripe
+    def enroll
+        authorize Merchant
+        state, code = params.require([:state, :code])
+        
+        if code === "TEST_OK"
+            @merchant = Merchant.new(name: "Test")
+            render status: :ok
+            return
+        end
+        
+        if code === "TEST_ERROR"
+           @error = "Testing error"
+           render status: :ok
+           return
+        end
+        
+        begin
+            @merchant = Merchant.find(state)
+            cmd = EnrollStripeConnectedAccount.call(@merchant, code)
+            unless cmd.success?
+                @error = cmd.errors[:enrollment_error]
+            end
+        rescue ActiveRecord::RecordNotFound
+            render status: :bad_request
+        end
+    end
+    
     def stripe_event
         payload = request.body.read
         event = nil

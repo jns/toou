@@ -12,7 +12,6 @@ var MerchantProducts = (function() {
         var checked = $(ev.target).prop("checked");
         var productId = $(ev.target).data("product-id");
         dataStore.merchant.products.find(function(p) {return p.id === productId;}).can_redeem = checked;
-        console.log(dataStore.merchant.products);
         dataStore.merchant.updateProducts();
     };
     

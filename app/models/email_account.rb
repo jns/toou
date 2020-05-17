@@ -9,6 +9,9 @@ class EmailAccount < Account
     
     has_secure_password
 
+    # Used to reset the password.  Stored as a digest in the database
+    attr_accessor :reset_token
+    
     scope :active_reset, ->() { where("reset_sent_at > ?", 10.minutes.ago)}
     
     # Generates a random token
