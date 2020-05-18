@@ -17,7 +17,6 @@ class Account < ActiveRecord::Base
     validates :authentication_method, inclusion: {in: [AUTHX_OTP, AUTHX_PASSWORD, AUTHX_OAUTH], message: "Invalid authentication method"}
 
                     
-    attr_accessor :token
     
     # Searches accounts by any unformatted string that resembles a phone number
     # Throws an error if the string cannot be formatted into a phone number

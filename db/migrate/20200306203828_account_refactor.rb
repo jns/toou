@@ -9,6 +9,10 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
       t.belongs_to :user
     end
     
+    change_table :users do |t|
+      t.string :stripe_customer_id
+    end
+    
     reversible do |dir|
       dir.up do
         # Make all existing Accounts, MobilePhoneAccounts
@@ -45,20 +49,23 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
             a.phone_number
           end
           
-          u = User.find_by(username: username)
-          if u
-            a.update(user: u)
-          else  
-            u = User.create(username: username, email: a.email, first_name: a.name)
-            a.update(user: u)
-          end
+          u = User.find_by(username: username) || User.create(username: username, email: a.email, first_name: a.name)
+          
+          a.update(user: u)
+          u.update(stripe_customer_id: a.stripe_customer_id)
         end
         
         remove_column :users, :email
-        
+        remove_column :accounts, :stripe_customer_id
       end
       
       dir.down do
+        
+        # copy stripe_customer_id back to account
+        add_column :accounts, :stripe_customer_id, :string
+        Account.all.each do |a|
+          a.update(stripe_customer_id: a.user.stripe_customer_id)
+        end
         
         # Recreate user email accounts
         add_column :users, :email, :string
@@ -68,7 +75,7 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
         end
         
         # Re-add tester email
-        User.find(username: "tester").update(email: "tester")
+        #User.find(username: "tester").update(email: "tester")
         
         # Destroy EmailAccounts
         EmailAccount.all.destroy_all

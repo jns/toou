@@ -1,5 +1,5 @@
+# @DEPRECATED
 class CreateAuthToken
-   
   prepend SimpleCommand
   
   def initialize(username, password)

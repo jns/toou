@@ -31,12 +31,8 @@ class AuthorizeApiRequest
     end
     
     begin
-      if user_type === "Customer"
-        return Account.find(user_id)
-      elsif user_type === "User"
+      if user_type === "User"
         return User.find(user_id)
-      elsif user_type === "Merchant"
-        return Merchant.find(user_id)
       elsif user_type === "MerchantDevice"
         return Device.find(user_id)
       else

@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(version: 2020_03_06_203828) do
     t.datetime "one_time_password_validity"
     t.string "phone_number"
     t.string "device_id"
-    t.string "stripe_customer_id"
     t.string "name"
     t.string "type"
     t.string "authentication_method"
@@ -248,6 +247,7 @@ ActiveRecord::Schema.define(version: 2020_03_06_203828) do
     t.datetime "reset_sent_at"
     t.string "picture_url"
     t.string "locale"
+    t.string "stripe_customer_id"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 

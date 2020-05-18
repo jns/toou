@@ -1,3 +1,4 @@
+# @DEPRECATED
 class CreateDeviceAuthToken
   
   prepend SimpleCommand

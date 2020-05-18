@@ -25,6 +25,15 @@ class MerchantApiControllerTest < ActionDispatch::IntegrationTest
 		token
 	end
 
+	test "Retrieve merchants for user" do
+		u = users(:quantum_user)
+		token = auth_merchant(merchants(:quantum))
+		post "/api/merchant/merchants", params: {authorization: token}
+		assert_response :ok
+		body = JSON.parse(response.body)
+		assert_equal u.merchants.count, body.count
+	end
+
 	test "Deauthorize a device" do
 		m = merchants(:quantum)
 		token = auth_merchant(m, "beer")

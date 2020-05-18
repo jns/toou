@@ -7,7 +7,7 @@ class UserPolicy < ApplicationPolicy
 	def login?
 		true
 	end
-
+	
 	class Scope < Scope
 		def resolve
 			if user.admin?

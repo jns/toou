@@ -3,6 +3,10 @@ class User < ApplicationRecord
     has_and_belongs_to_many :roles
     has_many :accounts
 
+
+    # Cache the id of the account used to authenticate this user
+    @authenticated_with_id 
+
     
     TEST_USERNAME = "tester"
         
@@ -56,6 +60,23 @@ class User < ApplicationRecord
     # one call to the next.
     def first_email
       accounts.where("email is not null").first.email 
+    end
+    
+    # Cache the id of the account used to authenticate this user
+    # Do not cache actual account so that rails re-polls database 
+    # when user accesses authenticated_with 
+    def authenticated_with=(account)
+        if (accounts.member?(account))
+           @authenticated_with_id = account.id
+       else
+           @authenticated_with_id = nil
+       end
+       
+    end
+    
+    # Returns the account used to authenticate this user
+    def authenticated_with
+        accounts.find(@authenticated_with_id)
     end
     
 end

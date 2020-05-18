@@ -93,7 +93,11 @@ class MerchantPolicy < ApplicationPolicy
 
 	class Scope < Scope
 		def resolve
-			scope.where(user: user)
+			if user.is_a? User and user.merchant?
+				scope.where(user: user)
+			else 
+				[]
+			end
 		end
 	end
 end

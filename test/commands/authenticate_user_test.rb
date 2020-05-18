@@ -20,7 +20,7 @@ class AuthenticateUserTest < ActiveSupport::TestCase
         assert_not_nil token
         
         body = JsonWebToken.decode(token)
-        assert_equal acct.id, body[:user_id]
+        assert_equal acct.user.id, body[:user_id]
     end
    
    test "authenticate user fails" do
@@ -45,7 +45,7 @@ class AuthenticateUserTest < ActiveSupport::TestCase
         assert_not_nil token
         
         body = JsonWebToken.decode(token)
-        assert_equal acct.id, body[:user_id]
+        assert_equal acct.user.id, body[:user_id]
    end
    
    test "authenticate Email User Fails" do

@@ -121,8 +121,8 @@ class ApiController < ApiBaseController
             command = AuthenticateUser.call(phoneNumber, otp)
         
            if command.success?
-               acct = command.result
-             render json: { auth_token: acct.token, missing_fields: acct.missing_fields}, status: :ok
+               token = command.result
+             render json: { auth_token: token, missing_fields: []}, status: :ok
            else
              render json: { error: "Invalid code"}, status: :unauthorized
            end
@@ -134,6 +134,8 @@ class ApiController < ApiBaseController
     # get groups a user belongs and the number of valid passes for
     # buyables in that group
     def groups
+        
+        
         @groups = @current_user.groups
         render 'groups.json.jbuilder', status: :ok
     end
@@ -143,6 +145,7 @@ class ApiController < ApiBaseController
     # @param recipients a list of phone numbers
     # @param payment_source a stripe payment token
     # @param promotion_id the promotion being purchased
+    # @deprecated use initiate_order
     def order
         purchaser = params.require(:purchaser).permit(:name, :phone, :email)
         recipients, payment_source = params.require([:recipients, :payment_source])
@@ -174,6 +177,7 @@ class ApiController < ApiBaseController
     # @param message String the message to include in the delivered pass
     # @param payment_source String a payment token
     # @param promotion_id String an id of the item being purchased (optional)
+    # @deprecated use initiate_order
     def placeOrder
         recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
         product = buyable_params

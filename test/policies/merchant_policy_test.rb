@@ -57,4 +57,5 @@ class  MerchantPolicyTest < ActiveSupport::TestCase
 	test "Device cannot access other merchants credits" do
 		refute MerchantPolicy.new(devices(:quantum_device), merchants(:cupcake_store)).credits?	
 	end
+	
 end

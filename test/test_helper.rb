@@ -30,7 +30,7 @@ module TestEnvironment
     end
     command = AuthenticateUser.call(phone_number, one_time_passcode)
     if command.success?
-      command.result.token
+      command.result
     else
       puts "Error in test harness authenticating account #{account.to_json}"
       nil

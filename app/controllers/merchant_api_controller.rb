@@ -7,7 +7,7 @@ class MerchantApiController < ApiBaseController
 
     # Lists all merchants in scope
     def merchants
-        @merchants = Merchant.where(user: @current_user)
+        @merchants = policy_scope(Merchant)
         render 'merchants.json.jbuilder', status: :ok
     end
 
