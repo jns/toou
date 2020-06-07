@@ -33,25 +33,33 @@ not_notifiable:
   
 np_1:
   username: np_1
+  stripe_customer_id: np_1
   
 np_2:
   username: np_2
+  stripe_customer_id: np_2
   
 cupcake_lover:
   username: cupcakes
+  stripe_customer_id: np_3
   
 cupcake_lovers_friend:
   username: cupcakes toou
+  stripe_customer_id: np_4
   
 
 beer_lover:
   username: Beer
+  stripe_customer_id: np_5
   
 beer_lovers_friend:
   username: Beer toou
+  stripe_customer_id: np_6
   
 active_duty:
   username: Active Duty
+  stripe_customer_id: np_7
   
 trying_it_out:
   username: Just Trying
+  stripe_customer_id: np_8

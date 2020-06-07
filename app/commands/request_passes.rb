@@ -11,20 +11,20 @@ class RequestPasses
     prepend SimpleCommand
     
     # Initalize the command for a specific account
-    def initialize(account, passes = [])
-        @account = account
+    def initialize(user, passes = [])
+        @user = user
         @passes = passes
     end
     
     def call 
         
-        unless @account and @account.is_a? Account
-            errors.add(:account, "Invalid account") 
+        unless @user and @user.is_a? User
+            errors.add(:account, "Invalid user") 
             return
         end
         
-        @account.passes.order(created_at: :desc).collect{|p| p}.concat( @passes.map { |sn| 
-            found_pass = Pass.find_by(serial_number: sn, recipient: @account)
+        @user.passes.order(created_at: :desc).collect{|p| p}.concat( @passes.map { |sn| 
+            found_pass = Pass.find_by(serial_number: sn, recipient: @user)
             if found_pass then
                 found_pass
             else

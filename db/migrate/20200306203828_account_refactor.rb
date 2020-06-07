@@ -13,6 +13,14 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
       t.string :stripe_customer_id
     end
     
+    change_table :orders do |t|
+      t.belongs_to :user
+    end
+    
+    change_table :memberships do |t|
+      t.belongs_to :user
+    end
+    
     reversible do |dir|
       dir.up do
         # Make all existing Accounts, MobilePhoneAccounts
@@ -53,6 +61,18 @@ class AccountRefactor < ActiveRecord::Migration[5.2]
           
           a.update(user: u)
           u.update(stripe_customer_id: a.stripe_customer_id)
+        end
+        
+        # Update all orders with user corresponding to account
+        Order.all.each do |o|
+          a = Account.find(o.account_id)
+          o.update(user: a.user)
+        end
+        
+        # Update all memberships with user corresponding to account
+        Membership.all.each do |m|
+          a = Account.find(m.account_id)
+          m.update(user: a.user)
         end
         
         remove_column :users, :email

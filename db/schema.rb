@@ -106,8 +106,10 @@ ActiveRecord::Schema.define(version: 2020_03_06_203828) do
     t.datetime "updated_at", null: false
     t.bigint "account_id"
     t.bigint "group_id"
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_memberships_on_account_id"
     t.index ["group_id"], name: "index_memberships_on_group_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "merchant_pass_queues", force: :cascade do |t|
@@ -160,7 +162,9 @@ ActiveRecord::Schema.define(version: 2020_03_06_203828) do
     t.string "charge_stripe_id"
     t.integer "charge_amount_cents"
     t.integer "commitment_amount_cents"
+    t.bigint "user_id"
     t.index ["account_id"], name: "index_orders_on_account_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "passes", force: :cascade do |t|

@@ -9,16 +9,16 @@ class ApiController < ApiBaseController
     def account
         case request.method
         when "PATCH"
-            data = params.require(:data).permit(:name, :email, :device_id)
-            data[:device_id] = nil if data[:device_id] == "nil"
-            @current_user.update(data)
+            name, email, device_id = params.require(:data).permit(:name, :email, :device_id)
+            device_id = nil if device_id == "nil"
+            @current_user.update(first_name: name, email: email)
+            @current_user.authenticated_with.update(device_id: device_id)
             render json: {success: "Success"}, status: :ok
         when "POST"
-            data = params.permit(data: [:name, :email, :device_id])[:data]
-            if (data) 
-                data[:device_id] = nil if data[:device_id] == "nil"
-                @current_user.update(data)
-            end
+            name, email, device_id = params.permit(:data).permit(:name, :email, :device_id)
+            device_id = nil if device_id == "nil"
+            @current_user.update(first_name: name, email: email)
+            @current_user.authenticated_with.update(device_id: device_id)
             render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
         else
             render json: {}, status: :bad_request
@@ -140,56 +140,6 @@ class ApiController < ApiBaseController
         render 'groups.json.jbuilder', status: :ok
     end
     
-    # Alternate order that doesn't require auth
-    # @param a purchaser name, phone, and email
-    # @param recipients a list of phone numbers
-    # @param payment_source a stripe payment token
-    # @param promotion_id the promotion being purchased
-    # @deprecated use initiate_order
-    def order
-        purchaser = params.require(:purchaser).permit(:name, :phone, :email)
-        recipients, payment_source = params.require([:recipients, :payment_source])
-        message = params.permit(:message)[:message]
-        product = buyable_params
-        
-        # Sanitize and format the phone number
-        phone = PhoneNumber.new(purchaser[:phone]).to_s
-        unless phone
-            render json: {error: "Invalid Phone Number"}, status: :bad_request
-            return
-        end
-        
-        # Find or generate an account
-        acct = User.find_or_create_mobile_phone_account(phone, purchaser[:email], purchaser[:name])
-            
-        
-        # Place the order
-        command = PlaceOrder.call(acct, payment_source, recipients, message, product)
-        if command.success?
-            render json: {}, status: :ok
-        else
-            render json: {error: command.errors.first.message}, status: :bad_request
-        end
-    end
-    
-    # Places an order for passes to be delivered to recipients
-    # @param recipients Array of phone numbers who will receive passes
-    # @param message String the message to include in the delivered pass
-    # @param payment_source String a payment token
-    # @param promotion_id String an id of the item being purchased (optional)
-    # @deprecated use initiate_order
-    def placeOrder
-        recipients, message, payment_source = params.require([:recipients, :message, :payment_source])
-        product = buyable_params
-        
-        command = PlaceOrder.call(@current_user, payment_source, recipients, message, product)
-        if command.success?
-            
-            render json: {order_id: command.result.id}, status: :ok
-        else
-            render json: {error: command.errors.first.message}, status: :bad_request
-        end
-    end
 
     def initiate_order
         recipients, payment_source = params.require([:recipients, :payment_source])
@@ -277,7 +227,7 @@ class ApiController < ApiBaseController
     # Returns pass data for the user
     def pass 
         serialNumber = serialNumberParam
-        unless @current_user.is_a? Account 
+        unless @current_user.is_a? User 
             render json: {}, status: :unauthorized
             return
         end
@@ -304,36 +254,7 @@ class ApiController < ApiBaseController
         render 'pass.json.jbuilder', status: :ok
                 
     end
-    
-    # Returns the specific pkpass if the user is authorized
-    # Required Params
-    # @param serial_number
-    def pkpass
-        
-        serialNumber = serialNumberParam
-        
-        pass = @current_user.passes.find{|p| p.serial_number == serialNumber}
-        
-        unless pass
-            render json: {}, status: :not_found
-            return
-        end
-        
-        passFileName = passFileName(pass)
-        
-        # If pass doesn't exist then build pass on the fly
-        if not File.exists?(passFileName)
-            PassBuilderJob.new().perform(pass.id)
-        end
-        
-        # If pass still doesn't exist there was an error, return internal server error
-        if File.exists?(passFileName)
-            send_file(passFileName, type: 'application/vnd.apple.pkpass', disposition: 'inline')
-        else
-            render json: {}, status: :internal_server_error
-        end
-    end
-    
+
     private
     
     

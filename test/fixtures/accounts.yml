@@ -67,56 +67,48 @@ new_person_1:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551212"
-  stripe_customer_id: np_1
   user: np_1
   
 new_person_2:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551213"
-  stripe_customer_id: np_2
   user: np_2
   
 cupcake_lover:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551214"
-  stripe_customer_id: np_3
   user: cupcake_lover
 
 cupcake_lovers_friend:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551215"
-  stripe_customer_id: np_4
   user: cupcake_lovers_friend
 
 beer_lover:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551215"
-  stripe_customer_id: np_5
   user: beer_lover
 
 beer_lovers_friend:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551216"
-  stripe_customer_id: np_6
   user: beer_lovers_friend
 
 active_duty:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551217"
-  stripe_customer_id: np_7
   user: active_duty
 
 trying_it_out:
   type: MobilePhoneAccount
   authentication_method: One Time Password
   phone_number: "+15555551218"
-  stripe_customer_id: np_8
   user: trying_it_out
   
 quantum:

@@ -3,8 +3,8 @@
 abc123:
   id: 1
   serial_number: abc123
-  recipient: josh (Account)
-  order_id: 1
+  recipient: josh (User)
+  order: one
   created_at: 2018-09-11 02:35:30
   expiration: 2018-09-18 02:35:30
   message: This is pass one
@@ -15,8 +15,8 @@ abc123:
 distant_future:
   id: 2
   serial_number: abc124
-  recipient: josh (Account)
-  order_id: 2
+  recipient: josh (User)
+  order: two
   created_at: 2050-09-11 02:40:30
   expiration: 2050-09-18 02:40:30
   message: This is pass two
@@ -27,8 +27,8 @@ distant_future:
 expired:
   id: 3
   serial_number: abc125
-  recipient: pete (Account)
-  order_id: 1
+  recipient: pete (User)
+  order: one
   created_at: 2018-09-11 02:35:30
   expiration: 2018-09-18 02:35:30
   message: This is pass three
@@ -39,8 +39,8 @@ expired:
 abc126:
   id: 4
   serial_number: abc126
-  recipient: three (Account)
-  order_id: 3
+  recipient: three (User)
+  order: three
   created_at: 2024-12-25 00:00:00
   expiration: 2025-01-01 00:00:00
   message: This pass has an emoji 👍
@@ -50,7 +50,7 @@ abc126:
 
 redeemable_pass:
   serial_number: redeemable
-  recipient: new_person_2 (Account)
+  recipient: np_2 (User)
   order: redeemable_order
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -60,7 +60,7 @@ redeemable_pass:
 
 notifiable_recipient:
   serial_number: notifiablerecipient
-  recipient: notifiable (Account)
+  recipient: notifiable (User)
   order: redeemable_order
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -71,7 +71,7 @@ notifiable_recipient:
 
 not_notifiable_recipient:
   serial_number: notnotifiablerecipient
-  recipient: not_notifiable (Account)
+  recipient: not_notifiable (User)
   order: redeemable_order
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -81,7 +81,7 @@ not_notifiable_recipient:
     
 redeemable_cupcake:
   serial_number: redeemablecupcake
-  recipient: cupcake_lover (Account)
+  recipient: cupcake_lover (User)
   order: order_for_cupcake_lover
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -91,7 +91,7 @@ redeemable_cupcake:
 
 redeemable_cupcake_2:
   serial_number: redeemablecupcake2
-  recipient: cupcake_lover (Account)
+  recipient: cupcake_lover (User)
   order: order_for_cupcake_lover
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -101,7 +101,7 @@ redeemable_cupcake_2:
 
 expired_beer:
   serial_number: expiredbeerpass
-  recipient: beer_lover (Account)
+  recipient: beer_lover (User)
   order: expired_order_for_beer_lover
   created_at: 2018-01-01 00:00:00
   expiration: 2018-01-10 00:00:00
@@ -111,7 +111,7 @@ expired_beer:
 
 used_beer_pass:
   serial_number: usedbeerpass
-  recipient: beer_lover (Account)
+  recipient: beer_lover (User)
   order: used_order_for_beer_lover
   created_at: 2019-01-01 00:00:00
   expiration: 2025-01-01 00:00:00
@@ -150,7 +150,7 @@ redeemable_by_army:
   
 notifiable_purchaser:
   serial_number: notifiablepurchaser
-  recipient: josh (Account)
+  recipient: josh (User)
   order: purchased_by_notifiable
   created_at: 2019-10-28 00:00:00
   expiration: 2029-10-28 00:00:00
@@ -165,7 +165,7 @@ notifiable_purchaser:
 
 not_notifiable_purchaser:
   serial_number: notnotifiablepurchaser
-  recipient: josh (Account)
+  recipient: josh (User)
   order: purchaned_by_not_notifiable
   created_at: 2019-10-28 00:00:00
   expiration: 2029-10-28 00:00:00
@@ -180,7 +180,7 @@ not_notifiable_purchaser:
   
 zero_value_pass:
   serial_number: zerovalue
-  recipient: trying_it_out (Account)
+  recipient: trying_it_out (User)
   order: zero_value_order
   created_at: 2019-11-03 00:00:00
   expiration: 2029-11-03 00:00:00
@@ -190,7 +190,7 @@ zero_value_pass:
   
 tester_pass:
   serial_number: tester
-  recipient: test (Account)
+  recipient: test (User)
   order: tester_order
   created_at: 2019-12-10 00:00:00
   expiration: 2029-12-10 00:00:00

@@ -50,9 +50,6 @@ class ActiveSupport::TestCase
   SendDeviceNotification.connector = MockApnoticConnector
   SendDeviceNotification.dataStore = MockPersistentStore
   CreateStripeCustomerJob.client = MockStripeCustomer
-  PlaceOrder.charge_client = MockStripeCharge
-  PlaceOrder.customer_client = MockStripeCustomer
-  PlaceOrder.source_client = MockStripeSource
   CaptureOrder.transfer_client = MockStripeTransfer
   InitiateOrder.payment_intent_client = MockStripePaymentIntent
   CompleteOrder.payment_intent_client = MockStripePaymentIntent

@@ -1,3 +1,5 @@
+
+# This class is deprecated.  Delete ASAP
 class Charge < ApplicationRecord
 	
 	alias_attribute :source, :account

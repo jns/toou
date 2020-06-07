@@ -44,8 +44,6 @@ Rails.application.routes.draw do
   post 'api/passes', to: 'api#passes'
   post 'api/initiate_order', to: 'api#initiate_order'
   post 'api/confirm_payment', to: 'api#confirm_payment'
-  post 'api/place_order', to: 'api#placeOrder'
-  post 'api/order', to: 'api#order'
   post 'api/history', to: 'api#history'
   post  'api/pass/:serial_number', to: 'api#pass'
   post 'api/request_group_pass', to: 'api#request_group_pass'

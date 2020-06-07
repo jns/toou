@@ -2,7 +2,12 @@ class User < ApplicationRecord
     
     has_and_belongs_to_many :roles
     has_many :accounts
+    has_many :passes, as: :recipient
+    has_many :orders
+    has_many :memberships
+    has_many :groups, through: :memberships
 
+    after_create :generate_stripe_customer
 
     # Cache the id of the account used to authenticate this user
     @authenticated_with_id 
@@ -11,6 +16,14 @@ class User < ApplicationRecord
     TEST_USERNAME = "tester"
         
     validates :username,  presence: true, length: { maximum: 50 }
+
+    def name
+       return "#{first_name} #{last_name}" 
+    end
+    
+    def name=(first, last=nil)
+        update(first_name: first, last_name: last)
+    end
 
     def User.find_or_create_mobile_phone_account(phone_number, email, name)
         phone = PhoneNumber.new(phone_number).to_s
@@ -55,13 +68,20 @@ class User < ApplicationRecord
        Merchant.where(user: self) 
     end
     
+    
     # Convenience method created when emails where moved into EmailAccounts
     # This takes the first found email, and is not guaranteed to be the same from 
     # one call to the next.
     def first_email
       accounts.where("email is not null").first.email 
     end
-    
+    alias :email :first_email
+
+    # Convenience method to extract first phone number
+    def phone_number
+        accounts.where("phone_number is not null").first.phone_number    
+    end
+
     # Cache the id of the account used to authenticate this user
     # Do not cache actual account so that rails re-polls database 
     # when user accesses authenticated_with 
@@ -79,4 +99,9 @@ class User < ApplicationRecord
         accounts.find(@authenticated_with_id)
     end
     
+    # Creates a stripe customer account for this user
+    def generate_stripe_customer
+        CreateStripeCustomerJob.perform_now(self.id)
+        reload
+    end
 end

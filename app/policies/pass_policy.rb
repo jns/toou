@@ -6,6 +6,8 @@ class PassPolicy < AdminPolicy
             recipient.accounts.member? user
         elsif recipient.is_a? Account
             recipient == user
+        elsif recipient.is_a? User
+            recipient == user
         else
             false
         end

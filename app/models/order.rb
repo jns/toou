@@ -8,7 +8,7 @@ class Order < ActiveRecord::Base
     attr_accessor :payment_intent
     
     # The customer that made the purchase
-    belongs_to :account
+    belongs_to :user
     
     # The recipients of the passes
     has_many :passes

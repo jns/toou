@@ -320,42 +320,6 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     end
   end 
   
-  test "Place Order Succeeds" do
-    
-    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
-    json = JSON.parse(@response.body) 
-    token = json["auth_token"]
-  
-    
-    # Posting with an array of serial numbers will return those serial numbers
-    post "/api/place_order",  
-      params: {authorization: token,
-               recipients: [@acct1.phone_number.to_s],
-               message: "So Long and Thanks for all the Fish",
-               payment_source: "mock_payment_source_token",
-               product: {id: products(:beer).id, type: "Product"}}
-    
-    assert_response :success
-    order = JSON.parse(@response.body)
-    o = Order.find(order["order_id"].to_i)
-    assert_not_nil o.charge_stripe_id
-    assert_equal products(:beer).max_price_cents, o.commitment_amount_cents
-    assert products(:beer).max_price_cents < o.charge_amount_cents
-  end
-  
-  test "Place order without authorization fails" do 
-     
-    assert_no_difference "Order.count" do
-      post "/api/place_order", 
-        params: {authorization: "Not.a.token",
-                 recipients: ["310-909-7243","5043834228"],
-                 message: "So Long and Thanks for all the Fish", 
-                 product: {id: promotions(:generic).id, type: "Promotion"}}
-      assert_response :unauthorized
-    end
-  end
-  
-
   
   test "Account History Succeeds" do
     post "/api/authenticate", params: {phone_number: @acct2.phone_number.to_s, pass_code: @acct2_passcode, device_id: @devId}, as: :json  
@@ -421,7 +385,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     assert_nil MobilePhoneAccount.search_by_phone_number(purchaser[:phone])
     
     assert_difference "Order.count", 1 do
-      post "/api/order", params: {purchaser: purchaser, product: product, recipients: recipients, payment_source: payment_source, message: message}
+      post "/api/initiate_order", params: {purchaser: purchaser, product: product, recipients: recipients, payment_source: payment_source, message: message}
       assert_response :ok
       o = Order.last
       assert_not_nil o.charge_stripe_id
@@ -468,7 +432,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/groups", params: {authorization: token}
     assert_response :ok
     groups = JSON.parse(response.body)
-    assert_equal acct.groups.count, groups.count
+    assert_equal acct.user.groups.count, groups.count
     
     groups.each do |g|
       g["passes"].each do |passes|

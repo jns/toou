@@ -5,87 +5,84 @@
 # below each fixture, per the syntax in the comments below
 #
 one: 
-  id: 1
-  account: josh
+  user: josh
   created_at: 2018-09-11 02:35:30
   charge_stripe_id: ch_one
   commitment_amount_cents: 2000
   charge_amount_cents: 2250
   
 two: 
-  id: 2
-  account: pete
+  user: pete
   created_at: 2050-09-11 02:40:30
   charge_stripe_id: ch_two
   commitment_amount_cents: 1000
   charge_amount_cents: 1125
   
 three:
-  id: 3
-  account: pete
+  user: pete
   created_at: 2024-12-25 00:00:00
   charge_stripe_id: ch_three
   commitment_amount_cents: 1000
   charge_amount_cents: 1125
   
 redeemable_order:
-  account: new_person_1
+  user: np_1
   created_at: 2019-01-01 08:00:00
   charge_stripe_id: ch_four
   commitment_amount_cents: 1000
   charge_amount_cents: 1125
   
 order_for_cupcake_lover:
-  account: cupcake_lovers_friend
+  user: cupcake_lovers_friend
   created_at: 2019-01-01 08:00:00
   charge_stripe_id: ch_five
   commitment_amount_cents: 500
   charge_amount_cents: 600  
 
 expired_order_for_beer_lover:
-  account: beer_lovers_friend
+  user: beer_lovers_friend
   created_at: 2018-01-01 08:00:00
   charge_stripe_id: ch_six
   commitment_amount_cents: 1000
   charge_amount_cents: 1125
   
 used_order_for_beer_lover:
-  account: new_person_1
+  user: np_1
   created_at: 2019-01-01 08:00:00
   charge_stripe_id: charge1234
   charge_amount_cents: 700
   commitment_amount_cents: 650
   
 order_for_army:
-  account: new_person_2
+  user: np_2
   created_at: 2019-10-15 09:00:00
   charge_stripe_id: ch_20191015
   charge_amount_cents: 1125
   commitment_amount_cents: 1000
   
 purchased_by_notifiable:
-  account: notifiable
+  user: notifiable
   created_at: 2019-10-28 00:00:00
   charge_stripe_id: ch2019102801
   charge_amount_cents: 1125
   commitment_amount_cents: 1000
 
 purchaned_by_not_notifiable:
-  account: not_notifiable
+  user: not_notifiable
   created_at: 2019-10-28 00:00:00
   charge_stripe_id: ch2019102802
   charge_amount_cents: 1125
   commitment_amount_cents: 1000
 
 zero_value_order:
-  account: trying_it_out
+  user: trying_it_out
   created_at: 2019-11-03 00:00:00
   charge_stripe_id: ch20191103
   charge_amount_cents: 0
   commitment_amount_cents: 0
   
 tester_order:
-  account: test
+  user: tester
   created_at: 2019-12-10 00:00:00
   charge_stripe_id: ch20191210
   charge_amount_cents: 1125

@@ -40,7 +40,7 @@ class Pass < ActiveRecord::Base
     validates_presence_of :order, :buyable, :recipient
     
     def purchaser
-       order.account 
+       order.user 
     end
     
     def status
