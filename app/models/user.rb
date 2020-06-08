@@ -20,7 +20,8 @@ class User < ApplicationRecord
     def name
        return "#{first_name} #{last_name}" 
     end
-    
+
+    #    
     def name=(first, last=nil)
         update(first_name: first, last_name: last)
     end
@@ -69,11 +70,21 @@ class User < ApplicationRecord
     end
     
     
+    def email=(value)
+       a = accounts.where("email is not null").first
+       a.update(email: value)
+    end
+    
     # Convenience method created when emails where moved into EmailAccounts
     # This takes the first found email, and is not guaranteed to be the same from 
     # one call to the next.
     def first_email
-      accounts.where("email is not null").first.email 
+      accts = accounts.where("email is not null")
+      if accts.count > 0
+          accts.first.email
+      else
+          nil
+      end
     end
     alias :email :first_email
 
@@ -94,9 +105,26 @@ class User < ApplicationRecord
        
     end
     
+    # Returns the device id for the account the user authenticated with
+    def device_id
+        a = authenticated_with
+        if a
+            authenticated_with.device_id
+        else
+            nil
+        end
+    end
+    
+    # Updates the device_id for the account they authenticated with
+    def device_id=(device_id)
+        device_id = nil if device_id == "nil"
+       a = authenticated_with
+       a.update(device_id: device_id) if a 
+    end
+    
     # Returns the account used to authenticate this user
     def authenticated_with
-        accounts.find(@authenticated_with_id)
+        accounts.find(@authenticated_with_id) || nil
     end
     
     # Creates a stripe customer account for this user

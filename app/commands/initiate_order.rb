@@ -27,7 +27,7 @@ class InitiateOrder
     def call
 
         begin
-            raise "Invalid Acount" unless @user.is_a? User
+            raise "Invalid User" unless @user.is_a? User
             raise "No Product Specified" unless @buyable
             raise "No Recipients" unless @recipients.count > 0
 
@@ -121,36 +121,36 @@ class InitiateOrder
         rescue Stripe::CardError => e
             # Since it's a decline, Stripe::CardError will be caught
             m = "Stripe Card Error: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, e.message)
         rescue Stripe::RateLimitError => e
             # Too many requests made to the API too quickly
             m = "Stripe Rate Limit Error: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, e.message)
         rescue Stripe::InvalidRequestError => e
             # Invalid parameters were supplied to Stripe's API
             m = "Stripe Invalid Request Error: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, m)
         rescue Stripe::AuthenticationError => e
             # Authentication with Stripe's API failed
             # (maybe you changed API keys recently)
             m = "Stripe Authentication Error: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, m)
         rescue Stripe::APIConnectionError => e
             # Network communication with Stripe failed
             m = "Stripe API Connection Error: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, m)
         rescue Stripe::StripeError => e
             m = "Error creating charge: #{e.message}"
-            Log.create(log_type: Log::ERROR, context: "PlaceOrderCommand#charge", current_user: @user.id, message: m)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: m)
             errors.add(:message, m)
         rescue Exception => e
             message = e.message
-            Log.create(log_type: Log::ERROR, context: PlaceOrder.name, current_user: @user.id, message: message)
+            Log.create(log_type: Log::ERROR, context: "InitiateOrder", current_user: @user.id, message: message)
             errors.add(:message, message)
         end
     end

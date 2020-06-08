@@ -32,7 +32,11 @@ class AuthorizeApiRequest
     
     begin
       if user_type === "User"
-        return User.find(user_id)
+        u = User.find(user_id)
+        if decoded_token[:auth_acct_id]
+          u.authenticated_with = Account.find(decoded_token[:auth_acct_id])
+        end
+        return u
       elsif user_type === "MerchantDevice"
         return Device.find(user_id)
       else

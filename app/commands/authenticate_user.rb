@@ -22,7 +22,7 @@ class AuthenticateUser
     
     if acct and acct.authenticate(@password)
       user = acct.user 
-      return JsonWebToken.encode({user_id: user.id, user_type: "User"}) 
+      return JsonWebToken.encode({user_id: user.id, user_type: "User", auth_acct_id: acct.id}) 
     else
       errors.add :unauthorized, 'invalid credentials'
     end

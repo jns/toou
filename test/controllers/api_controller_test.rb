@@ -29,9 +29,9 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/account", params: {authorization: token}
     assert_response :ok
     data = JSON.parse(response.body)
-    assert_equal acct.name, data["name"]
-    assert_equal acct.email, data["email"]
-    assert_equal acct.phone_number, data["phone"]
+    assert_equal acct.user.name, data["name"]
+    assert_equal acct.user.email, data["email"]
+    assert_equal acct.user.phone_number, data["phone"]
   end 
   
   test "Update device_id with post" do
@@ -176,16 +176,15 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   
   test "Fetch Passes succeeds" do
     
-    post "/api/authenticate", params: {phone_number: @acct1.phone_number.to_s, pass_code: @acct1_passcode, device_id: @devId}, as: :json  
-    json = JSON.parse(@response.body) 
-    token = json["auth_token"]
-    
+    acct = accounts(:josh)
+    token = forceAuthenticate(acct)
+  
     # Posting with no parameters will return all passes
     post "/api/passes", params: {authorization: token}
     assert_response :ok
     passes = JSON.parse(@response.body)
     
-    assert_equal @acct1.passes.count, passes.size
+    assert_equal acct.user.passes.count, passes.size
     # Verify json structure
     assert_equal ["name", "phone_number", "email"], passes.first["purchaser"].keys
     
@@ -194,7 +193,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     post "/api/passes", params: {authorization: token, serialNumbers: ["abc123", "abc124"]}
     passes = JSON.parse(@response.body)
     
-    assert_equal @acct1.passes.count, passes.size
+    assert_equal @acct1.user.passes.count, passes.size
     assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc123"}["status"]
     assert_equal "VALID", passes.find{|p| p["serialNumber"] == "abc124"}["status"]
     
@@ -224,7 +223,7 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
     passes = JSON.parse(@response.body)
     
     # Verify that invalid serial returns invalid pass
-    assert_equal @acct1.passes.count+1, passes.size
+    assert_equal @acct1.user.passes.count+1, passes.size
     assert_equal "INVALID", passes.find{|p| p["serialNumber"] == "12345abc"}["status"]
     
   end

@@ -8,17 +8,13 @@ class ApiController < ApiBaseController
     # Account details for the current user
     def account
         case request.method
-        when "PATCH"
-            name, email, device_id = params.require(:data).permit(:name, :email, :device_id)
-            device_id = nil if device_id == "nil"
-            @current_user.update(first_name: name, email: email)
-            @current_user.authenticated_with.update(device_id: device_id)
-            render json: {success: "Success"}, status: :ok
         when "POST"
-            name, email, device_id = params.permit(:data).permit(:name, :email, :device_id)
-            device_id = nil if device_id == "nil"
-            @current_user.update(first_name: name, email: email)
-            @current_user.authenticated_with.update(device_id: device_id)
+            data = params.permit(data: [:name, :email, :device_id])
+            if data[:data]
+                @current_user.name = data[:data][:name] if data[:data][:name]
+                @current_user.email = data[:data][:email] if data[:data][:email]
+                @current_user.device_id = data[:data][:device_id] if data[:data][:device_id] 
+            end
             render json: {name: @current_user.name, email: @current_user.email, phone: @current_user.phone_number}, status: :ok
         else
             render json: {}, status: :bad_request
@@ -164,12 +160,13 @@ class ApiController < ApiBaseController
             end
             
             # Find or generate an account
-            @current_user = User.find_or_create_mobile_phone_account(phone, purchaser[:email], purchaser[:name])
+            @current_user = User.find_or_create_mobile_phone_account(phone, purchaser[:email], purchaser[:name]).user
             
-            # Update name and email if they are nil
-            @current_user.update(email: purchaser[:email]) unless @current_user.email
-            @current_user.update(name: purchaser[:name]) unless @current_user.name
         end 
+
+        # Update name and email if they are nil
+        @current_user.email = purchaser[:email] unless @current_user.email
+        @current_user.name = purchaser[:name] unless @current_user.name
         
         # Place the order
         command = InitiateOrder.call(@current_user, payment_source, recipients, message, product, fee)
